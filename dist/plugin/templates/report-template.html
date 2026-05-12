@@ -1,0 +1,753 @@
+<!doctype html>
+<!-- FreeSTRIDE report-template v2.0 — interactive SVG DFD, no Mermaid CDN -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STRIDE 安全审计报告 - {{ meta.system_name | default('Security Target') }}</title>
+<style>
+:root {
+  color-scheme: light;
+  --ink: #17211b;
+  --muted: #65736b;
+  --quiet: #8b978f;
+  --paper: #fbf7ef;
+  --panel: #fffdf8;
+  --panel-strong: #f4ead8;
+  --line: #ded3c0;
+  --line-strong: #bfae91;
+  --green: #1f7a4d;
+  --green-soft: #dff1e5;
+  --red: #b7352d;
+  --red-soft: #fae1dc;
+  --amber: #b56b12;
+  --amber-soft: #f7e8c9;
+  --blue: #245f86;
+  --blue-soft: #dceaf2;
+  --violet: #7153a6;
+  --violet-soft: #e8e1f4;
+  --slate: #6d7372;
+  --slate-soft: #e9ece8;
+  --shadow: 0 24px 80px rgba(46, 36, 22, .12);
+  --mono: "Cascadia Code", "SFMono-Regular", "Fira Code", "JetBrains Mono", monospace;
+  --sans: "Source Han Sans SC", "Noto Sans CJK SC", "Microsoft YaHei UI", "PingFang SC", sans-serif;
+  --serif: "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 8% 2%, rgba(31,122,77,.13), transparent 24rem),
+    radial-gradient(circle at 92% 0%, rgba(181,107,18,.15), transparent 26rem),
+    linear-gradient(180deg, #f5ead7 0%, var(--paper) 42rem);
+  font-family: var(--sans);
+  line-height: 1.62;
+}
+a { color: inherit; }
+.shell { max-width: 1440px; margin: 0 auto; padding: 28px; }
+.hero {
+  display: grid;
+  grid-template-columns: 1.4fr .8fr;
+  gap: 24px;
+  min-height: 280px;
+  padding: 34px;
+  border: 1px solid rgba(23,33,27,.12);
+  border-radius: 30px;
+  background:
+    linear-gradient(135deg, rgba(255,253,248,.95), rgba(244,234,216,.86)),
+    repeating-linear-gradient(90deg, transparent, transparent 28px, rgba(23,33,27,.035) 29px);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  position: relative;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  right: -120px;
+  top: -140px;
+  width: 360px;
+  height: 360px;
+  border-radius: 999px;
+  border: 56px solid rgba(31,122,77,.08);
+}
+.eyebrow {
+  color: var(--green);
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+h1 {
+  margin: 14px 0 12px;
+  font-family: var(--serif);
+  font-size: clamp(34px, 4.6vw, 68px);
+  line-height: 1.02;
+  letter-spacing: -.045em;
+}
+.hero p { max-width: 820px; margin: 0; color: var(--muted); font-size: 16px; }
+.run-meta {
+  display: grid;
+  gap: 10px;
+  align-content: end;
+  position: relative;
+  z-index: 1;
+}
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 1px solid rgba(23,33,27,.1);
+  border-radius: 14px;
+  background: rgba(255,253,248,.72);
+  font-size: 13px;
+}
+.meta-row b { color: var(--ink); }
+.meta-row span { color: var(--muted); text-align: right; }
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  margin: 18px 0 24px;
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  border: 1px solid rgba(23,33,27,.1);
+  border-radius: 18px;
+  background: rgba(255,253,248,.84);
+  backdrop-filter: blur(18px);
+}
+.nav a {
+  flex: 0 0 auto;
+  padding: 9px 13px;
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 750;
+  text-decoration: none;
+}
+.nav a:hover { background: var(--panel-strong); color: var(--ink); }
+.grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.card {
+  border: 1px solid rgba(23,33,27,.12);
+  border-radius: 24px;
+  background: rgba(255,253,248,.9);
+  box-shadow: 0 10px 40px rgba(46,36,22,.07);
+}
+.pad { padding: 22px; }
+.metric {
+  min-height: 126px;
+  padding: 18px;
+  position: relative;
+  overflow: hidden;
+}
+.metric::after {
+  content: "";
+  position: absolute;
+  inset: auto -24px -38px auto;
+  width: 120px;
+  height: 120px;
+  border-radius: 100px;
+  background: var(--tint, var(--panel-strong));
+}
+.metric .label { color: var(--muted); font-size: 13px; font-weight: 750; }
+.metric .num { margin-top: 8px; font-size: 42px; line-height: 1; font-weight: 900; letter-spacing: -.06em; }
+.metric .hint { margin-top: 8px; color: var(--quiet); font-size: 12px; }
+.section {
+  margin-top: 22px;
+  padding: 24px;
+}
+.section-head {
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 18px;
+}
+.section h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 28px;
+  letter-spacing: -.025em;
+}
+.section-note { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 850;
+  white-space: nowrap;
+  background: var(--slate-soft);
+  color: var(--slate);
+}
+.pill.confirmed { background: var(--red-soft); color: var(--red); }
+.pill.confirmed_exploitable { background: var(--red); color: white; }
+.pill.confirmed_code_defect { background: var(--amber-soft); color: var(--amber); }
+.pill.partial { background: var(--amber-soft); color: var(--amber); }
+.pill.design { background: var(--violet-soft); color: var(--violet); }
+.pill.false_positive, .pill.fp { background: var(--green-soft); color: var(--green); }
+.pill.oos, .pill.out_of_scope { background: var(--slate-soft); color: var(--slate); }
+.pill.high, .pill.HIGH, .pill.High { background: var(--red-soft); color: var(--red); }
+.pill.medium, .pill.MEDIUM, .pill.Medium { background: var(--amber-soft); color: var(--amber); }
+.pill.low, .pill.LOW, .pill.Low { background: var(--blue-soft); color: var(--blue); }
+.pill.critical, .pill.CRITICAL, .pill.Critical { background: var(--red); color: white; }
+.audit-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+.audit-item {
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255,253,248,.72);
+}
+.audit-item b { display: block; margin-bottom: 4px; }
+.audit-item span { color: var(--muted); font-size: 13px; }
+.warn { border-color: rgba(181,107,18,.35); background: var(--amber-soft); }
+.pass { border-color: rgba(31,122,77,.28); background: var(--green-soft); }
+.fail { border-color: rgba(183,53,45,.3); background: var(--red-soft); }
+.layout-2 { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 18px; align-items: start; }
+.dfd-box {
+  min-height: 430px;
+  padding: 16px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255,253,248,.95), rgba(250,244,232,.78)),
+    linear-gradient(90deg, rgba(23,33,27,.035) 1px, transparent 1px),
+    linear-gradient(rgba(23,33,27,.035) 1px, transparent 1px);
+  background-size: auto, 28px 28px, 28px 28px;
+  overflow: auto;
+}
+.mermaid { min-width: 760px; }
+.dfd-clickable { cursor: pointer; }
+.dfd-clickable:hover { filter: brightness(0.88); }
+.dfd-edge-label { text-decoration: underline; text-decoration-style: dotted; }
+.dfd-side {
+  position: sticky;
+  top: 86px;
+  padding: 18px;
+  border-radius: 22px;
+  background: #17211b;
+  color: #f7f0e5;
+}
+.dfd-side h3 { margin: 0 0 8px; font-size: 16px; }
+.dfd-side p { margin: 0 0 12px; color: #d7cbbb; font-size: 13px; }
+.dfd-list { display: grid; gap: 8px; margin-top: 14px; }
+.dfd-chip {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 11px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.08);
+  font-size: 12px;
+}
+.finding-list { display: grid; gap: 12px; }
+.finding {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255,253,248,.86);
+  overflow: hidden;
+}
+.finding summary {
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: auto auto auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  list-style: none;
+}
+.finding summary::-webkit-details-marker { display: none; }
+.finding summary::after {
+  content: "展开";
+  color: var(--quiet);
+  font-size: 12px;
+}
+.finding[open] summary::after { content: "收起"; }
+.finding-title { min-width: 0; font-weight: 850; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.finding-body {
+  border-top: 1px solid var(--line);
+  padding: 16px;
+  background: rgba(255,253,248,.62);
+}
+.kv {
+  display: grid;
+  grid-template-columns: 150px minmax(0,1fr);
+  gap: 8px 14px;
+  margin: 0;
+  font-size: 13px;
+}
+.kv dt { color: var(--muted); font-weight: 850; }
+.kv dd { margin: 0; min-width: 0; word-break: break-word; }
+.evidence {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-left: 4px solid var(--green);
+  border-radius: 12px;
+  background: var(--green-soft);
+  color: #17482f;
+  font-size: 13px;
+}
+.counter {
+  border-left-color: var(--amber);
+  background: var(--amber-soft);
+  color: #5a3509;
+}
+.mono { font-family: var(--mono); font-size: 11px; }
+.code {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: rgba(23,33,27,.07);
+  border: 1px solid rgba(23,33,27,.1);
+  border-radius: 10px;
+  padding: 8px 10px;
+  overflow-x: auto;
+}
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th, td {
+  padding: 11px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+tr:hover td { background: rgba(244,234,216,.42); }
+.empty {
+  padding: 28px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 18px;
+  color: var(--muted);
+  text-align: center;
+}
+.footer {
+  margin: 28px 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+@media (max-width: 980px) {
+  .hero, .layout-2, .audit-strip { grid-template-columns: 1fr; }
+  .grid-4, .grid-3 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .dfd-side { position: static; }
+}
+@media (max-width: 620px) {
+  .shell { padding: 14px; }
+  .hero { padding: 24px; border-radius: 22px; }
+  .grid-4, .grid-3 { grid-template-columns: 1fr; }
+  .section { padding: 18px; }
+  .finding summary { grid-template-columns: auto auto 1fr; }
+  .finding-title { grid-column: 1 / -1; white-space: normal; }
+  .kv { grid-template-columns: 1fr; }
+}
+@media print {
+  body { background: white; }
+  .nav, .dfd-side { display: none; }
+  .card, .hero, .section { box-shadow: none; break-inside: avoid; }
+  .finding { break-inside: avoid; }
+}
+</style>
+<!-- DFD interaction is handled by inline SVG + vanilla JS below. No Mermaid CDN needed. -->
+</head>
+<body>
+{% set cls = executive_summary.classification_counts if executive_summary and executive_summary.classification_counts else {} %}
+{% set sev = executive_summary.severity_counts if executive_summary and executive_summary.severity_counts else {} %}
+{% set all_threats = threats | default([]) %}
+
+{% macro label_class(value) -%}{{ (value|string)|replace(' ', '_')|lower }}{%- endmacro %}
+
+{% macro pill(text, klass='') -%}
+<span class="pill {{ label_class(klass if klass else text) }}">{{ text }}</span>
+{%- endmacro %}
+
+{% macro field(label, value) -%}
+{% if value is defined and value %}
+<dt>{{ label }}</dt><dd>{{ value }}</dd>
+{% endif %}
+{%- endmacro %}
+
+{% macro dfd_element_label(ref) -%}
+{%- if ref is defined and ref -%}
+{%- if ref is string and ref -%}
+{%- set eid = ref -%}
+{%- set name = dfd_element_names.get(eid, '') -%}
+{%- if name %}{{ name }} ({{ eid }}){% else %}{{ eid }}{% endif -%}
+{%- elif ref is iterable and ref is not string -%}
+{%- for eid in ref -%}
+{%- set name = dfd_element_names.get(eid, '') -%}
+{%- if name %}{{ name }} ({{ eid }}){% else %}{{ eid }}{% endif -%}
+{%- if not loop.last %}, {% endif -%}
+{%- endfor -%}
+{%- else -%}
+{{ ref }}
+{%- endif -%}
+{%- endif -%}
+{%- endmacro %}
+
+{% macro call_chain(chain) -%}
+{% if chain %}
+<div class="code">
+{% if chain is string %}{{ chain }}{% else -%}
+{% if chain.entry %}entry: {{ chain.entry }}<br>{% endif -%}
+{% if chain.entry_point %}entry: {{ chain.entry_point }}<br>{% endif -%}
+{% if chain.handler %}handler: {{ chain.handler }}<br>{% endif -%}
+{% if chain.handler_chain %}handler: {{ chain.handler_chain | join(' -> ') }}<br>{% endif -%}
+{% if chain.validation %}validation: {{ chain.validation }}<br>{% endif -%}
+{% if chain.validation_layer %}validation: {{ chain.validation_layer | join(' -> ') }}<br>{% endif -%}
+{% if chain.vulnerable %}vulnerable: {{ chain.vulnerable }}<br>{% endif -%}
+{% if chain.vulnerable_function %}vulnerable: {{ chain.vulnerable_function }}<br>{% endif -%}
+{% if chain.impact %}impact: {{ chain.impact }}<br>{% endif -%}
+{% if chain.completeness %}completeness: {{ chain.completeness }}{% endif -%}
+{% endif %}
+</div>
+{% endif %}
+{%- endmacro %}
+
+{% macro finding_card(threat) -%}
+<details class="finding" id="threat-{{ threat.id }}">
+  <summary>
+    <b>{{ threat.id }}</b>
+    {{ pill(threat.severity | default('UNKNOWN'), threat.severity | default('')) }}
+    {{ pill(threat.final_classification | default('unclassified'), threat.final_classification | default('')) }}
+    <span class="finding-title">{{ threat.name | default(threat.title | default('未命名发现')) }}</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      {{ field('STRIDE 维度', threat.stride_category) }}
+      {{ field('CWE', threat.cwe) }}
+      {{ field('源码位置', threat.file) }}
+      {%- if threat.dfd_element_ref -%}
+<dt>DFD 元素</dt><dd>{{ dfd_element_label(threat.dfd_element_ref) }}</dd>
+{%- endif -%}
+      {{ field('攻击者控制点', threat.attacker_control) }}
+      {{ field('利用路径', threat.exploit_path_type) }}
+      {{ field('PoC 级别', threat.poc_type) }}
+      {{ field('确认层级', threat.confirmed_tier) }}
+      {{ field('可利用性评分', threat.exploitability_score) }}
+    </dl>
+    {% if threat.description %}<p>{{ threat.description }}</p>{% endif %}
+    {% if threat.source_evidence %}<div class="evidence"><b>源证据</b><br>{{ threat.source_evidence }}</div>{% endif %}
+    {% if threat.counter_evidence_checked %}
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      {% for item in threat.counter_evidence_checked %}{{ item }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+    </div>
+    {% endif %}
+    {{ call_chain(threat.call_chain) }}
+    {% if threat.mitigation %}<div class="evidence"><b>修复建议</b><br>{{ threat.mitigation }}</div>{% endif %}
+    {% if threat.downgrade_reason %}<div class="evidence counter"><b>降级原因</b><br>{{ threat.downgrade_reason }}</div>{% endif %}
+    {% if threat.fp_rationale %}<div class="evidence"><b>误报判定依据</b><br>{{ threat.fp_rationale }}</div>{% endif %}
+  </div>
+</details>
+{%- endmacro %}
+
+{% macro finding_section(section_id, title, note, classification) -%}
+<section id="{{ section_id }}" class="section card">
+  <div class="section-head">
+    <div>
+      <h2>{{ title }}</h2>
+      <p class="section-note">{{ note }}</p>
+    </div>
+    {{ pill(cls.get(classification, 0) if cls.get is defined else 0, classification) }}
+  </div>
+  <div class="finding-list">
+    {% set shown = namespace(count=0) %}
+    {% for threat in all_threats if threat.final_classification == classification %}
+      {% set shown.count = shown.count + 1 %}
+      {{ finding_card(threat) }}
+    {% endfor %}
+    {% if shown.count == 0 %}<div class="empty">没有此类发现。</div>{% endif %}
+  </div>
+</section>
+{%- endmacro %}
+
+<div class="shell">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">STRIDE Audit Report</div>
+      <h1>{{ meta.system_name | default('安全威胁审计报告') }}</h1>
+      <p>
+        面向工程验收的安全审计报告模板。重点展示结论可信度、证据等级、误报压制、
+        DFD 覆盖和 result-auditor 门禁状态，避免把设计风险、模拟 PoC 和真实可利用漏洞混在一起。
+      </p>
+    </div>
+    <div class="run-meta">
+      <div class="meta-row"><b>工作流版本</b><span>{{ meta.workflow_version | default('unknown') }}</span></div>
+      <div class="meta-row"><b>分析时间</b><span>{{ meta.analysis_date | default(meta.generated | default('unknown')) }}</span></div>
+      <div class="meta-row"><b>攻击者模型</b><span>{{ meta.attacker_profile | default('mobile_device_remote_attacker') }}</span></div>
+      <div class="meta-row"><b>目标路径</b><span>{{ meta.target | default('未记录') }}</span></div>
+    </div>
+  </header>
+
+  <nav class="nav">
+    <a href="#overview">概览</a>
+    <a href="#quality">质量门禁</a>
+    <a href="#dfd">DFD</a>
+    <a href="#confirmed">确认漏洞</a>
+    <a href="#candidate">候选发现</a>
+    <a href="#design">设计建议</a>
+    <a href="#fp">误报</a>
+    <a href="#poc">PoC</a>
+    <a href="#method">方法与限制</a>
+  </nav>
+
+  <section id="overview" class="grid-4">
+    <div class="card metric" style="--tint:var(--slate-soft)"><div class="label">总发现</div><div class="num">{{ executive_summary.total_threats | default(all_threats | length) }}</div><div class="hint">canonical threat list</div></div>
+    <div class="card metric" style="--tint:var(--red-soft)"><div class="label">确认漏洞</div><div class="num">{{ cls.get('confirmed', 0) if cls.get is defined else 0 }}</div><div class="hint">通过门禁后保留</div></div>
+    <div class="card metric" style="--tint:var(--amber-soft)"><div class="label">候选发现</div><div class="num">{{ cls.get('partial', 0) if cls.get is defined else 0 }}</div><div class="hint">需补证据或降级</div></div>
+    <div class="card metric" style="--tint:var(--violet-soft)"><div class="label">设计建议</div><div class="num">{{ cls.get('design', 0) if cls.get is defined else 0 }}</div><div class="hint">不直接等同漏洞</div></div>
+  </section>
+
+  <section class="section card">
+    <div class="section-head">
+      <div>
+        <h2>严重度与结论分布</h2>
+        <p class="section-note">先看整体风险轮廓，再进入单项证据。</p>
+      </div>
+    </div>
+    <div class="grid-4">
+      <div class="audit-item"><b>Critical</b><span>{{ sev.get('CRITICAL', sev.get('Critical', 0)) if sev.get is defined else 0 }}</span></div>
+      <div class="audit-item"><b>High</b><span>{{ sev.get('HIGH', sev.get('High', 0)) if sev.get is defined else 0 }}</span></div>
+      <div class="audit-item"><b>Medium</b><span>{{ sev.get('MEDIUM', sev.get('Medium', 0)) if sev.get is defined else 0 }}</span></div>
+      <div class="audit-item"><b>Low</b><span>{{ sev.get('LOW', sev.get('Low', 0)) if sev.get is defined else 0 }}</span></div>
+    </div>
+    {% if executive_summary.top_findings %}
+    <div class="table-wrap" style="margin-top:18px">
+      <table>
+        <thead><tr><th>优先级</th><th>发现</th><th>严重度</th><th>分类</th></tr></thead>
+        <tbody>
+        {% for item in executive_summary.top_findings %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ item.title | default(item.name) }}</td>
+          <td>{{ pill(item.severity | default('UNKNOWN'), item.severity | default('')) }}</td>
+          <td>{{ pill(item.classification | default('unknown'), item.classification | default('')) }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </section>
+
+  <section id="quality" class="section card">
+    <div class="section-head">
+      <div>
+        <h2>质量门禁</h2>
+        <p class="section-note">报告可信度来自 result-auditor、语义一致性、PoC 分级，而不是模型口头声明。</p>
+      </div>
+      {{ pill(result_audit.audit_result | default(consistency.overall | default('UNKNOWN')), result_audit.audit_result | default(consistency.overall | default(''))) }}
+    </div>
+    <div class="audit-strip">
+      <div class="audit-item {{ 'pass' if not result_audit.hard_fails else 'fail' }}">
+        <b>Hard Fail</b>
+        <span>{{ result_audit.hard_fails | length if result_audit.hard_fails is defined else consistency.hard_fails | length if consistency.hard_fails is defined else 0 }} 项</span>
+      </div>
+      <div class="audit-item {{ 'warn' if result_audit.soft_warns or consistency.soft_warns else 'pass' }}">
+        <b>Soft Warn</b>
+        <span>{{ result_audit.soft_warns | length if result_audit.soft_warns is defined else consistency.soft_warns | length if consistency.soft_warns is defined else 0 }} 项</span>
+      </div>
+      <div class="audit-item pass">
+        <b>Must-Detect</b>
+        <span>
+          {% if result_audit.must_detect_status %}
+          {{ result_audit.must_detect_status.covered | default('?') }} covered /
+          {{ result_audit.must_detect_status.missed | default('?') }} missed
+          {% else %}未提供{% endif %}
+        </span>
+      </div>
+    </div>
+    {% if result_audit.downgrades_applied %}
+    <h3>审计器自动降级</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>威胁</th><th>变更</th><th>原因</th></tr></thead>
+        <tbody>
+        {% for item in result_audit.downgrades_applied %}
+        <tr>
+          <td>{{ item.threat_id }}</td>
+          <td>{{ item.from | default('') }}{% if item.to %} -> {{ item.to }}{% endif %}{% if item.severity_change %}{{ item.severity_change }}{% endif %}</td>
+          <td>{{ item.reason }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+    {% set warns = result_audit.soft_warns if result_audit.soft_warns is defined else consistency.soft_warns | default([]) %}
+    {% if warns %}
+    <h3>仍需关注的警告</h3>
+    {% for warn in warns %}
+    <div class="evidence counter">{% if warn.rule_id %}<b>{{ warn.rule_id }}</b> {% endif %}{{ warn.reason | default(warn) }}</div>
+    {% endfor %}
+    {% endif %}
+  </section>
+
+  <section id="dfd" class="section card">
+    <div class="section-head">
+      <div>
+        <h2>数据流图</h2>
+        <p class="section-note">点击 DFD 元素查看 STRIDE 六维安全分析。蓝框=外部实体, 橙圆=处理过程, 绿开放线=存储, 红虚线=IPC信任边界。</p>
+      </div>
+    </div>
+    <div class="layout-2">
+      <div class="dfd-box" id="dfd-svg-container" style="min-height:600px;display:flex;align-items:center;justify-content:center">
+        {% if dfd_svg %}
+        {{ dfd_svg | safe }}
+        {% else %}
+        <div class="empty">未提供交互式 DFD。请运行 DFD 生成脚本。</div>
+        {% endif %}
+      </div>
+      <aside class="dfd-side" id="dfd-sidebar">
+        <h3 id="dfd-sidebar-title">元素统计</h3>
+        <p id="dfd-sidebar-hint">点击 DFD 元素查看 STRIDE 六维安全分析</p>
+        <div class="dfd-list" id="dfd-sidebar-threats" style="display:none"></div>
+        <div class="dfd-list" id="dfd-sidebar-chips" style="margin-top:14px">
+          <div class="dfd-chip"><span>外部实体</span><b>{{ dfd_stats.external_entities | default('?') }}</b></div>
+          <div class="dfd-chip"><span>处理过程</span><b>{{ dfd_stats.processes | default('?') }}</b></div>
+          <div class="dfd-chip"><span>数据存储</span><b>{{ dfd_stats.stores | default(dfd_stats.data_stores | default('?')) }}</b></div>
+          <div class="dfd-chip"><span>数据流</span><b>{{ dfd_stats.data_flows | default('?') }}</b></div>
+          <div class="dfd-chip"><span>信任边界</span><b>{{ dfd_stats.trust_boundaries | default('?') }}</b></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  {{ finding_section('confirmed', '确认漏洞', '代码证据和调用路径足够强，但仍需看 PoC 级别区分“机制成立”和“目标代码验证”。', 'confirmed') }}
+  {{ finding_section('candidate', '候选发现', '有安全价值，但利用路径、攻击前提或证据强度仍不足。', 'partial') }}
+  {{ finding_section('design', '设计建议', '架构或防御纵深问题，不直接等同可提交漏洞。', 'design') }}
+  {{ finding_section('oos', '超出范围', '不在当前攻击者模型或威胁边界内。', 'out_of_scope') }}
+  {{ finding_section('fp', '误报记录', '已由源码反证、must-reject 或威胁边界排除。', 'false_positive') }}
+
+  <section id="poc" class="section card">
+    <div class="section-head">
+      <div>
+        <h2>PoC 与证据等级</h2>
+        <p class="section-note">PoC 分级决定结论能说到哪一步。模拟 PoC 只能证明机制，不能冒充目标代码利用。</p>
+      </div>
+      {{ pill((poc_summary.meta.total_pocs if poc_summary.meta is defined else poc_summary | length) | default(0), 'poc') }}
+    </div>
+    {% set poc_results = poc_summary.poc_results if poc_summary.poc_results is defined else poc_summary | default([]) %}
+    {% if poc_results %}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>威胁</th><th>状态</th><th>证据级别</th><th>调用目标代码</th><th>源码路径</th><th>限制说明</th></tr></thead>
+        <tbody>
+        {% for poc in poc_results %}
+        <tr>
+          <td><a href="#threat-{{ poc.threat_id }}">{{ poc.threat_id }}</a></td>
+          <td>{{ poc.status_cn | default(poc.status | default('UNKNOWN')) }}</td>
+          <td>{{ pill(poc.type_cn | default(poc.type | default(poc.poc_type | default('unknown'))), poc.type | default(poc.poc_type | default(''))) }}</td>
+          <td>{{ '是' if poc.target_code_invoked else '否' }}</td>
+          <td class="mono">{{ poc.source_file | default('未提供') }}</td>
+          <td>{{ poc.limitations | default('未说明') }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty">未提供 PoC 摘要。</div>
+    {% endif %}
+  </section>
+
+  <section id="method" class="section card">
+    <div class="section-head">
+      <div>
+        <h2>方法与限制</h2>
+        <p class="section-note">这里记录本次报告不可忽略的边界条件。</p>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="audit-item"><b>威胁模型</b><span>{{ meta.attacker_profile | default('mobile_device_remote_attacker') }}</span></div>
+      <div class="audit-item"><b>SAST 状态</b><span>{{ sast_status | default('未提供或降级') }}</span></div>
+      <div class="audit-item"><b>报告依据</b><span>source evidence + counter evidence + result auditor</span></div>
+    </div>
+    {% if methodology and methodology.limitations %}
+    {% for item in methodology.limitations %}<div class="evidence counter">{{ item }}</div>{% endfor %}
+    {% endif %}
+  </section>
+
+  <p class="footer">Generated by FreeSTRIDE workflow. Treat this report as an evidence index, not as a substitute for exploit validation.</p>
+</div>
+
+<script>
+// ---- DFD STRIDE 六维分析 (event delegation) ----
+var C={HIGH:'#dc3545',MEDIUM:'#fd7e14',LOW:'#17a2b8'},
+SC={Spoofing:'#0d6efd',Tampering:'#fd7e14',Repudiation:'#6f42c1','Information Disclosure':'#198754','Denial of Service':'#dc3545','Elevation of Privilege':'#b8590c'},
+SCN={Spoofing:'欺骗 (Spoofing)',Tampering:'篡改 (Tampering)',Repudiation:'抵赖 (Repudiation)','Information Disclosure':'信息泄露 (Information Disclosure)','Denial of Service':'拒绝服务 (Denial of Service)','Elevation of Privilege':'权限提升 (Elevation of Privilege)'},
+	TCN={'external_entities':'外部实体','processes':'处理过程','data_stores':'数据存储','data_flows':'数据流','trust_boundaries':'信任边界'},
+	DO=['Spoofing','Tampering','Repudiation','Information Disclosure','Denial of Service','Elevation of Privilege'],saved=null;
+
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function safeThreatId(v){return String(v||'').replace(/[^A-Za-z0-9_.:-]/g,'')}
+function saveSide(){if(!saved){var s=document.getElementById('dfd-sidebar');if(s)saved=s.innerHTML}}
+function restoreSide(){if(saved){var s=document.getElementById('dfd-sidebar');if(s)s.innerHTML=saved;saved=null;var chips=document.getElementById('dfd-sidebar-chips');if(chips)chips.style.display='block'}}
+
+function renderDfdDetail(eid){
+ var n=document.querySelector('[data-eid=\"'+eid+'\"]');if(!n)return;
+ saveSide();var chips=document.getElementById('dfd-sidebar-chips');if(chips)chips.style.display='none';
+ var name=n.dataset.name||'',desc=n.dataset.desc||'',type=n.dataset.type||'';
+ var threats,analysis;
+ try{threats=JSON.parse(n.getAttribute('data-threats')||'[]')}catch(e){threats=[]}
+ try{analysis=JSON.parse(n.getAttribute('data-analysis')||'{}')}catch(e){analysis={}}
+ var tbs={};threats.forEach(function(t){var d=t.stride||'Unknown';if(!tbs[d])tbs[d]=[];tbs[d].push(t)});
+ var h='<div id=\"dfdSideBack\" style=\"display:block;font-size:11px;color:#8b978f;cursor:pointer;margin-bottom:8px\" onclick=\"restoreSide()\">← 返回统计视图</div>';
+ h+='<h3>'+esc(name)+'</h3><p>'+esc(TCN[type]||type)+' · '+esc(eid)+'</p>';
+ if(desc)h+='<p style=\"font-size:12px;color:#d7cbbb;line-height:1.6\">'+esc(desc)+'</p>';
+ DO.forEach(function(dim){var a=analysis[dim]||{},risk=a.risk||'低',summary=a.summary||'暂无分析。',cp=a.code_path||'',dt=tbs[dim]||[],dc=SC[dim]||'#6c757d';h+='<div style=\"margin:8px 0;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)\"><div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:6px\"><span style=\"color:'+dc+';font-weight:600;font-size:13px\">'+esc(SCN[dim])+'</span><span style=\"font-size:11px;padding:2px 7px;border-radius:8px;'+(risk==='高'?'background:#dc3545;color:#fff':(risk==='中等'?'background:#fd7e14;color:#fff':'background:#17a2b8;color:#fff'))+'\">'+esc(risk)+'</span></div><div style=\"font-size:12px;color:#d7cbbb;line-height:1.5;margin-bottom:4px\">'+esc(summary)+'</div>';if(cp)h+='<div style=\"font-size:10px;color:#8b978f;font-family:var(--mono);margin-top:4px\">'+esc(cp)+'</div>';if(dt.length>0){h+='<div style=\"margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.08)\">';dt.forEach(function(t){var tid=safeThreatId(t.threat_id),sev=String(t.severity||''),tn=String(t.name||'').substring(0,55);h+='<a href=\"#threat-'+tid+'\" data-threat-link=\"'+esc(tid)+'\" style=\"display:block;font-size:11px;color:#cfe2ff;text-decoration:none;padding:2px 0\"><b>'+esc(tid)+'</b> <span style=\"color:'+(C[sev]||'#6c757d')+'\">['+esc(sev)+']</span> '+esc(tn)+'</a>'});h+='</div>'}else{h+='<div style=\"margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.08)\"><span style=\"font-size:11px;color:#6c757d\">该维度未发现直接威胁</span></div>'}h+='</div>';});
+ var sidebar=document.getElementById('dfd-sidebar');if(sidebar)sidebar.innerHTML=h;
+}
+
+// Compatibility aliases for older generated SVG fixtures/reports that still
+// contain inline onclick="selectDfdElement('P1')" handlers.
+window.renderDfdDetail=renderDfdDetail;
+window.showDfdDetail=renderDfdDetail;
+window.selectDfdElement=renderDfdDetail;
+window.selectElement=renderDfdDetail;
+window.restoreSide=restoreSide;
+window.resetFilter=restoreSide;
+
+// Event delegation — single listener on SVG container, finds closest [data-eid]
+document.addEventListener('DOMContentLoaded',function(){
+ var container=document.getElementById('dfd-svg-container');
+ if(!container)return;
+ container.addEventListener('click',function(e){
+   var target=e.target;
+   // Walk up to find an element with data-eid
+   while(target&&target!==container){
+     var eid=target.getAttribute('data-eid');
+	 if(eid){renderDfdDetail(eid);return;}
+	 target=target.parentElement;
+   }
+ });
+ document.addEventListener('click',function(e){
+   var link=e.target.closest&&e.target.closest('[data-threat-link]');
+   if(!link)return;
+   var tid=safeThreatId(link.getAttribute('data-threat-link'));
+   var el=document.getElementById('threat-'+tid);
+   if(el){el.open=true;setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'center'})},100)}
+ });
+ console.log('DFD delegation ready. Elements with data-eid:',container.querySelectorAll('[data-eid]').length);
+});
+</script>
+</body>
+</html>

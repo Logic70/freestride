@@ -1,0 +1,27 @@
+{
+  "commands": {
+    "stride-audit": ".claude/commands/stride-audit.md"
+  },
+  "skills": {
+    "stride-parse": ".claude/skills/stride-parse/SKILL.md",
+    "stride-dfd-renderer": ".claude/skills/stride-dfd-renderer/SKILL.md",
+    "stride-attack-pattern-lookup": ".claude/skills/stride-attack-pattern-lookup/SKILL.md",
+    "stride-sast-runner": ".claude/skills/stride-sast-runner/SKILL.md",
+    "stride-fp-pattern-lookup": ".claude/skills/stride-fp-pattern-lookup/SKILL.md",
+    "stride-consistency-check": ".claude/skills/stride-consistency-check/SKILL.md",
+    "stride-poc-executor": ".claude/skills/stride-poc-executor/SKILL.md",
+    "stride-html-reporter": ".claude/skills/stride-html-reporter/SKILL.md",
+    "stride-result-auditor": ".claude/skills/stride-result-auditor/SKILL.md"
+  },
+  "agents": {
+    "stride-parse": ".claude/agents/stride-parse.md",
+    "stride-dfd-inferrer": ".claude/agents/stride-dfd-inferrer.md",
+    "stride-analyzer": ".claude/agents/stride-analyzer.md",
+    "stride-attack-pattern-matcher": ".claude/agents/stride-attack-pattern-matcher.md",
+    "stride-sast-verifier": ".claude/agents/stride-sast-verifier.md",
+    "stride-validator": ".claude/agents/stride-validator.md",
+    "stride-poc-generator": ".claude/agents/stride-poc-generator.md",
+    "stride-report-assembler": ".claude/agents/stride-report-assembler.md",
+    "stride-diff-analyzer": ".claude/agents/stride-diff-analyzer.md"
+  }
+}

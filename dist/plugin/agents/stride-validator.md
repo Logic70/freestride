@@ -26,22 +26,23 @@ Every threat in the output MUST have:
 | `counter_evidence_checked` | List of mitigations or guards checked that could negate this threat | ALL (at least 1 item, even if "no guard found") |
 | `mitigation` | Recommended fix or hardening measure | ALL (must be non-empty, specific to the threat) |
 | `call_chain` | source entry -> handler -> validation -> vulnerable function -> impact | HIGH/CRITICAL required |
-| `final_classification` | confirmed / partial / design / oos / false_positive | ALL |
+| `final_classification` | confirmed_exploitable / confirmed_code_defect / partial / design / out_of_scope / false_positive | ALL |
 | `fp_code_ref` | Source file:line of the guard that disproves the threat | Required if final_classification == false_positive |
 | `fp_rationale` | Why the threat is not exploitable, with specific code evidence | Required if final_classification == false_positive |
 
-### Classification Field Consolidation (NEW v0.3)
+### Classification Field Consolidation (v0.5 two-tier)
 
 The `final_classification` field is the single source of truth for a threat's disposition.
-**Deprecated**: `tentative_classification` (use `final_classification` instead).
+**Deprecated**: `tentative_classification` (use `final_classification` instead). Single-tier `confirmed` is retired in v0.5.
 The `verification_level` field is now a derived value from `final_classification`:
 
 | final_classification | verification_level | 含义 |
 |---------------------|-------------------|------|
-| confirmed | confirmed | 完整证据 + 可复现路径 |
+| confirmed_exploitable | confirmed | 目标代码 runtime_target_poc 验证 + 可观测影响 |
+| confirmed_code_defect | confirmed | 代码缺陷确认，static_evidence 或 runtime_model_poc |
 | partial | partial | 部分证据，需进一步调查 |
 | design | partial | 架构级问题，无直接利用路径 |
-| oos | n/a | 超出威胁边界 |
+| out_of_scope | n/a | 超出威胁边界或攻击者能力 |
 | false_positive | n/a | 源码反证排除 |
 
 ### Evidence Thresholds for Severity
@@ -64,18 +65,25 @@ Without these, the finding is capped at `candidate` severity and its `final_clas
 | MEDIUM | Source evidence present, call chain partially verified, counter-evidence partially checked |
 | LOW | Source evidence is inference-based, call chain incomplete, counter-evidence not checked |
 
-### Confirmed Vulnerability Threshold (NEW v0.3)
+### Confirmed Vulnerability Threshold (v0.5 two-tier)
 
-To classify a threat as **confirmed**, ALL 6 conditions must be met:
+To classify a threat as any form of **confirmed**, ALL 5 base conditions must be met:
 
 1. **Complete call chain across ALL layers** (v0.3.1 strengthened): `call_chain.completeness == "complete"` — full trace from external entry → permission/auth layer → dispatch layer → business layer → vulnerable function → observable impact. For IPC threats this means: stub → CheckPermission → method table → implementation. For auth threats this means: entry parse → protocol verification → final signature/MAC check.
 2. **Verified counter-evidence**: `counter_evidence_checked` is non-empty AND at least one entry describes a specific guard that was verified absent (format: "guard description — checked at file:line")
 3. **Explicit attacker control point**: the call chain identifies the exact function+parameter where attacker-controlled data enters the vulnerable path
 4. **Confidence >= MEDIUM**: source evidence traced to actual code, not inference
 5. **No dependency on privilege escalation preconditions**: root access, HUKS compromise, arbitrary process memory write, or physical access are NOT required to exploit
-6. **No must-reject pattern match** (v0.3.1): the threat does NOT trigger any `must_reject_pattern` in `regression-corpus.yaml`
 
 Fail any of these → capped at `partial`.
+
+**Tier differentiation** (v0.5):
+- `confirmed_exploitable` requires ALL of the above PLUS: `exploit_path=direct` AND `poc_type=runtime_target_poc` AND `impact_observed=true`
+- `confirmed_code_defect` requires ALL of the above. Allows `exploit_path=direct|conditional`, `poc_type=runtime_model_poc|static_evidence`. Max severity: MEDIUM
+- `static_evidence` PoC cannot support HIGH severity (GATE-STATIC-EVIDENCE-HIGH: HARD FAIL)
+- `runtime_model_poc` max severity: MEDIUM (GATE-POC-SEVERITY-CAP)
+
+**Must-reject check** (v0.5): the threat must not trigger any `must_reject` pattern in `config/regression-corpus-v2.yaml`.
 
 ## Step 1: Source Evidence Verification
 
@@ -158,17 +166,23 @@ Key patterns to check:
 - **FP-IPC-BOUNDS-EXIST** (v0.3): IPC deserialization already has valSz/inParamNum bounds checks
 - **FP-CRITICAL-COUNTER-BALANCED** (v0.3): IncreaseCriticalCnt/DecreaseCriticalCnt calls are balanced
 
-## Step 5: Auto-Downgrade Rules (NEW v0.3)
+## Step 5: Auto-Downgrade Rules (v0.5)
 
 Before final classification, apply these automatic downgrade rules in order:
 
 1. `counter_evidence_checked` is empty → force `partial` (evidence gate violation)
 2. `call_chain.completeness != "complete"` → force `partial`
-3. Threat depends on root / HUKS compromise / arbitrary-write / physical access → force `design` or `oos`
+3. Threat depends on root / HUKS compromise / arbitrary-write / physical access → force `design` or `out_of_scope`
 4. `confidence == "LOW"` → max classification is `partial`
 5. `mitigation` is empty → force `partial`
+6. `attacker_control == "none"` → cannot be any confirmed tier (v0.5)
+7. `exploit_path_type == "design_only"` → cannot be any confirmed tier (v0.5)
+8. `exploit_path_type == "conditional"` → cannot be `confirmed_exploitable` (v0.5)
+9. `poc_type == "static_evidence"` and `severity == "HIGH"` → force downgrade to MEDIUM (GATE-STATIC-EVIDENCE-HIGH: HARD FAIL) (v0.5)
+10. `poc_type == "runtime_model_poc"` and `severity >= "HIGH"` → force downgrade to MEDIUM (GATE-POC-SEVERITY-CAP) (v0.5)
+11. `poc_type == "design_scenario"` → force downgrade to `design` (GATE-SIMULATION-CLAIMS) (v0.5)
 
-**Any threat that fails rules 1-5 CANNOT be classified as `confirmed`.**
+**Any threat that fails rules 1-11 CANNOT be classified as any confirmed tier.**
 
 ## Step 6: Final Classification
 
@@ -176,11 +190,12 @@ Apply the verified evidence to determine `final_classification`:
 
 | Classification | Criteria |
 |---------------|----------|
-| `confirmed` | ALL 6 Confirmed Vulnerability Threshold conditions met + passed auto-downgrade rules + no must_reject pattern match |
+| `confirmed_exploitable` | ALL 5 base conditions + exploit_path=direct + runtime_target_poc + impact_observed=true + passed auto-downgrade rules 1-11 |
+| `confirmed_code_defect` | ALL 5 base conditions + passed auto-downgrade rules 1-11 + static_evidence or runtime_model_poc, max severity MEDIUM |
 | `partial` | Some evidence but call chain incomplete OR source not fully verified OR auto-downgraded |
 | `design` | Architecture-level issue, no direct exploit path but design improvement warranted |
-| `oos` | Out of scope based on threat boundary OR INTERNAL_ONLY call chain OR requires root/HUKS |
-| `false_positive` | FP pattern matched + `fp_code_ref` filled + `fp_rationale` explains why not exploitable |
+| `out_of_scope` | Out of scope based on threat boundary OR INTERNAL_ONLY call chain OR requires root/HUKS OR attacker capability mismatch |
+| `false_positive` | FP pattern matched OR must-reject triggered + `fp_code_ref` filled + `fp_rationale` explains why not exploitable |
 
 ### FP Classification Requirements (NEW v0.3)
 
@@ -212,7 +227,7 @@ Example of an INVALID FP (rationale doesn't match threat):
 
 ## Step 7: Regression Corpus Check (NEW v0.3.1)
 
-After classifying all threats, cross-check against `config/regression-corpus.yaml`.
+After classifying all threats, cross-check against `config/regression-corpus-v2.yaml`.
 
 ### Check A: Known Regression Entries
 1. For each entry in `regression_entries`, find the threat with matching `threat_id` or `description`
@@ -245,9 +260,11 @@ Write to `outputs/stride-audit/validation_report.json`:
   "summary": {
     "total_threats_analyzed": 29,
     "confirmed": 2,
+    "confirmed_code_defect": 1,
+    "confirmed_exploitable": 1,
     "partial": 12,
     "design": 5,
-    "oos": 3,
+    "out_of_scope": 3,
     "false_positive": 7,
     "severity_downgrades": 5,
     "severity_upgrades": 0
@@ -284,4 +301,7 @@ Write to `outputs/stride-audit/validation_report.json`:
 - `verification_level` MUST be consistent with `final_classification` per the consolidation table
 - **v0.3**: confirmed threats without counter-evidence or with incomplete call chain → auto-downgrade to partial
 - **v0.3**: false_positive threats without fp_code_ref → auto-reclassify to partial
-- **v0.3**: regression corpus mismatch → correct classification to match known outcome
+- **v0.5**: regression corpus v2 mismatch → correct classification to match known outcome
+- **v0.5**: `static_evidence + HIGH` → HARD FAIL, force severity downgrade
+- **v0.5**: `runtime_model_poc` → max severity MEDIUM
+- **v0.5**: `design_scenario` PoC → force `design` classification

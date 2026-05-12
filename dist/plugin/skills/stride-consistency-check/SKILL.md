@@ -66,7 +66,7 @@ Every threat in every output file MUST have:
 - If any count mismatches between HTML and JSON → FAIL
 
 ### Rule 9: Must-Reject Override (NEW v0.3.1)
-- Load `config/regression-corpus.yaml` → `must_reject_patterns`
+- Load `config/regression-corpus-v2.yaml` → `must_reject_patterns`
 - For each pattern, check if ANY threat in `confirmed_findings.json` matches the pattern's `description` or `proof_location`
 - If a confirmed threat matches a must_reject pattern → **auto-reclassify to false_positive** with the pattern's `proof_code` as `fp_code_ref` and `rationale` as `fp_rationale`
 - Move the threat from `confirmed_findings.json` to `false_positives.json`
@@ -74,7 +74,7 @@ Every threat in every output file MUST have:
 - This gate runs BEFORE any other output validation
 
 ### Rule 10: Must-Detect Check (NEW v0.3.1)
-- Load `config/regression-corpus.yaml` → `must_detect_entries`
+- Load `config/regression-corpus-v2.yaml` → `must_detect_entries`
 - For each entry, search `threat_list.json` for a threat whose `file:line` or `description` matches
 - If found with correct `final_classification` → pass
 - If found with WRONG `final_classification` → FAIL, flag as `must_detect_misclassified`

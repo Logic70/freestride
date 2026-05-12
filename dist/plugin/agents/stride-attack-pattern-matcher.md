@@ -41,28 +41,30 @@ THREAT(stride_dimension=Information_Disclosure, dfd_element=Store)
 
 ## Step 2: Vulnerability Classification
 
-Tag every threat with exactly ONE classification (v0.3 consolidated labels):
+Tag every threat with exactly ONE classification (v0.5 two-tier labels):
 
-| Tag | v0.3 final_classification | Meaning | Action |
+| Tag | v0.5 final_classification | Meaning | Action |
 |-----|--------------------------|---------|--------|
-| `confirmed` | confirmed | 确认可利用漏洞 | Generate PoC, fix required |
+| `confirmed_exploitable` | confirmed_exploitable | 目标代码验证的可利用漏洞 | runtime_target_poc, fix required |
+| `confirmed_code_defect` | confirmed_code_defect | 代码缺陷确认，未在目标环境验证利用 | runtime_model_poc or static_evidence, fix required |
 | `partial` | partial | 证据不足/需进一步调查 | Document in candidate list |
 | `design` | design | 架构问题/加固建议 | Document in report, recommend redesign |
 | `false_positive` | false_positive | 误报 — 不构成真实威胁 | Exclude from report, fill fp_code_ref + fp_rationale |
-| `oos` | oos | 超出威胁边界 | Exclude from PoC, note in report |
+| `out_of_scope` | out_of_scope | 超出威胁边界或攻击者能力 | Exclude from PoC, note in report |
 
-> **v0.3 废弃**: `[VULN]`、`[HARDENING]` 标签。统一使用 `final_classification` 枚举值。
+> **v0.5**: Single-tier `confirmed` is retired. Use `confirmed_exploitable` only when runtime_target_poc verifies exploitability. Use `confirmed_code_defect` for confirmed code flaws without runtime verification.
 
 Classification rules:
-- `oos`: `dfd_element_ref` is in `parse_result.threat_boundary.out_of_scope` OR reachability is `INTERNAL_ONLY`
+- `out_of_scope`: `dfd_element_ref` is in `parse_result.threat_boundary.out_of_scope` OR reachability is `INTERNAL_ONLY` OR requires capabilities attacker lacks per `config/attacker-capabilities.yaml`
 - `false_positive`: Attributed to code misunderstanding or impossible preconditions → MUST fill fp_code_ref + fp_rationale
-- `confirmed`: Confirmed reachable + exploitable from outside the trust boundary + call chain complete
+- `confirmed_exploitable`: runtime_target_poc executed successfully with observable impact + direct exploit path
+- `confirmed_code_defect`: code flaw confirmed at source, but exploitability not verified in target → static_evidence or runtime_model_poc
 - `design`: Reachable but requires improbable state OR design-level improvement with no direct exploit path
-- `partial`: All threats that don't meet confirmed/design/oos/false_positive criteria
+- `partial`: All threats that don't meet any of the above criteria
 
 ## Step 3: SAST Rule Generation
 
-For `confirmed` and `design` threats, generate tool-specific verification rules:
+For `confirmed_exploitable`, `confirmed_code_defect`, and `design` threats, generate tool-specific verification rules:
 - **C/C++**: `cppcheck --enable=warning,style,performance --template=gcc` + custom `flawfinder` patterns
 - **Rust**: `cargo clippy -- -W clippy::all` with security lint focus
 - **General**: `semgrep` rules targeting the specific attack pattern indicators
@@ -103,6 +105,6 @@ Write to `outputs/stride-audit/attack_pattern_map.json`:
 ## Constraints
 
 - Must classify ALL threats before passing to sast-verifier
-- `[OOS]` threats: excluded from further analysis channels
-- `[FP]` threats: must include written justification
+- `out_of_scope` threats: excluded from further analysis channels
+- `false_positive` threats: must include written justification
 - Each finding tagged with provenance (agent + timestamp + library version)
