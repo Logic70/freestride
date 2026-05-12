@@ -1,0 +1,16 @@
+{
+  "name": "freestride",
+  "version": "0.1.0",
+  "description": "基于微软 STRIDE 框架的安全威胁分析工作区。支持六维度威胁分析、DFD数据流图、PoC证据分级、独立审计门禁。",
+  "author": {
+    "name": "<github-user>"
+  },
+  "homepage": "https://github.com/Logic70/freestride",
+  "repository": "https://github.com/Logic70/freestride",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "workflow",
+    "workflowprogram"
+  ]
+}

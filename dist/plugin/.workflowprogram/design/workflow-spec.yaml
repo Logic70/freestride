@@ -1,0 +1,617 @@
+meta:
+  name: stride-security-audit
+  version: 0.3.1
+  target_platform: claude-code
+  source_design: outputs/stages/s3-design-highlevel.md
+  complexity: L
+stages:
+- id: research
+  stage_slot: S1
+  name: 需求澄清与规格生成
+  pattern: Explore
+  agent_ref: stride-parse
+  steps:
+  - parse_requirement
+  - clarify_ambiguity
+  - generate_spec
+  - generate_clarification_package
+  - confirm_readback
+  output:
+  - outputs/stages/clarification-record.json
+  - outputs/stages/clarification-handoff.json
+- id: domain_research
+  stage_slot: S2
+  name: 领域研究与资产扫描
+  pattern: Explore
+  steps:
+  - scan_claude_assets
+  - probe_host_environment
+  - analyze_existing_projects
+  - generate_domain_report
+  output:
+  - outputs/stages/s2-domain-report.md
+- id: design
+  stage_slot: S3
+  name: 模式选择与工作流设计
+  pattern: Specialized Agent
+  agent_ref: stride-analyzer
+  steps:
+  - select_patterns
+  - design_agent_team
+  - create_workflow_spec_yaml
+  - generate_view_docs
+  - present_design_gate
+  gate: user_approval
+  output:
+  - workflow-spec.yaml
+  - outputs/stages/s3-design-highlevel.md
+  - outputs/stages/s3-design-lowlevel.md
+- id: generate
+  stage_slot: S4
+  name: 从YAML生成工作流文件
+  pattern: Sequential
+  steps:
+  - generate_agents
+  - generate_skills
+  - generate_commands
+  - generate_settings
+  - generate_runtime
+  - managed_apply
+  max_retries: 3
+  output:
+  - outputs/candidate/.workflowprogram/runtime
+  - .workflowprogram/runtime/workflow-entry.py
+  - .workflowprogram/runtime/workflow-runner.py
+  - .workflowprogram/runtime/validate-run-state.py
+  - .workflowprogram/runtime/runtime-manifest.json
+- id: validate
+  stage_slot: S5
+  name: 运行时验证
+  pattern: Test-Driven
+  steps:
+  - read_test_contract
+  - validate_entry
+  - validate_boundary
+  - validate_flow
+  - validate_artifacts
+  - validate_failure
+  - generate_s5_summary
+  output:
+  - outputs/stages/s5-validation-summary.json
+- id: close
+  stage_slot: S6
+  name: 约束演进与流程闭环
+  pattern: Sequential
+  steps:
+  - review_lessons
+  - extract_constraints
+  - cleanup_artifacts
+  output:
+  - outputs/stages/s6-lessons-delta.md
+intent_flows:
+  develop:
+    required_stage_slots:
+    - S1
+    - S2
+    - S3
+    - S4
+    - S5
+    - S6
+    optional_stage_slots: []
+  audit:
+    required_stage_slots:
+    - S5
+    - S6
+    optional_stage_slots: []
+  iterate:
+    required_stage_slots:
+    - S6
+    optional_stage_slots:
+    - S5
+  validate:
+    required_stage_slots:
+    - S5
+    optional_stage_slots:
+    - S6
+agent_refs:
+- stride-parse
+- stride-dfd-inferrer
+- stride-analyzer
+- stride-attack-pattern-matcher
+- stride-sast-verifier
+- stride-validator
+- stride-poc-generator
+- stride-report-assembler
+- stride-diff-analyzer
+skills:
+- name: stride-parse
+- name: stride-dfd-renderer
+- name: stride-attack-pattern-lookup
+- name: stride-sast-runner
+- name: stride-fp-pattern-lookup
+- name: stride-consistency-check
+- name: stride-poc-executor
+- name: stride-html-reporter
+registry:
+  commands:
+  - name: stride-audit
+    file: .claude/commands/stride-audit.md
+  skills:
+  - name: stride-parse
+    file: .claude/skills/stride-parse/SKILL.md
+  - name: stride-dfd-renderer
+    file: .claude/skills/stride-dfd-renderer/SKILL.md
+  - name: stride-attack-pattern-lookup
+    file: .claude/skills/stride-attack-pattern-lookup/SKILL.md
+  - name: stride-sast-runner
+    file: .claude/skills/stride-sast-runner/SKILL.md
+  - name: stride-fp-pattern-lookup
+    file: .claude/skills/stride-fp-pattern-lookup/SKILL.md
+  - name: stride-consistency-check
+    file: .claude/skills/stride-consistency-check/SKILL.md
+  - name: stride-poc-executor
+    file: .claude/skills/stride-poc-executor/SKILL.md
+  - name: stride-html-reporter
+    file: .claude/skills/stride-html-reporter/SKILL.md
+  agents:
+  - name: stride-parse
+    file: .claude/agents/stride-parse.md
+  - name: stride-dfd-inferrer
+    file: .claude/agents/stride-dfd-inferrer.md
+  - name: stride-analyzer
+    file: .claude/agents/stride-analyzer.md
+  - name: stride-attack-pattern-matcher
+    file: .claude/agents/stride-attack-pattern-matcher.md
+  - name: stride-sast-verifier
+    file: .claude/agents/stride-sast-verifier.md
+  - name: stride-validator
+    file: .claude/agents/stride-validator.md
+  - name: stride-poc-generator
+    file: .claude/agents/stride-poc-generator.md
+  - name: stride-report-assembler
+    file: .claude/agents/stride-report-assembler.md
+  - name: stride-diff-analyzer
+    file: .claude/agents/stride-diff-analyzer.md
+  runtime_assets:
+  - name: workflow-entry
+    file: .workflowprogram/runtime/workflow-entry.py
+  - name: workflow-runner
+    file: .workflowprogram/runtime/workflow-runner.py
+  - name: validate-run-state
+    file: .workflowprogram/runtime/validate-run-state.py
+  - name: runtime-manifest
+    file: .workflowprogram/runtime/runtime-manifest.json
+constraints:
+  always:
+  - SAST tools must execute AFTER STRIDE analysis, driven by attack patterns (verification, not discovery)
+  - Threat boundary must be explicitly defined before DFD inference
+  - Every threat must be classified as confirmed/partial/design/oos/false_positive
+  - All findings must include provenance tag (agent+tool+code_path)
+  - DFD must identify 5 element types: Process, DataFlow, ExternalEntity, Store, TrustBoundary
+  - PoC execution prefers Docker sandbox; fallback to other isolation methods (virtualenv, chroot) or user-approved local execution
+  - Report must validate browser-compatible render
+  - Every threat must have source_evidence AND counter_evidence_checked fields
+  - HIGH/CRITICAL threats require: source line number, reachable entry point, explainable logic flaw, checked existing mitigations, no dependency on root/HUKS/same-process arbitrary write
+  - Call chain reachability required: source entry -> handler -> validation -> vulnerable function -> impact; threats without full chain must be capped at candidate
+  - summary.total_threats and severity counts must be auto-generated from threat list, never hand-written
+  - HTML, JSON, DFD outputs must reference the same canonical threat list
+  - Output must split into confirmed_findings.json, candidate_findings.json, design_gaps.json, out_of_scope.json, false_positives.json
+  - Each threat must include poc_plan field: {type, minimal_repro, expected_observation, limitations}
+  never:
+  - Never run SAST as a discovery tool before STRIDE analysis
+  - Never skip threat boundary definition
+  - Never modify target source code
+  - Never exceed 4 parallel sub-agents in fan-out stages
+  - Never execute PoC outside isolated environment without user approval
+  - Never mark a finding HIGH/CRITICAL without source line number and reachable call chain
+  - Never merge candidate/hypothesis findings with confirmed vulnerabilities in the same output list
+resource_limits:
+  max_parallel_agents: 4
+  max_retries_per_stage: 3
+  max_validation_loops: 10
+runtime_contract:
+  write_boundaries:
+    target_root_allow:
+    - .claude/
+    - .workflowprogram/
+    - config/
+    - templates/
+    - outputs/stride-audit-*/
+    run_root_allow:
+    - outputs/
+    temp_root_allow:
+    - /tmp/stride-audit-*/
+    deny:
+    - src/
+    - .git/
+  required_evidence:
+  - outputs/stride-audit/dfd.yaml
+  - outputs/stride-audit/threat_list.json
+  - outputs/stride-audit/call_chain_map.json
+  - outputs/stride-audit/validation_report.json
+  - outputs/stride-audit/attack_pattern_map.json
+  - outputs/stride-audit/sast_verification.log
+  - outputs/stride-audit/poc_files/
+  - outputs/stride-audit/confirmed_findings.json
+  - outputs/stride-audit/candidate_findings.json
+  - outputs/stride-audit/design_gaps.json
+  - outputs/stride-audit/out_of_scope.json
+  - outputs/stride-audit/false_positives.json
+  - outputs/stride-audit/stride-audit-report.html
+  failure_kinds:
+  - none
+  - design
+  - implementation
+  - environment
+  - conflict
+  environment_skip:
+  - code: SAST_UNAVAILABLE
+    check: runtime_host_available
+    message: SAST tools not found; degrade to LLM-only verification
+  - code: DOCKER_UNAVAILABLE
+    check: runtime_host_ready
+    message: Docker not available; skip PoC sandbox execution
+generated_runtime_contract:
+  runtime_root: .workflowprogram/runtime/
+  design_spec_path: .workflowprogram/design/workflow-spec.yaml
+  entry_script: .workflowprogram/runtime/workflow-entry.py
+  runner_script: .workflowprogram/runtime/workflow-runner.py
+  state_validator_script: .workflowprogram/runtime/validate-run-state.py
+  runtime_manifest: .workflowprogram/runtime/runtime-manifest.json
+  run_root_dir: .workflowprogram/runs/
+  mode: shared-control-plane-wrapper
+  runtime_capabilities:
+  - state_transitions
+  - run_state_validation
+  - capability_discovery
+  - host_capability_probe
+  - node_loop_execution
+test_contract:
+  entry:
+    main_entry: stride-audit
+    entry_type: slash_command
+    required_args:
+    - target
+    missing_arg_verdict: FAIL
+    invalid_entry_verdict: FAIL
+  boundary:
+    write_boundaries_ref: runtime_contract.write_boundaries
+    managed_overwrite_policy: Managed files overwritable; user-owned files raise conflict
+    conflict_expectation: Conflicts must be preserved in RUN_ROOT/outputs/conflicts/
+    external_write_policy: Deny writes outside allowed boundaries
+  flow:
+    required_stages:
+    - research
+    - domain_research
+    - design
+    - generate
+    - validate
+    - close
+    skippable_stages: []
+    failure_recovery:
+      design: design
+      implementation: generate
+      environment: generate
+      conflict: generate
+    terminal_conditions:
+      PASS: done
+      WARN: done
+      FAIL: failed
+      ENVIRONMENT-SKIP: done
+  artifacts:
+    deliverables:
+    - .workflowprogram/managed-files.json
+    - .workflowprogram/design/workflow-spec.yaml
+    - .workflowprogram/runtime/workflow-entry.py
+    - .workflowprogram/runtime/workflow-runner.py
+    - .workflowprogram/runtime/validate-run-state.py
+    - .workflowprogram/runtime/runtime-manifest.json
+    - .claude/commands/stride-audit.md
+    - .claude/agents/stride-parse.md
+    - .claude/agents/stride-dfd-inferrer.md
+    - .claude/agents/stride-analyzer.md
+    - .claude/agents/stride-attack-pattern-matcher.md
+    - .claude/agents/stride-sast-verifier.md
+    - .claude/agents/stride-validator.md
+    - .claude/agents/stride-poc-generator.md
+    - .claude/agents/stride-report-assembler.md
+    - .claude/agents/stride-diff-analyzer.md
+    - .claude/skills/stride-parse/SKILL.md
+    - .claude/skills/stride-dfd-renderer/SKILL.md
+    - .claude/skills/stride-attack-pattern-lookup/SKILL.md
+    - .claude/skills/stride-sast-runner/SKILL.md
+    - .claude/skills/stride-fp-pattern-lookup/SKILL.md
+    - .claude/skills/stride-consistency-check/SKILL.md
+    - .claude/skills/stride-poc-executor/SKILL.md
+    - .claude/skills/stride-html-reporter/SKILL.md
+    evidence_ref: runtime_contract.required_evidence
+    optional_outputs:
+    - outputs/stages/s3-design-highlevel.md
+    - outputs/stages/s3-design-lowlevel.md
+    - outputs/stages/node-designs/
+  failure:
+    failure_kinds_ref: runtime_contract.failure_kinds
+    environment_skip_ref: runtime_contract.environment_skip
+    implemented_now:
+    - none
+    - design
+    - implementation
+    - environment
+capability_discovery:
+  enabled: true
+  domains: []
+  infer_from_request: true
+  include_local_installed: true
+  include_curated_profiles: true
+host_capabilities:
+- id: cppcheck
+  kind: external_binary
+  name: Cppcheck C/C++ Static Analyzer
+  required: false
+  approval_required: false
+  probe:
+    binary: cppcheck
+    args:
+    - --version
+  bootstrap:
+    scope: project_local
+    project_local_outputs:
+    - .workflowprogram/bootstrap/install-sast-tools.sh
+    assets:
+    - path: .workflowprogram/bootstrap/install-sast-tools.sh
+      format: shell
+      executable: true
+      content: "#!/bin/bash\nset -e\necho \"Installing SAST tools...\"\nif ! command\
+        \ -v cppcheck &>/dev/null; then\n  sudo apt-get update && sudo apt-get install\
+        \ -y cppcheck\nfi\nif ! command -v flawfinder &>/dev/null; then\n  pip3 install\
+        \ flawfinder\nfi\nif ! command -v semgrep &>/dev/null; then\n  pip3 install\
+        \ semgrep\nfi\necho \"SAST tools installation complete.\"\n"
+- id: flawfinder
+  kind: external_binary
+  name: Flawfinder C/C++ Security Scanner
+  required: false
+  approval_required: false
+  probe:
+    binary: flawfinder
+    args:
+    - --version
+  bootstrap:
+    scope: project_local
+    project_local_outputs:
+    - .workflowprogram/bootstrap/requirements.txt
+    assets:
+    - path: .workflowprogram/bootstrap/requirements.txt
+      format: text
+      content: 'flawfinder
+
+        semgrep
+
+        pyyaml
+
+        jinja2
+
+        networkx
+
+        rich
+
+        docker
+
+        '
+- id: semgrep
+  kind: external_binary
+  name: Semgrep Multi-language SAST
+  required: false
+  approval_required: false
+  probe:
+    binary: semgrep
+    args:
+    - --version
+  bootstrap:
+    scope: project_local
+    project_local_outputs:
+    - .workflowprogram/bootstrap/install-sast-tools.sh
+- id: docker
+  kind: external_binary
+  name: Docker Container Runtime (preferred PoC sandbox)
+  required: false
+  approval_required: true
+  probe:
+    binary: docker
+    args:
+    - --version
+  bootstrap:
+    scope: host_global
+    adapter:
+      type: symlink_binary
+      source_binary: /usr/bin/docker
+      target_path: /usr/local/bin/docker
+workflow_graph:
+  schema_version: 1
+  templates_used:
+  - agent
+  - fan-out
+  - sequential
+  - loop
+  entrypoints:
+  - name: stride-audit
+    node: parse
+  nodes:
+  - id: parse
+    role: input_parsing
+    template: agent
+    owner: stride-parse
+    gate: none
+    input_refs: []
+    output_refs:
+    - outputs/stride-audit/parse_result.json
+  - id: dfd
+    role: data_flow_analysis
+    template: agent
+    owner: stride-dfd-inferrer
+    gate: auto_approval
+    input_refs:
+    - outputs/stride-audit/parse_result.json
+    output_refs:
+    - outputs/stride-audit/dfd.yaml
+    - outputs/stride-audit/code_reading_log.md
+  - id: stride
+    role: threat_analysis
+    template: fan-out
+    owner: stride-analyzer
+    gate: auto_approval
+    input_refs:
+    - outputs/stride-audit/dfd.yaml
+    output_refs:
+    - outputs/stride-audit/threat_list.json
+    - outputs/stride-audit/call_chain_map.json
+    loop_policy:
+      enabled: false
+  - id: verify
+    role: attack_pattern_verification
+    template: sequential
+    owner: stride-attack-pattern-matcher
+    gate: auto_approval
+    input_refs:
+    - outputs/stride-audit/threat_list.json
+    output_refs:
+    - outputs/stride-audit/attack_pattern_map.json
+    - outputs/stride-audit/sast_verification.log
+  - id: validation
+    role: source_evidence_validation
+    template: agent
+    owner: stride-validator
+    gate: auto_approval
+    input_refs:
+    - outputs/stride-audit/threat_list.json
+    - outputs/stride-audit/dfd.yaml
+    - outputs/stride-audit/call_chain_map.json
+    - outputs/stride-audit/code_reading_log.md
+    output_refs:
+    - outputs/stride-audit/validation_report.json
+  - id: poc
+    role: poc_generation
+    template: loop
+    owner: stride-poc-generator
+    gate: auto_approval
+    input_refs:
+    - outputs/stride-audit/threat_list.json
+    - outputs/stride-audit/attack_pattern_map.json
+    - outputs/stride-audit/validation_report.json
+    output_refs:
+    - outputs/stride-audit/poc_files/
+    - outputs/stride-audit/sandbox_execution.log
+    loop_policy:
+      enabled: true
+      mode: ralph
+      max_iterations: 3
+      fresh_context_each_iteration: true
+      prompt_package: .workflowprogram/loops/poc-iteration.md
+      goal_source: user
+      feedback_commands:
+      - id: poc_validate
+        kind: validator
+        argv:
+        - python3
+        - -c
+        - import ast; ast.parse(open('poc.py').read()); print('OK')
+        failure_effect: feedback
+      stop_conditions:
+        success:
+        - PoC syntax valid
+        - sandbox execution passes
+        max_iterations: warn
+      evidence_outputs:
+      - outputs/stages/loops/poc/poc_iteration_1.md
+      - outputs/stages/loops/poc/poc_iteration_2.md
+      - outputs/stages/loops/poc/poc_iteration_3.md
+  - id: report
+    role: report_assembly_with_consistency_gate
+    template: loop
+    owner: stride-report-assembler
+    gate: auto_approval
+    input_refs:
+    - outputs/stride-audit/dfd.yaml
+    - outputs/stride-audit/threat_list.json
+    - outputs/stride-audit/call_chain_map.json
+    - outputs/stride-audit/validation_report.json
+    - outputs/stride-audit/attack_pattern_map.json
+    - outputs/stride-audit/sast_verification.log
+    - outputs/stride-audit/poc_files/
+    output_refs:
+    - outputs/stride-audit/confirmed_findings.json
+    - outputs/stride-audit/candidate_findings.json
+    - outputs/stride-audit/design_gaps.json
+    - outputs/stride-audit/out_of_scope.json
+    - outputs/stride-audit/false_positives.json
+    - outputs/stride-audit/stride-audit-report.html
+    loop_policy:
+      enabled: true
+      mode: ralph
+      max_iterations: 3
+      fresh_context_each_iteration: true
+      prompt_package: .workflowprogram/loops/report-render.md
+      goal_source: user
+      feedback_commands:
+      - id: html_render_check
+        kind: verifier
+        argv:
+        - python3
+        - -c
+        - print('HTML render validation')
+        failure_effect: feedback
+      - id: consistency_check
+        kind: validator
+        argv:
+        - python3
+        - -c
+        - 'import json; d=json.load(open("confirmed_findings.json")); assert d["summary"]["total"]==len(d["findings"]); print("OK")'
+        failure_effect: gate
+      stop_conditions:
+        success:
+        - HTML renders in browser
+        - all sections populated
+        - summary.total == len(threats) in all split outputs
+        - all HIGH/CRITICAL have source line number and call chain
+        max_iterations: warn
+      evidence_outputs:
+      - outputs/stages/loops/report/report_snapshot_1.html
+      - outputs/stages/loops/report/report_snapshot_2.html
+      - outputs/stages/loops/report/report_snapshot_3.html
+  - id: diff
+    role: comparative_analysis
+    template: agent
+    owner: stride-diff-analyzer
+    gate: none
+    input_refs: []
+    output_refs:
+    - outputs/stride-audit/diff-report.md
+  transitions:
+  - from: parse
+    to: dfd
+  - from: dfd
+    to: stride
+  - from: stride
+    to: verify
+  - from: verify
+    to: validation
+  - from: validation
+    to: poc
+  - from: poc
+    to: report
+  - from: report
+    to: diff
+    condition: --diff specified
+  - from: report
+    to: done
+design_refs:
+  requirements: outputs/stages/s2-domain-report.md
+  design_highlevel: outputs/stages/s3-design-highlevel.md
+  design_lowlevel: outputs/stages/s3-design-lowlevel.md
+  node_designs:
+    parse: outputs/stages/node-designs/parse.md
+    dfd: outputs/stages/node-designs/dfd-inferrer.md
+    stride: outputs/stages/node-designs/stride-analyzer.md
+    verify: outputs/stages/node-designs/attack-pattern-matcher.md
+    validation: outputs/stages/node-designs/validation.md
+    poc: outputs/stages/node-designs/poc-generator.md
+    report: outputs/stages/node-designs/report-assembler.md
