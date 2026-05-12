@@ -40,32 +40,45 @@ def validate_spec_structure(spec_path):
 
 
 def validate_assets_exist(target_root):
-    """Verify expected candidate assets are present."""
+    """Verify expected candidate assets are present.
+
+    Plugin installs may deploy files under .claude/ (project-local)
+    or at root level (plugin-managed). Check both conventions.
+    """
     required_assets = [
-        ".claude/commands/stride-audit.md",
-        ".claude/agents/stride-parse.md",
-        ".claude/agents/stride-dfd-inferrer.md",
-        ".claude/agents/stride-analyzer.md",
-        ".claude/agents/stride-attack-pattern-matcher.md",
-        ".claude/agents/stride-sast-verifier.md",
-        ".claude/agents/stride-validator.md",
-        ".claude/agents/stride-poc-generator.md",
-        ".claude/agents/stride-report-assembler.md",
-        ".claude/agents/stride-diff-analyzer.md",
-        ".claude/skills/stride-fp-pattern-lookup/SKILL.md",
-        ".claude/skills/stride-consistency-check/SKILL.md",
-        ".workflowprogram/runtime/workflow-entry.py",
-        ".workflowprogram/runtime/workflow-runner.py",
-        ".workflowprogram/runtime/validate-run-state.py",
-        ".workflowprogram/runtime/runtime-manifest.json",
-        "config/fp-patterns.yaml",
+        # Command — accept both .claude/commands/ and commands/
+        (".claude/commands/stride-audit.md", "commands/stride-audit.md"),
+        # Agents — accept both .claude/agents/ and agents/
+        (".claude/agents/stride-parse.md", "agents/stride-parse.md"),
+        (".claude/agents/stride-dfd-inferrer.md", "agents/stride-dfd-inferrer.md"),
+        (".claude/agents/stride-analyzer.md", "agents/stride-analyzer.md"),
+        (".claude/agents/stride-attack-pattern-matcher.md", "agents/stride-attack-pattern-matcher.md"),
+        (".claude/agents/stride-sast-verifier.md", "agents/stride-sast-verifier.md"),
+        (".claude/agents/stride-validator.md", "agents/stride-validator.md"),
+        (".claude/agents/stride-poc-generator.md", "agents/stride-poc-generator.md"),
+        (".claude/agents/stride-report-assembler.md", "agents/stride-report-assembler.md"),
+        (".claude/agents/stride-diff-analyzer.md", "agents/stride-diff-analyzer.md"),
+        # Skills — accept both .claude/skills/ and skills/
+        (".claude/skills/stride-fp-pattern-lookup/SKILL.md", "skills/stride-fp-pattern-lookup/SKILL.md"),
+        (".claude/skills/stride-consistency-check/SKILL.md", "skills/stride-consistency-check/SKILL.md"),
+        # Runtime — always under .workflowprogram/
+        (".workflowprogram/runtime/workflow-entry.py", None),
+        (".workflowprogram/runtime/workflow-runner.py", None),
+        (".workflowprogram/runtime/validate-run-state.py", None),
+        (".workflowprogram/runtime/runtime-manifest.json", None),
+        # Config — always at project root
+        ("config/fp-patterns.yaml", None),
     ]
 
     root = Path(target_root)
     missing_assets = []
     for asset in required_assets:
-        if not (root / asset).exists():
-            missing_assets.append(asset)
+        primary, fallback = asset if isinstance(asset, tuple) else (asset, None)
+        found = (root / primary).exists()
+        if not found and fallback:
+            found = (root / fallback).exists()
+        if not found:
+            missing_assets.append(primary)
 
     if missing_assets:
         print(f"[validator] WARNING: Missing assets: {missing_assets}")

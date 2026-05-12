@@ -45,6 +45,68 @@ parse → dfd → stride → verify → validation → poc → result-auditor(pr
 | **result-auditor (post)** | stride-result-auditor **(v0.5 新增)** | HTML与JSON一致性、run_manifest终态 | HTML统计=分表统计 |
 | **diff** | stride-diff-analyzer | 对比历史分析（可选） | diff正确计算 |
 
+## 执行指令
+
+按顺序调用每个阶段的 agent，**不要跳过**。每个阶段必须产出指定文件后，才进入下一阶段。
+
+### Stage 1: parse
+- 调用 `stride-parse` agent
+- 必须写入: `outputs/stride-audit/parse_result.json`
+- 若未生成 parse_result.json → 重试 (max 3次) → 仍失败则终止，报告 `parse: FAIL`
+
+### Stage 2: dfd
+- 调用 `stride-dfd-inferrer` agent
+- 必须写入: `outputs/stride-audit/dfd.yaml`
+- 然后调用 `config/scripts/generate-dfd-mermaid.py` 生成 `outputs/stride-audit/dfd_mermaid.mmd`
+- 若 dfd.yaml 不存在 → 重试 (max 2次)
+
+### Stage 3: stride
+- 调用 `stride-analyzer` agent
+- 必须写入: `outputs/stride-audit/threat_list.json`（含 20+ threats，六维覆盖）
+- 若 threats 数量 < 6 → 重试 (max 2次)
+
+### Stage 4: verify
+- 调用 `stride-attack-pattern-matcher` agent
+- 必须写入: `outputs/stride-audit/attack_pattern_map.json`
+- [可选] 调用 `stride-sast-verifier` agent（除非 `--no-sast`）
+- 若映射覆盖 < 80% threats → WARN
+
+### Stage 5: validation
+- 调用 `stride-validator` agent
+- 必须写入: `outputs/stride-audit/validation_report.json`
+- 检查: 每个 threat 有 source_evidence、counter_evidence_checked 非空、mitigation 非空
+- 分类必须使用 v0.5 双级枚举: `confirmed_exploitable | confirmed_code_defect | partial | design | out_of_scope | false_positive`
+
+### Stage 6: poc
+- 调用 `stride-poc-generator` agent（除非 `--no-poc-exec`）
+- 必须写入: `outputs/stride-audit/poc_summary.json`
+- 运行 `config/scripts/check-consistency-v3.py outputs/stride-audit/` — HARD_FAIL 时回退修正
+
+### Stage 7: result-auditor (pre-report)
+- 调用 `stride-result-auditor` agent
+- 必须写入: `outputs/stride-audit/result_audit.json`
+- 硬门禁: HARD_FAIL → 禁止生成报告 → 修正后重试 (max 3次)
+
+### Stage 8: report
+- 调用 `stride-report-assembler` agent
+- 然后运行: `python3 config/scripts/assemble-report.py outputs/stride-audit/`
+- 必须生成: `outputs/stride-audit/stride-audit-report-{ts}.html`
+- 报告必须通过 HTML contract gate
+
+### Stage 9: result-auditor (post-report)
+- 调用 `stride-result-auditor` agent（post-report 模式）
+- 验证 HTML 统计数据与分表 JSON 一致
+- 更新 `run_manifest.json` → status=COMPLETE|BLOCKED
+
+### Stage 10: diff (可选)
+- 仅当指定 `--diff <run-id>` 时执行
+- 调用 `stride-diff-analyzer` agent
+
+### 异常处理
+- 任一阶段连续失败 3 次 → 写入 `run_manifest.json` status=INCOMPLETE，终止流程
+- SOFT_WARN → 允许继续但记录到 consistency
+- HARD_FAIL → 阻塞当前阶段，必须修正后重试
+
 ### Confirmed 两级分类（v0.5 新增）
 
 ```

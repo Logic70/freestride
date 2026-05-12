@@ -3,7 +3,7 @@
   "name": "target-workflow-plugins",
   "description": "Marketplace for FreeSTRIDE",
   "owner": {
-    "name": "<github-user>"
+    "name": "Logic70"
   },
   "plugins": [
     {
@@ -15,7 +15,7 @@
         "ref": "main"
       },
       "description": "基于微软 STRIDE 框架的安全威胁分析工作区。支持六维度威胁分析、DFD数据流图、PoC证据分级、独立审计门禁。",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "homepage": "https://github.com/Logic70/freestride",
       "repository": "https://github.com/Logic70/freestride",
       "license": "MIT",
