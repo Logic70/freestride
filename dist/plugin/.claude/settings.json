@@ -1,0 +1,27 @@
+{
+  "commands": {
+    "stride-audit": "commands/stride-audit.md"
+  },
+  "skills": {
+    "stride-parse": "skills/stride-parse/SKILL.md",
+    "stride-dfd-renderer": "skills/stride-dfd-renderer/SKILL.md",
+    "stride-attack-pattern-lookup": "skills/stride-attack-pattern-lookup/SKILL.md",
+    "stride-sast-runner": "skills/stride-sast-runner/SKILL.md",
+    "stride-fp-pattern-lookup": "skills/stride-fp-pattern-lookup/SKILL.md",
+    "stride-consistency-check": "skills/stride-consistency-check/SKILL.md",
+    "stride-poc-executor": "skills/stride-poc-executor/SKILL.md",
+    "stride-html-reporter": "skills/stride-html-reporter/SKILL.md",
+    "stride-result-auditor": "skills/stride-result-auditor/SKILL.md"
+  },
+  "agents": {
+    "stride-parse": "agents/stride-parse.md",
+    "stride-dfd-inferrer": "agents/stride-dfd-inferrer.md",
+    "stride-analyzer": "agents/stride-analyzer.md",
+    "stride-attack-pattern-matcher": "agents/stride-attack-pattern-matcher.md",
+    "stride-sast-verifier": "agents/stride-sast-verifier.md",
+    "stride-validator": "agents/stride-validator.md",
+    "stride-poc-generator": "agents/stride-poc-generator.md",
+    "stride-report-assembler": "agents/stride-report-assembler.md",
+    "stride-diff-analyzer": "agents/stride-diff-analyzer.md"
+  }
+}

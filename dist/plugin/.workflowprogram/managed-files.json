@@ -1,0 +1,223 @@
+{
+  "manifest_version": 1,
+  "summary": {
+    "files_with_conflicts": 0,
+    "total_managed": 15,
+    "last_updated": "2026-05-09T02:46:13Z",
+    "last_run_id": "iterate-20260509-024500"
+  },
+  "managed_files": [
+    {
+      "relative_path": ".claude/agents/stride-validator.md",
+      "producer_version": "0.3.1",
+      "last_applied_hash": "fd176f5983407e304f5d8728de352010cddf9cad8a7ca93315203239eccba710",
+      "ownership": "managed",
+      "last_applied_at": "2026-05-09T02:46:13Z",
+      "last_run_id": "iterate-20260509-024500",
+      "change_description": "confirmed criteria, FP requirements, auto-downgrade, field consolidation, cross-layer verification"
+    },
+    {
+      "relative_path": ".claude/agents/stride-report-assembler.md",
+      "producer_version": "0.3.1",
+      "last_applied_hash": "924233ed1a44391a76a1c6d86674c554da83a76f350ecd244fcc8c0f54f57bd3",
+      "ownership": "managed",
+      "last_applied_at": "2026-05-09T02:46:13Z",
+      "last_run_id": "iterate-20260509-024500",
+      "change_description": "hard fail consistency gate, DFD orchestration, field mapping, Known Misses section"
+    },
+    {
+      "relative_path": ".claude/agents/stride-sast-verifier.md",
+      "producer_version": "0.3.1",
+      "last_applied_hash": "2fb23eb4895946c305c4a86e54884d6f392110ca257778fac4926eb5643d7dfb",
+      "ownership": "managed",
+      "last_applied_at": "2026-05-09T02:46:13Z",
+      "last_run_id": "iterate-20260509-024500",
+      "change_description": "Step 0 pre-flight + auto-install, Tiered Degradation T1-T5"
+    },
+    {
+      "relative_path": ".claude/agents/stride-analyzer.md",
+      "producer_version": "0.3.1",
+      "last_applied_hash": "67996f2ee9b9307bdcef467d50800b6a3450f99e6e92d772d1bd1260e30d26f4",
+      "ownership": "managed",
+      "last_applied_at": "2026-05-09T02:46:13Z",
+      "last_run_id": "iterate-20260509-024500",
+      "change_description": "tentative_classification→final_classification, counter_evidence/mitigation required"
+    },
+    {
+      "relative_path": ".claude/agents/stride-attack-pattern-matcher.md",
+      "producer_version": "0.3.1",
+      "last_applied_hash": "5a914f8be8a4b61775598f020fab272a183fc283133bd8782e7a7d6cc42250c0",
+      "ownership": "managed",
+      "last_applied_at": "2026-05-09T02:46:13Z",
+      "last_run_id": "iterate-20260509-024500",
+      "change_description": "[VULN]→confirmed, [HARDENING]→design"
+    },
+    {
+      "relative_path": ".claude/agents/stride-poc-generator.md",
+      "producer_version": "0.3.1",
+      "last_applied_hash": "34b20d123d6258099f3f84579e7548957b30cff109cb3cc224601ac50b7b3de6",
+      "ownership": "managed",
+      "last_applied_at": "2026-05-09T02:46:13Z",
+      "last_run_id": "iterate-20260509-024500",
+      "change_description": "3-type PoC classification, old tag replacement"
+    },
+    {
+      "relative_path": ".claude/skills/stride-consistency-check/SKILL.md",
+      "producer_version": "0.3.1",
+      "last_applied_hash": "064ff97001ca27e86398c002a4da52f1316f14aafe9ea7ab300ec2712cb8c980",
+      "ownership": "managed",
+      "last_applied_at": "2026-05-09T02:46:13Z",
+      "last_run_id": "iterate-20260509-024500",
+      "change_description": "Rules 6-10, hard_fail, v0.3"
+    },
+    {
+      "relative_path": ".claude/skills/stride-sast-runner/SKILL.md",
+      "producer_version": "0.3.1",
+      "last_applied_hash": "bbada3ec724e28f4e4c1b94fff19d64d20df5084d3e811710e4e7d2eeaf00c94",
+      "ownership": "managed",
+      "last_applied_at": "2026-05-09T02:46:13Z",
+      "last_run_id": "iterate-20260509-024500",
+      "change_description": "auto-install flow, v0.3"
+    },
+    {
+      "relative_path": ".claude/skills/stride-dfd-renderer/SKILL.md",
+      "producer_version": "0.3.1",
+      "last_applied_hash": "7eae544477222b58f0997842e66103c432965669cf854de1ba243e442795330c",
+      "ownership": "managed",
+      "last_applied_at": "2026-05-09T02:46:13Z",
+      "last_run_id": "iterate-20260509-024500",
+      "change_description": "complete rendering, v0.3"
+    },
+    {
+      "relative_path": ".claude/skills/stride-html-reporter/SKILL.md",
+      "producer_version": "0.3.1",
+      "last_applied_hash": "bbcb37490632cac295b0917e983a0dcd735b316de44f77acfc60deb44ef4ee06",
+      "ownership": "managed",
+      "last_applied_at": "2026-05-09T02:46:13Z",
+      "last_run_id": "iterate-20260509-024500",
+      "change_description": "input contract, field mapping, v0.3"
+    },
+    {
+      "relative_path": ".claude/commands/stride-audit.md",
+      "producer_version": "0.3.1",
+      "last_applied_hash": "f5efcc5d809958f4df38daad36484839e06de5fa9bc670c3491006e006cb2800",
+      "ownership": "managed",
+      "last_applied_at": "2026-05-09T02:46:13Z",
+      "last_run_id": "iterate-20260509-024500",
+      "change_description": "v0.3.1, --no-auto-install flag"
+    },
+    {
+      "relative_path": "config/fp-patterns.yaml",
+      "producer_version": "0.3.1",
+      "last_applied_hash": "b6b507d3f91908dbb872ca79b193b3a0a481048232c5a92a0262c2a7a5434fe2",
+      "ownership": "managed",
+      "last_applied_at": "2026-05-09T02:46:13Z",
+      "last_run_id": "iterate-20260509-024500",
+      "change_description": "3 new FP patterns (SENSITIVE-LOG, IPC-BOUNDS, CRITICAL-COUNTER)"
+    },
+    {
+      "relative_path": "config/regression-corpus-v2.yaml",
+      "producer_version": "0.3.1",
+      "last_applied_hash": "dae55b9aecc381d178db1723f43b0167f3b36ee1ecead7ce5caa2f14074ee3a0",
+      "ownership": "managed",
+      "last_applied_at": "2026-05-09T02:46:13Z",
+      "last_run_id": "iterate-20260509-024500",
+      "change_description": "NEW: 10 regression + 7 must_detect + 5 must_reject"
+    },
+    {
+      "relative_path": ".workflowprogram/design/workflow-spec.yaml",
+      "producer_version": "0.3.1",
+      "last_applied_hash": "ad23842f627ffd96f2a7f86eddeb64e3f76530c0219b768e9fb50e5272184a62",
+      "ownership": "managed",
+      "last_applied_at": "2026-05-09T02:46:13Z",
+      "last_run_id": "iterate-20260509-024500",
+      "change_description": "version 0.2.0→0.3.1"
+    },
+    {
+      "relative_path": ".workflowprogram/runtime/runtime-manifest.json",
+      "producer_version": "0.3.1",
+      "last_applied_hash": "5301919d3db3e2e8af8a8b7b9d20fb4a2c7b0cacce3a288b4b7b189a140b461e",
+      "ownership": "managed",
+      "last_applied_at": "2026-05-09T02:46:13Z",
+      "last_run_id": "iterate-20260509-024500",
+      "change_description": "version 0.2.0→0.3.1"
+    }
+  ],
+  "entries": [
+    {
+      "relative_path": ".claude/agents/stride-validator.md",
+      "producer_version": "0.3.1",
+      "ownership": "managed"
+    },
+    {
+      "relative_path": ".claude/agents/stride-report-assembler.md",
+      "producer_version": "0.3.1",
+      "ownership": "managed"
+    },
+    {
+      "relative_path": ".claude/agents/stride-sast-verifier.md",
+      "producer_version": "0.3.1",
+      "ownership": "managed"
+    },
+    {
+      "relative_path": ".claude/agents/stride-analyzer.md",
+      "producer_version": "0.3.1",
+      "ownership": "managed"
+    },
+    {
+      "relative_path": ".claude/agents/stride-attack-pattern-matcher.md",
+      "producer_version": "0.3.1",
+      "ownership": "managed"
+    },
+    {
+      "relative_path": ".claude/agents/stride-poc-generator.md",
+      "producer_version": "0.3.1",
+      "ownership": "managed"
+    },
+    {
+      "relative_path": ".claude/skills/stride-consistency-check/SKILL.md",
+      "producer_version": "0.3.1",
+      "ownership": "managed"
+    },
+    {
+      "relative_path": ".claude/skills/stride-sast-runner/SKILL.md",
+      "producer_version": "0.3.1",
+      "ownership": "managed"
+    },
+    {
+      "relative_path": ".claude/skills/stride-dfd-renderer/SKILL.md",
+      "producer_version": "0.3.1",
+      "ownership": "managed"
+    },
+    {
+      "relative_path": ".claude/skills/stride-html-reporter/SKILL.md",
+      "producer_version": "0.3.1",
+      "ownership": "managed"
+    },
+    {
+      "relative_path": ".claude/commands/stride-audit.md",
+      "producer_version": "0.3.1",
+      "ownership": "managed"
+    },
+    {
+      "relative_path": "config/fp-patterns.yaml",
+      "producer_version": "0.3.1",
+      "ownership": "managed"
+    },
+    {
+      "relative_path": "config/regression-corpus-v2.yaml",
+      "producer_version": "0.3.1",
+      "ownership": "managed"
+    },
+    {
+      "relative_path": ".workflowprogram/design/workflow-spec.yaml",
+      "producer_version": "0.3.1",
+      "ownership": "managed"
+    },
+    {
+      "relative_path": ".workflowprogram/runtime/runtime-manifest.json",
+      "producer_version": "0.3.1",
+      "ownership": "managed"
+    }
+  ]
+}

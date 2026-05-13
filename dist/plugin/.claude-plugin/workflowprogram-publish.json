@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-13T01:54:45Z",
+  "plugin_id": "freestride",
+  "plugin_name": "FreeSTRIDE",
+  "version": "0.1.2",
+  "repo_mode": "export_repo",
+  "runtime_mode": "workflowprogram_dependency",
+  "source_target_root": "/mnt/d/Code/FreeSTRIDE",
+  "workflowprogram_dependency": true,
+  "vendored_runtime_files": [],
+  "support_asset_refs": [],
+  "dependency_packages": [
+    "pyyaml",
+    "jinja2"
+  ]
+}
