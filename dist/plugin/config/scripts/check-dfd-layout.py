@@ -31,6 +31,17 @@ W, H = 1300, 850
 
 def ctr(eid): p=pos[eid]; return(p[0]+p[2]//2, p[1]+p[3]//2)
 
+def dfd_refs(threat):
+    """Return normalized DFD element refs from string, list, or legacy field names."""
+    refs = threat.get('dfd_element_ref', threat.get('dfd_elements', []))
+    if refs is None:
+        return []
+    if isinstance(refs, str):
+        return [refs]
+    if isinstance(refs, list):
+        return [ref for ref in refs if isinstance(ref, str)]
+    return []
+
 def seg_rect_intersect(x1,y1,x2,y2,rx,ry,rw,rh):
     """线段 (x1,y1)-(x2,y2) 与矩形 (rx,ry,rw,rh) 是否相交。"""
     if rx<=x1<=rx+rw and ry<=y1<=ry+rh: return True
@@ -94,7 +105,7 @@ tests.append(('T3:标签位置','PASS' if not li else 'WARN', li))
 
 # T4: 威胁 DFD 引用有效性
 av = set(pos.keys()) | set(df['id'] for df in dfd_data.get('data_flows',[]))
-mr = [f"{t['id']}→{ref}" for t in all_threats for ref in t.get('dfd_element_ref',[]) if ref not in av]
+mr = [f"{t['id']}→{ref}" for t in all_threats for ref in dfd_refs(t) if ref not in av]
 tests.append(('T4:威胁引用','PASS' if not mr else 'FAIL', mr))
 
 # T5: 交互属性完整性

@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-05-13T01:54:45Z",
+  "generated_at": "2026-05-13T02:46:00Z",
   "plugin_id": "freestride",
   "plugin_name": "FreeSTRIDE",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "repo_mode": "export_repo",
   "runtime_mode": "workflowprogram_dependency",
   "source_target_root": "/mnt/d/Code/FreeSTRIDE",
