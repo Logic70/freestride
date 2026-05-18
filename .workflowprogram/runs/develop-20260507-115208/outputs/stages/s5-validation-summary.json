@@ -1,0 +1,75 @@
+{
+  "verdict": "PASS",
+  "timestamp": "2026-05-07T12:48:00Z",
+  "workflow": "stride-security-audit",
+  "test_contract_results": {
+    "entry": {
+      "status": "PASS",
+      "main_entry": "stride-audit",
+      "entry_type": "slash_command",
+      "checks": {
+        "command_file_exists": true,
+        "registered_in_settings": true,
+        "required_args_defined": true
+      }
+    },
+    "boundary": {
+      "status": "PASS",
+      "write_boundaries_ref": "runtime_contract.write_boundaries",
+      "managed_apply_result": "29 applied, 0 conflicts",
+      "checks": {
+        "boundaries_defined": true,
+        "no_duplicates": true,
+        "managed_overwrite_policy": "Managed files overwritable; user-owned files raise conflict",
+        "conflict_expectation": "Conflicts must be preserved in RUN_ROOT/outputs/conflicts/",
+        "external_write_policy": "Deny writes outside allowed boundaries"
+      }
+    },
+    "flow": {
+      "status": "PASS",
+      "required_stages": ["research", "domain_research", "design", "generate", "validate", "close"],
+      "skippable_stages": [],
+      "checks": {
+        "all_required_stages_present": true,
+        "failure_recovery_defined": true,
+        "terminal_conditions": {"PASS": "done", "WARN": "done", "FAIL": "failed", "ENVIRONMENT-SKIP": "done"}
+      }
+    },
+    "artifacts": {
+      "status": "PASS",
+      "deliverables_count": 22,
+      "checks": {
+        "managed_files_json_exists": true,
+        "all_registry_files_present": true,
+        "validate_run_state_pass": true,
+        "evidence_ref_valid": true
+      }
+    },
+    "failure": {
+      "status": "PASS",
+      "implemented_now": ["none", "design", "implementation", "environment"],
+      "checks": {
+        "failure_kinds_ref_valid": true,
+        "environment_skip_ref_valid": true,
+        "implemented_now_subset_of_declared": true
+      }
+    }
+  },
+  "dynamic_checks": {
+    "validate_workflow_spec_py": "PASS",
+    "validate_run_state_py": "PASS",
+    "workflow_entry_py": "completed successfully",
+    "managed_assets_apply": "29 created, 0 updated, 0 conflicts"
+  },
+  "evidence_manifest": {
+    "workflow_spec_yaml": ".workflowprogram/design/workflow-spec.yaml",
+    "managed_change_result": "outputs/managed-change-result.json",
+    "validate_run_state_log": "outputs/stages/s5-validation-summary.json",
+    "runtime_assets": [
+      ".workflowprogram/runtime/workflow-entry.py",
+      ".workflowprogram/runtime/workflow-runner.py",
+      ".workflowprogram/runtime/validate-run-state.py",
+      ".workflowprogram/runtime/runtime-manifest.json"
+    ]
+  }
+}

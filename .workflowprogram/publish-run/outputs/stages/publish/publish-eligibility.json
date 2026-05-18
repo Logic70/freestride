@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-12T10:42:40Z",
+  "eligible": true,
+  "status": "PASS",
+  "errors": [],
+  "warnings": [],
+  "target_root": "/mnt/d/Code/FreeSTRIDE",
+  "run_root": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/publish-run",
+  "develop_run_root": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/runs/develop-20260507-115208",
+  "allow_warn": false,
+  "checks": [
+    {
+      "name": "target_root_exists",
+      "status": "PASS",
+      "detail": "target root exists: /mnt/d/Code/FreeSTRIDE",
+      "severity": "error"
+    },
+    {
+      "name": "required_target_file:.workflowprogram/design/workflow-spec.yaml",
+      "status": "PASS",
+      "detail": ".workflowprogram/design/workflow-spec.yaml exists",
+      "severity": "error"
+    },
+    {
+      "name": "required_target_file:.workflowprogram/design/workflow-lowlevel.md",
+      "status": "PASS",
+      "detail": ".workflowprogram/design/workflow-lowlevel.md exists",
+      "severity": "error"
+    },
+    {
+      "name": "required_target_file:.workflowprogram/runtime/runtime-manifest.json",
+      "status": "PASS",
+      "detail": ".workflowprogram/runtime/runtime-manifest.json exists",
+      "severity": "error"
+    },
+    {
+      "name": "required_target_file:.workflowprogram/managed-files.json",
+      "status": "PASS",
+      "detail": ".workflowprogram/managed-files.json exists",
+      "severity": "error"
+    },
+    {
+      "name": "develop_run_selected",
+      "status": "PASS",
+      "detail": "develop RUN_ROOT selected: /mnt/d/Code/FreeSTRIDE/.workflowprogram/runs/develop-20260507-115208",
+      "severity": "error"
+    },
+    {
+      "name": "develop_evidence:state.json",
+      "status": "PASS",
+      "detail": "state.json exists",
+      "severity": "error"
+    },
+    {
+      "name": "develop_evidence:events.jsonl",
+      "status": "PASS",
+      "detail": "events.jsonl exists",
+      "severity": "error"
+    },
+    {
+      "name": "develop_evidence:outputs/managed-change-result.json",
+      "status": "PASS",
+      "detail": "outputs/managed-change-result.json exists",
+      "severity": "error"
+    },
+    {
+      "name": "develop_evidence:outputs/stages/design-review/closure.json",
+      "status": "PASS",
+      "detail": "outputs/stages/design-review/closure.json exists",
+      "severity": "error"
+    },
+    {
+      "name": "develop_evidence:outputs/stages/s5-validation-summary.json",
+      "status": "PASS",
+      "detail": "outputs/stages/s5-validation-summary.json exists",
+      "severity": "error"
+    },
+    {
+      "name": "s5_verdict_publishable",
+      "status": "PASS",
+      "detail": "latest develop S5 verdict=PASS",
+      "severity": "error"
+    },
+    {
+      "name": "managed_result_has_no_conflicts",
+      "status": "PASS",
+      "detail": "managed conflicts=0",
+      "severity": "error"
+    },
+    {
+      "name": "managed_manifest_has_entries",
+      "status": "PASS",
+      "detail": "managed manifest entries=15",
+      "severity": "error"
+    },
+    {
+      "name": "managed_manifest_paths_exist",
+      "status": "PASS",
+      "detail": "missing managed paths=['<none>']",
+      "severity": "error"
+    },
+    {
+      "name": "required_host_capabilities_ready",
+      "status": "PASS",
+      "detail": "missing required host capabilities=['<none>']",
+      "severity": "error"
+    }
+  ],
+  "observed_target_files": [
+    {
+      "path": ".workflowprogram/design/workflow-spec.yaml",
+      "sha256": "ad23842f627ffd96f2a7f86eddeb64e3f76530c0219b768e9fb50e5272184a62"
+    },
+    {
+      "path": ".workflowprogram/design/workflow-lowlevel.md",
+      "sha256": "44ca3a1f869b7a5c01886558237a8e4de9b39d6ad5aaa3cf1d8cc08c5ea0656d"
+    },
+    {
+      "path": ".workflowprogram/runtime/runtime-manifest.json",
+      "sha256": "5301919d3db3e2e8af8a8b7b9d20fb4a2c7b0cacce3a288b4b7b189a140b461e"
+    },
+    {
+      "path": ".workflowprogram/managed-files.json",
+      "sha256": "d5191de7ee02946e566445330815207c209f9ef09aa7b6312c9e7b2f15a2c62a"
+    }
+  ],
+  "develop_evidence": {
+    "state.json": "485c2295a2e98e5e34f6d8bf445fc755ea5466d0718a62c1f1c9519d713555e5",
+    "events.jsonl": "f2b5e082bb88907a329976c1bb2ea99fea8b1192a8e177c94af77c4197b350c8",
+    "outputs/managed-change-result.json": "964337c974743d02e57a3f1d02b4e4e48e7cfe533204d677397a867bf14ebcd6",
+    "outputs/stages/design-review/closure.json": "9c29e8694a926982c7cc13cca3d02216cae72a77a6818edd2f477e634837d664",
+    "outputs/stages/s5-validation-summary.json": "5c1bd999e4119bbd57274c3678039c77b4b51b5f02daf8eea196d60fa4173562"
+  },
+  "s5_verdict": "PASS",
+  "managed_manifest_paths": [
+    ".claude/agents/stride-validator.md",
+    ".claude/agents/stride-report-assembler.md",
+    ".claude/agents/stride-sast-verifier.md",
+    ".claude/agents/stride-analyzer.md",
+    ".claude/agents/stride-attack-pattern-matcher.md",
+    ".claude/agents/stride-poc-generator.md",
+    ".claude/skills/stride-consistency-check/SKILL.md",
+    ".claude/skills/stride-sast-runner/SKILL.md",
+    ".claude/skills/stride-dfd-renderer/SKILL.md",
+    ".claude/skills/stride-html-reporter/SKILL.md",
+    ".claude/commands/stride-audit.md",
+    "config/fp-patterns.yaml",
+    "config/regression-corpus-v2.yaml",
+    ".workflowprogram/design/workflow-spec.yaml",
+    ".workflowprogram/runtime/runtime-manifest.json"
+  ]
+}

@@ -1,0 +1,233 @@
+{
+  "meta": {
+    "target": "/mnt/d/Code/STRIDEAnalyse/security_device_auth",
+    "classification": "confirmed",
+    "count": 8
+  },
+  "findings": [
+    {
+      "id": "T-001",
+      "name": "DecreaseCriticalCnt no lower bound — integer underflow",
+      "stride_category": "Tampering",
+      "severity": "MEDIUM",
+      "cwe": "CWE-191",
+      "file": "services/sa/src/critical_handler/critical_handler.cpp:48",
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "direct",
+      "impact_observed": false,
+      "poc_type": "static_evidence",
+      "confirmed_tier": "confirmed_code_defect",
+      "exploitability_score": 4.5,
+      "source_evidence": "critical_handler.cpp:48-56: g_count declared as int32_t, decremented unconditionally without lower bound check. g_count == 0 branch only handles zero, not negative values. Underflow carries correction.",
+      "counter_evidence_checked": [
+        "g_count is int32_t, not uint32_t",
+        "No lower bound check before decrement"
+      ],
+      "mitigation": "Add lower bound check: if (g_count <= 0) return; before decrement",
+      "attack_pattern_ref": "CAPEC-191",
+      "static_evidence_file": "services/sa/src/critical_handler/critical_handler.cpp",
+      "static_evidence_line": 48,
+      "sink_function": "DecreaseCriticalCnt",
+      "bug_pattern": "integer_underflow_no_lower_bound"
+    },
+    {
+      "id": "T-002",
+      "name": "Seed value not zeroed before free in identity_group.c",
+      "stride_category": "Information Disclosure",
+      "severity": "MEDIUM",
+      "cwe": "CWE-226",
+      "file": "services/legacy/identity_manager/src/identity_group.c:552",
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "direct",
+      "impact_observed": false,
+      "poc_type": "static_evidence",
+      "confirmed_tier": "confirmed_code_defect",
+      "exploitability_score": 4.5,
+      "source_evidence": "identity_group.c:552,559,565: HcFree(seedVal) called at three locations without prior secure zeroization. ClearFreeUint8Buff exists in codebase but not used here.",
+      "counter_evidence_checked": [
+        "ClearFreeUint8Buff utility exists in codebase",
+        "memset_s pattern used correctly elsewhere (iso_task_common.c:336-338)"
+      ],
+      "mitigation": "Call memset_s(seedVal, SEED_LEN, 0, SEED_LEN) before HcFree(seedVal)",
+      "attack_pattern_ref": "CAPEC-226",
+      "static_evidence_file": "services/legacy/identity_manager/src/identity_group.c",
+      "static_evidence_line": 552,
+      "sink_function": "HcFree",
+      "bug_pattern": "sensitive_data_not_cleared_before_free"
+    },
+    {
+      "id": "T-003",
+      "name": "Account-related group membership bypass",
+      "stride_category": "Spoofing",
+      "severity": "MEDIUM",
+      "cwe": "CWE-287",
+      "file": "services/legacy/group_auth/src/group_auth_manager/group_auth_common/group_auth_data_operation.c:187",
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "direct",
+      "impact_observed": false,
+      "poc_type": "static_evidence",
+      "confirmed_tier": "confirmed_code_defect",
+      "exploitability_score": 4.5,
+      "source_evidence": "group_auth_data_operation.c:187: For AUTH_FORM_ACROSS_ACCOUNT and AUTH_FORM_IDENTICAL_ACCOUNT, device membership check returns true unconditionally. P2P groups DO verify properly.",
+      "counter_evidence_checked": [
+        "P2P group verification works correctly",
+        "AUTH_FORM_ACROSS_ACCOUNT and AUTH_FORM_IDENTICAL_ACCOUNT bypass verification"
+      ],
+      "mitigation": "Add proper device membership verification for account-related groups",
+      "attack_pattern_ref": "CAPEC-287",
+      "static_evidence_file": "services/legacy/group_auth/src/group_auth_manager/group_auth_common/group_auth_data_operation.c",
+      "static_evidence_line": 187,
+      "sink_function": "GaIsDeviceInGroup",
+      "bug_pattern": "device_verification_bypass_for_account_groups"
+    },
+    {
+      "id": "T-004",
+      "name": "Credential listener callback invoked under mutex — re-entrancy deadlock",
+      "stride_category": "Denial of Service",
+      "severity": "MEDIUM",
+      "cwe": "CWE-833",
+      "file": "services/identity_service/listener/src/cred_listener.c:47",
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "direct",
+      "impact_observed": false,
+      "poc_type": "static_evidence",
+      "confirmed_tier": "confirmed_code_defect",
+      "exploitability_score": 4.5,
+      "source_evidence": "cred_listener.c:47,68,89: LockHcMutex acquired before invoking external callbacks. If callback re-enters device_auth API that acquires same mutex, deadlock occurs.",
+      "counter_evidence_checked": [
+        "LockHcMutex is non-recursive",
+        "External callbacks are unknown third-party code"
+      ],
+      "mitigation": "Release mutex before invoking external callbacks, or use recursive mutex",
+      "attack_pattern_ref": "CAPEC-833",
+      "static_evidence_file": "services/identity_service/listener/src/cred_listener.c",
+      "static_evidence_line": 47,
+      "sink_function": "LockHcMutex",
+      "bug_pattern": "callback_under_lock_deadlock_risk"
+    },
+    {
+      "id": "T-005",
+      "name": "Task queue has no capacity limit — unbounded growth",
+      "stride_category": "Denial of Service",
+      "severity": "MEDIUM",
+      "cwe": "CWE-770",
+      "file": "deps_adapter/os_adapter/impl/src/hc_task_thread.c:40",
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "direct",
+      "impact_observed": false,
+      "poc_type": "static_evidence",
+      "confirmed_tier": "confirmed_code_defect",
+      "exploitability_score": 4.5,
+      "source_evidence": "hc_task_thread.c:40-55: PushTask appends to task vector via pushBack without checking current size or enforcing capacity limit.",
+      "counter_evidence_checked": [
+        "No MAX_QUEUE_SIZE constant found",
+        "pushBack is unbounded operation"
+      ],
+      "mitigation": "Add MAX_TASK_QUEUE_SIZE limit with rejection when full",
+      "attack_pattern_ref": "CAPEC-770",
+      "static_evidence_file": "deps_adapter/os_adapter/impl/src/hc_task_thread.c",
+      "static_evidence_line": 40,
+      "sink_function": "PushTask",
+      "bug_pattern": "unbounded_vector_pushback"
+    },
+    {
+      "id": "T-006",
+      "name": "Global session slots have no per-source limit — single source exhaustion",
+      "stride_category": "Denial of Service",
+      "severity": "MEDIUM",
+      "cwe": "CWE-770",
+      "file": "services/session_manager/src/dev_session_mgr.c:86",
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "direct",
+      "impact_observed": false,
+      "poc_type": "static_evidence",
+      "confirmed_tier": "confirmed_code_defect",
+      "exploitability_score": 4.5,
+      "source_evidence": "dev_session_mgr.c:86-101: Session creation checks curSessionNum against MAX_AUTH_SESSION_COUNT=10 globally. Single caller can exhaust all 10 slots.",
+      "counter_evidence_checked": [
+        "MAX_AUTH_SESSION_COUNT=10 is global limit",
+        "No per-UID or per-appId counter exists"
+      ],
+      "mitigation": "Add per-UID session cap alongside global limit",
+      "attack_pattern_ref": "CAPEC-770",
+      "static_evidence_file": "services/session_manager/src/dev_session_mgr.c",
+      "static_evidence_line": 86,
+      "sink_function": "CheckEnvForOpenSession",
+      "bug_pattern": "global_only_limit_no_per_source_cap"
+    },
+    {
+      "id": "T-007",
+      "name": "Credential ID generated with timestamp — predictable identifier",
+      "stride_category": "Spoofing",
+      "severity": "MEDIUM",
+      "cwe": "CWE-338",
+      "file": "services/identity_service/src/identity_operation.c:87",
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "conditional",
+      "impact_observed": false,
+      "poc_type": "static_evidence",
+      "confirmed_tier": "confirmed_code_defect",
+      "exploitability_score": 4.5,
+      "source_evidence": "identity_operation.c:87: credId generation uses HcGetCurTimeInMillis() timestamp without random component — predictable within millisecond window",
+      "counter_evidence_checked": [
+        "HcGetCurTimeInMillis provides millisecond granularity",
+        "No random component added to credId"
+      ],
+      "mitigation": "Add random suffix to credential ID generation",
+      "attack_pattern_ref": "CAPEC-338",
+      "static_evidence_file": "services/identity_service/src/identity_operation.c",
+      "static_evidence_line": 87,
+      "sink_function": "Int64ToString",
+      "bug_pattern": "predictable_identifier"
+    },
+    {
+      "id": "T-008",
+      "name": "Shared key material in malloc buffer not zeroed after use",
+      "stride_category": "Information Disclosure",
+      "severity": "MEDIUM",
+      "cwe": "CWE-226",
+      "file": "services/device_auth.c:1134",
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "direct",
+      "impact_observed": false,
+      "poc_type": "static_evidence",
+      "confirmed_tier": "confirmed_code_defect",
+      "exploitability_score": 4.5,
+      "source_evidence": "device_auth.c:1134-1146: sharedKeyVal allocated via HcMalloc filled with session key bytes, freed at line 1141 without secure zeroization",
+      "counter_evidence_checked": [
+        "HcFree calls free() which does not zero memory",
+        "memset_s+HcFree pattern used in iso_task_common.c but not here"
+      ],
+      "mitigation": "Call memset_s before HcFree for key material buffers",
+      "attack_pattern_ref": "CAPEC-226",
+      "static_evidence_file": "services/device_auth.c",
+      "static_evidence_line": 1134,
+      "sink_function": "HcFree",
+      "bug_pattern": "sensitive_data_not_cleared_before_free"
+    }
+  ]
+}

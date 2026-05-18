@@ -1,0 +1,64 @@
+{
+  "detected_language": "c",
+  "secondary_language": "cpp",
+  "confidence": 0.97,
+  "file_counts": {
+    "h": 333,
+    "c": 253,
+    "cpp": 145
+  },
+  "build_system": "GN",
+  "project_type": "OpenHarmony security subsystem - device_auth",
+  "attacker_profile": "mobile_device_remote_attacker",
+  "attacker_capabilities": {
+    "normal_app": true,
+    "system_app": false,
+    "local_filesystem_read": false,
+    "local_filesystem_write": false,
+    "system_partition_write": false,
+    "root": false,
+    "physical_access": false,
+    "network_access": true
+  },
+  "threat_boundary": {
+    "entry_points": [
+      {
+        "layer": "IPC/API",
+        "path": "interfaces/inner_api/"
+      },
+      {
+        "layer": "Protocol",
+        "path": "services/protocol/"
+      },
+      {
+        "layer": "SA",
+        "path": "services/sa/"
+      }
+    ],
+    "trust_boundaries": [
+      {
+        "name": "External Caller ↔ Device Auth Service",
+        "type": "IPC boundary"
+      },
+      {
+        "name": "Device Auth ↔ Remote Peer (Network)",
+        "type": "Network boundary"
+      },
+      {
+        "name": "Service ↔ HUKS Crypto",
+        "type": "Crypto boundary"
+      },
+      {
+        "name": "Service ↔ Persistent Storage",
+        "type": "Data boundary"
+      }
+    ],
+    "key_assets": [
+      "Device trust credentials & cryptographic keys",
+      "Session keys",
+      "Shared secrets / PIN codes",
+      "Device identity (UDID)",
+      "Group membership metadata"
+    ]
+  }
+}

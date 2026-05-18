@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "schema_name": "workflowprogram-publish-state",
+  "run_id": "publish-run",
+  "status": "completed",
+  "stage": "publish",
+  "result": "PASS",
+  "category": "none",
+  "values": {
+    "stage_history": [
+      "publish"
+    ],
+    "publish_status": "PASS"
+  },
+  "updated_at": "2026-05-12T10:42:51Z"
+}

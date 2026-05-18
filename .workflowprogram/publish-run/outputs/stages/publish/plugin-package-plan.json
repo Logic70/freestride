@@ -1,0 +1,320 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-12T10:42:43Z",
+  "status": "PASS",
+  "errors": [],
+  "warnings": [],
+  "target_root": "/mnt/d/Code/FreeSTRIDE",
+  "package_root": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/publish-run/outputs/stages/publish/package-root",
+  "plugin_id": "freestride",
+  "runtime_mode": "workflowprogram_dependency",
+  "included_files": [
+    ".claude-plugin/README.md",
+    ".claude-plugin/marketplace.json",
+    ".claude-plugin/plugin.json",
+    ".claude-plugin/workflowprogram-publish.json",
+    ".claude/settings.json",
+    ".workflowprogram/design/node-designs/attack-pattern-matcher.md",
+    ".workflowprogram/design/node-designs/dfd-inferrer.md",
+    ".workflowprogram/design/node-designs/parse.md",
+    ".workflowprogram/design/node-designs/poc-generator.md",
+    ".workflowprogram/design/node-designs/report-assembler.md",
+    ".workflowprogram/design/node-designs/stride-analyzer.md",
+    ".workflowprogram/design/node-designs/validation.md",
+    ".workflowprogram/design/s3-design-highlevel.md",
+    ".workflowprogram/design/workflow-lowlevel.md",
+    ".workflowprogram/design/workflow-spec.yaml",
+    ".workflowprogram/design/workflow-view.md",
+    ".workflowprogram/loops/poc-iteration.md",
+    ".workflowprogram/loops/report-render.md",
+    ".workflowprogram/runtime/runtime-manifest.json",
+    ".workflowprogram/runtime/validate-run-state.py",
+    ".workflowprogram/runtime/workflow-entry.py",
+    ".workflowprogram/runtime/workflow-runner.py",
+    "CLAUDE.md",
+    "agents/stride-analyzer.md",
+    "agents/stride-attack-pattern-matcher.md",
+    "agents/stride-dfd-inferrer.md",
+    "agents/stride-diff-analyzer.md",
+    "agents/stride-parse.md",
+    "agents/stride-poc-generator.md",
+    "agents/stride-report-assembler.md",
+    "agents/stride-sast-verifier.md",
+    "agents/stride-validator.md",
+    "commands/stride-audit.md",
+    "config/attack-patterns.yaml",
+    "config/attacker-capabilities.yaml",
+    "config/confirmed-gate-schema.yaml",
+    "config/consistency-rules-v2.yaml",
+    "config/fp-patterns.yaml",
+    "config/poc-evidence-grading.yaml",
+    "config/poc-sandbox.dockerfile",
+    "config/regression-corpus-v1-deprecated.yaml",
+    "config/regression-corpus-v2.yaml",
+    "config/sast-rules.yaml",
+    "config/scripts/assemble-report.py",
+    "config/scripts/check-consistency-v2.py",
+    "config/scripts/check-consistency-v3.py",
+    "config/scripts/check-dfd-layout.py",
+    "config/scripts/dfd_data.py",
+    "config/scripts/dfd_svg.py",
+    "config/scripts/generate-dfd-mermaid.py",
+    "config/stride-threats.yaml",
+    "skills/stride-attack-pattern-lookup/SKILL.md",
+    "skills/stride-consistency-check/SKILL.md",
+    "skills/stride-dfd-renderer/SKILL.md",
+    "skills/stride-fp-pattern-lookup/SKILL.md",
+    "skills/stride-html-reporter/SKILL.md",
+    "skills/stride-parse/SKILL.md",
+    "skills/stride-poc-executor/SKILL.md",
+    "skills/stride-result-auditor/SKILL.md",
+    "skills/stride-sast-runner/SKILL.md",
+    "templates/report-template.html"
+  ],
+  "files": [
+    {
+      "path": ".claude/settings.json",
+      "size": 1427
+    },
+    {
+      "path": ".claude-plugin/README.md",
+      "size": 334
+    },
+    {
+      "path": ".claude-plugin/marketplace.json",
+      "size": 987
+    },
+    {
+      "path": ".claude-plugin/plugin.json",
+      "size": 467
+    },
+    {
+      "path": ".claude-plugin/workflowprogram-publish.json",
+      "size": 318
+    },
+    {
+      "path": ".workflowprogram/design/node-designs/attack-pattern-matcher.md",
+      "size": 2129
+    },
+    {
+      "path": ".workflowprogram/design/node-designs/dfd-inferrer.md",
+      "size": 2485
+    },
+    {
+      "path": ".workflowprogram/design/node-designs/parse.md",
+      "size": 739
+    },
+    {
+      "path": ".workflowprogram/design/node-designs/poc-generator.md",
+      "size": 2157
+    },
+    {
+      "path": ".workflowprogram/design/node-designs/report-assembler.md",
+      "size": 2447
+    },
+    {
+      "path": ".workflowprogram/design/node-designs/stride-analyzer.md",
+      "size": 2225
+    },
+    {
+      "path": ".workflowprogram/design/node-designs/validation.md",
+      "size": 1631
+    },
+    {
+      "path": ".workflowprogram/design/s3-design-highlevel.md",
+      "size": 9277
+    },
+    {
+      "path": ".workflowprogram/design/workflow-lowlevel.md",
+      "size": 10721
+    },
+    {
+      "path": ".workflowprogram/design/workflow-spec.yaml",
+      "size": 19084
+    },
+    {
+      "path": ".workflowprogram/design/workflow-view.md",
+      "size": 13222
+    },
+    {
+      "path": ".workflowprogram/loops/poc-iteration.md",
+      "size": 567
+    },
+    {
+      "path": ".workflowprogram/loops/report-render.md",
+      "size": 725
+    },
+    {
+      "path": ".workflowprogram/runtime/runtime-manifest.json",
+      "size": 2140
+    },
+    {
+      "path": ".workflowprogram/runtime/validate-run-state.py",
+      "size": 4210
+    },
+    {
+      "path": ".workflowprogram/runtime/workflow-entry.py",
+      "size": 3407
+    },
+    {
+      "path": ".workflowprogram/runtime/workflow-runner.py",
+      "size": 2313
+    },
+    {
+      "path": "CLAUDE.md",
+      "size": 2116
+    },
+    {
+      "path": "agents/stride-analyzer.md",
+      "size": 7681
+    },
+    {
+      "path": "agents/stride-attack-pattern-matcher.md",
+      "size": 4882
+    },
+    {
+      "path": "agents/stride-dfd-inferrer.md",
+      "size": 3297
+    },
+    {
+      "path": "agents/stride-diff-analyzer.md",
+      "size": 2334
+    },
+    {
+      "path": "agents/stride-parse.md",
+      "size": 1825
+    },
+    {
+      "path": "agents/stride-poc-generator.md",
+      "size": 7421
+    },
+    {
+      "path": "agents/stride-report-assembler.md",
+      "size": 11261
+    },
+    {
+      "path": "agents/stride-sast-verifier.md",
+      "size": 5448
+    },
+    {
+      "path": "agents/stride-validator.md",
+      "size": 17647
+    },
+    {
+      "path": "commands/stride-audit.md",
+      "size": 11302
+    },
+    {
+      "path": "config/attack-patterns.yaml",
+      "size": 5639
+    },
+    {
+      "path": "config/attacker-capabilities.yaml",
+      "size": 2027
+    },
+    {
+      "path": "config/confirmed-gate-schema.yaml",
+      "size": 3995
+    },
+    {
+      "path": "config/consistency-rules-v2.yaml",
+      "size": 7098
+    },
+    {
+      "path": "config/fp-patterns.yaml",
+      "size": 12825
+    },
+    {
+      "path": "config/poc-evidence-grading.yaml",
+      "size": 2896
+    },
+    {
+      "path": "config/poc-sandbox.dockerfile",
+      "size": 407
+    },
+    {
+      "path": "config/regression-corpus-v1-deprecated.yaml",
+      "size": 9587
+    },
+    {
+      "path": "config/regression-corpus-v2.yaml",
+      "size": 9325
+    },
+    {
+      "path": "config/sast-rules.yaml",
+      "size": 3518
+    },
+    {
+      "path": "config/scripts/assemble-report.py",
+      "size": 11382
+    },
+    {
+      "path": "config/scripts/check-consistency-v2.py",
+      "size": 12357
+    },
+    {
+      "path": "config/scripts/check-consistency-v3.py",
+      "size": 21387
+    },
+    {
+      "path": "config/scripts/check-dfd-layout.py",
+      "size": 10907
+    },
+    {
+      "path": "config/scripts/dfd_data.py",
+      "size": 8718
+    },
+    {
+      "path": "config/scripts/dfd_svg.py",
+      "size": 7504
+    },
+    {
+      "path": "config/scripts/generate-dfd-mermaid.py",
+      "size": 4712
+    },
+    {
+      "path": "config/stride-threats.yaml",
+      "size": 4409
+    },
+    {
+      "path": "skills/stride-attack-pattern-lookup/SKILL.md",
+      "size": 1769
+    },
+    {
+      "path": "skills/stride-consistency-check/SKILL.md",
+      "size": 5834
+    },
+    {
+      "path": "skills/stride-dfd-renderer/SKILL.md",
+      "size": 3463
+    },
+    {
+      "path": "skills/stride-fp-pattern-lookup/SKILL.md",
+      "size": 1609
+    },
+    {
+      "path": "skills/stride-html-reporter/SKILL.md",
+      "size": 6058
+    },
+    {
+      "path": "skills/stride-parse/SKILL.md",
+      "size": 1048
+    },
+    {
+      "path": "skills/stride-poc-executor/SKILL.md",
+      "size": 2166
+    },
+    {
+      "path": "skills/stride-result-auditor/SKILL.md",
+      "size": 4649
+    },
+    {
+      "path": "skills/stride-sast-runner/SKILL.md",
+      "size": 2546
+    },
+    {
+      "path": "templates/report-template.html",
+      "size": 32088
+    }
+  ]
+}

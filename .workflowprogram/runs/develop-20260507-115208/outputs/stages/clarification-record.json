@@ -1,0 +1,119 @@
+{
+  "workflow_name": "stride-security-audit",
+  "trigger_command": "/stride-audit",
+  "workflow_summary": "基于微软STRIDE框架的代码安全威胁分析工作流，支持C/C++/Rust优先，先阅读代码推断DFD再按STRIDE六维识别威胁，以攻击模式+SAST工具验证，产出HTML报告含DFD可视化、威胁模型、漏洞统计、漏洞详情与PoC（条件执行验证）",
+  "user_goal": "需要一个通用的安全测试工作流，能对任意代码仓库或系统描述进行 STRIDE 六维度威胁建模分析，输出可操作的安全报告",
+  "business_purpose": "让安全工程师、开发者和架构师能系统化地识别系统威胁面，获得含验证结果和 PoC 的威胁清单和缓解建议",
+  "success_criteria": [
+    "工作流按 代码阅读→DFD→STRIDE识别→攻击模式验证→PoC→报告 的正确顺序完成分析，生成 HTML 报告，包含 DFD 图、威胁统计、漏洞详情，高危/严重漏洞附带经条件执行验证的 PoC"
+  ],
+  "clarification_rounds": null,
+  "complexity": "L",
+  "logic_lenses": {
+    "purpose": [
+      "问题=系统化安全威胁分析缺乏统一工作流",
+      "目的=提供 STRIDE 驱动的自动化安全审计能力",
+      "主要使用者=安全工程师、开发者、架构师",
+      "成功信号=完整HTML报告含DFD+威胁模型+PoC+验证结果",
+      "非目标=不是实时入侵检测系统"
+    ],
+    "object_model": [
+      "输入对象=代码仓库路径或系统描述文本",
+      "中间对象=代码阅读结果、DFD节点与边、威胁候选列表、攻击模式映射、SAST 验证报告",
+      "输出对象=HTML 报告含 DFD 图 + 威胁清单 + PoC 附件 + 验证记录",
+      "关键字段=威胁ID、STRIDE分类、攻击模式引用、影响评级、利用难度、缓解措施、PoC代码、验证结果",
+      "source of truth=代码仓库 + SAST工具输出 + 攻击模式库 + LLM推理",
+      "未知信息处理=标记为\"需人工确认\""
+    ],
+    "process_model": [
+      "候选步骤 1)parse输入解析+语言检测→2)dfd代码阅读+DFD推断→3)stride六维度威胁并行识别→4)verify攻击模式匹配+SAST验证→5)poc分层PoC生成+条件执行→6)report HTML报告组装→7)[diff]对比分析",
+      "每步输入输出由对应 Agent 负责",
+      "人工触点=报告审阅确认、对话引导模式中的交互、PoC执行确认"
+    ],
+    "decision_model": [
+      "关键分支=有无代码仓库输入？→有代码走自动分析/无代码走对话引导",
+      "C/C++/Rust还是其他语言？→影响 SAST 工具选择",
+      "威胁严重程度？→影响 PoC 深度和执行策略",
+      "沙箱/Docker可用？→影响 PoC 是否执行验证",
+      "决策输入=代码结构+STRIDE分析+攻击模式库+SAST结果+模型推理",
+      "fallback=SAST不可用时LLM-only验证",
+      "沙箱不可用时跳过PoC执行"
+    ],
+    "evidence_model": [
+      "必须保留的证据=代码阅读记录、DFD YAML、STRIDE威胁推理链、攻击模式匹配记录、SAST验证输出、PoC代码+执行结果、威胁-REQ映射",
+      "PASS最小证据=STRIDE六维度全覆盖+攻击模式映射完成+HTML报告生成+Critical/High威胁含PoC"
+    ],
+    "acceptance_model": [
+      "happy path=提供C++仓库→解析→阅读代码生成DFD→六维威胁识别→攻击模式匹配→SAST验证→PoC生成+沙箱执行→HTML报告输出",
+      "负向场景=无代码输入→进入对话引导→用户自评六维度→简化验证→生成报告",
+      "空仓库或无安全问题→生成\"未发现威胁\"报告",
+      "SAST不可用→攻击模式LLM验证并标注",
+      "沙箱不可用→PoC仅生成代码+标注\"未执行验证\""
+    ],
+    "boundary_model": [
+      "明确不做=不修改目标代码、不替代专业渗透测试、不处理运行时安全监控",
+      "停止条件=目标路径无效且无系统描述、SAST工具全部不可用且攻击模式验证也失败且用户不确认手动模式",
+      "人工确认=威胁评级为Critical时需确认报告再发布、对话模式中每个维度结果需用户确认、PoC在沙箱外执行时需用户明确批准",
+      "安全约束=PoC仅生成代码（沙箱内执行除外），禁止修改目标仓库文件"
+    ]
+  },
+  "logic_questions": [
+    "1)攻击模式库的基线条目数量和覆盖范围？2)PoC沙箱执行环境的标准化配置？3)对比分析模式的历史数据存储方案？"
+  ],
+  "workflow_node_candidates": [],
+  "negative_or_stop_scenarios": [
+    "目标路径不存在且无系统描述→停止并要求用户提供有效输入",
+    "代码无法阅读或结构无法理解→降级为对话引导模式",
+    "攻击模式+SAST全不可用→询问用户是否继续LLM-only威胁分析",
+    "威胁评级结果无Critical/High且用户要求PoC覆盖→提示仅有场景描述"
+  ],
+  "confirmed_decisions": [
+    "1. 通用 STRIDE 框架工作流，不绑定特定目标系统（Q1=D）"
+  ],
+  "resolved_ambiguities": [
+    "触发方式、输入模式、输出格式与结构、技术栈范围、SAST 工具链角色、PoC 深度要求与验证模式、DFD 生成策略、工作流节点顺序、攻击模式映射、命名"
+  ],
+  "trigger_mode": "手动命令",
+  "trigger_details": "用户在 Claude Code 中输入 `/stride-audit [目标路径或描述]`；可选参数 `--no-sast`（跳过SAST验证）、`--no-poc-exec`（跳过PoC执行验证）、`--mode chat`（强制对话引导模式）、`--diff <previous-run-id>`（对比分析模式）、`--scope <module>`（限定分析范围）",
+  "primary_inputs": [
+    "目标代码仓库路径 或 系统描述文本（二选一）"
+  ],
+  "optional_inputs": [
+    "`--no-sast`：跳过SAST验证"
+  ],
+  "external_context": [
+    "无（工作流自包含）"
+  ],
+  "primary_outputs": [
+    "HTML 报告文件（stride-audit-report-{timestamp}.html）"
+  ],
+  "secondary_outputs": [
+    "代码阅读记录（阅读了哪些文件/模块，识别了哪些结构）"
+  ],
+  "output_formats": [
+    "主报告 HTML，辅助产物 JSON/YAML/Markdown"
+  ],
+  "blocking_conditions": [
+    "1. 目标路径不存在且未提供系统描述"
+  ],
+  "required_validations": [
+    "1. STRIDE 六维度全部覆盖（每个维度对 DFD 相关元素至少输出一个结论）"
+  ],
+  "definition_of_done": [
+    "1. HTML 报告文件已生成"
+  ],
+  "external_dependencies": [
+    "1. cppcheck（C/C++ 静态分析——验证阶段使用）"
+  ],
+  "edge_cases": [
+    "1. 无代码仓库 → 对话引导模式（跳过自动DFD和SAST，交互式威胁识别）"
+  ],
+  "non_goals": [
+    "1. 不修改目标代码"
+  ],
+  "readback_summary": "",
+  "readback_confirmation_status": "已确认（含设计审查修正）",
+  "readback_corrections": [
+    "节点顺序重排（parse→dfd→stride→verify→poc→report→diff）、SAST改为验证工具、新增attack-pattern-matcher、PoC增加条件执行验证、DFD设计明确归属S3"
+  ]
+}

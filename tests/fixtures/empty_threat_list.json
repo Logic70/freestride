@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "target": "test",
+    "total_threats": 0,
+    "version": "0.5.0",
+    "attacker_profile": "mobile_device_remote_attacker"
+  },
+  "threats": [],
+  "summary": {
+    "total_threats": 0,
+    "by_severity": {},
+    "by_stride": {},
+    "by_classification": {
+      "confirmed": 0,
+      "partial": 0,
+      "design": 0,
+      "false_positive": 0
+    }
+  }
+}

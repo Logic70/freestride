@@ -1,0 +1,172 @@
+dfd:
+  name: Device Auth Service DFD
+  data_flows:
+  - id: DF1
+    description: IPC API calls
+    from: EE1
+    to: P1
+  - id: DF2
+    description: Group mgmt dispatch
+    from: P1
+    to: P2
+  - id: DF3
+    description: Auth dispatch
+    from: P1
+    to: P3
+  - id: DF4
+    description: Identity dispatch
+    from: P1
+    to: P4
+  - id: DF5
+    description: Group persistence
+    from: P2
+    to: P12
+  - id: DF6
+    description: Group read/write
+    from: P12
+    to: DS1
+  - id: DF7
+    description: Cred read/write
+    from: P12
+    to: DS2
+  - id: DF8
+    description: Auth protocol
+    from: P3
+    to: P5
+  - id: DF9
+    description: Session management
+    from: P5
+    to: P8
+  - id: DF10
+    description: Key agreement
+    from: P5
+    to: P6
+  - id: DF11
+    description: Protocol messages
+    from: P5
+    to: EE2
+  - id: DF12
+    description: Crypto operations
+    from: P5
+    to: P16
+  - id: DF13
+    description: Identity cred ops
+    from: P4
+    to: P12
+  - id: DF14
+    description: HUKS API
+    from: P16
+    to: EE3
+  - id: DF15
+    description: Session key store
+    from: P8
+    to: DS3
+  - id: DF16
+    description: Network channel
+    from: P5
+    to: EE4
+  - id: DF17
+    description: Framework services
+    from: P1
+    to: P15
+  - id: DF18
+    description: Plugin loading
+    from: P15
+    to: P17
+  - id: DF19
+    description: Identity auth
+    from: P4
+    to: P5
+  - id: DF20
+    description: Cred change notify
+    from: P4
+    to: EE1
+  - id: DF21
+    description: Auth callback
+    from: P1
+    to: EE1
+  external_entities:
+  - id: EE1
+    name: Caller App / Service
+    description: IPC API consumer
+    path: interfaces/
+  - id: EE2
+    name: Remote Peer Device
+    description: Remote OH device
+    path: services/protocol/
+  - id: EE3
+    name: HUKS KeyStore
+    description: Crypto backend
+    path: deps_adapter/key_management_adapter/
+  - id: EE4
+    name: Distributed Soft Bus
+    description: Network transport
+    path: interfaces/
+  processes:
+  - id: P1
+    name: SA Entry
+    description: IPC dispatch & lifecycle
+    path: services/sa/
+  - id: P2
+    name: Group Mgr
+    description: Trust group CRUD
+    path: services/legacy/group_manager/
+  - id: P3
+    name: Group Auth
+    description: Auth orchestration
+    path: services/legacy/group_auth/
+  - id: P4
+    name: Identity Svc
+    description: Identity & credential operations
+    path: services/identity_service/
+  - id: P5
+    name: Protocol Eng
+    description: PAKE/ISO/SPEKE protocol impl
+    path: services/protocol/
+  - id: P6
+    name: KeyAgree SDK
+    description: Key negotiation (DL/EC SPEKE)
+    path: services/key_agree_sdk/
+  - id: P8
+    name: Session Mgr
+    description: Session lifecycle & state machine
+    path: services/session_manager/
+  - id: P12
+    name: Data Mgr
+    description: Persistence layer
+    path: services/data_manager/
+  - id: P15
+    name: Framework
+    description: Permission/task/plugin mgmt
+    path: services/frameworks/
+  - id: P16
+    name: Crypto Adapter
+    description: HUKS/mbedTLS wrapper
+    path: deps_adapter/key_management_adapter/
+  - id: P17
+    name: Plugin Mgr
+    description: External plugin loading
+    path: services/ext_plugin_manager/
+  data_stores:
+  - id: DS1
+    name: Group DB
+    description: Trust group persistence
+  - id: DS2
+    name: Cred DB
+    description: Credential persistence
+  - id: DS3
+    name: Session Store
+    description: Active session keys & state
+  trust_boundaries:
+  - id: TB1
+    name: IPC Trust Boundary
+    spans: [DF1, DF20, DF21]
+  - id: TB2
+    name: Network Protocol Boundary
+    spans: [DF11, DF16]
+  - id: TB3
+    name: Crypto Boundary
+    spans: [DF14]
+  - id: TB4
+    name: Storage Boundary
+    spans: [DF6, DF7, DF15]

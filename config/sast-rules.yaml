@@ -1,0 +1,118 @@
+# ============================================================
+# SAST Rules Mapping — Attack Pattern → Tool-Specific Rules
+# ============================================================
+
+rules:
+  # Spoofing → SAST Rules
+  MISSING_AUTH:
+    semgrep: |
+      rules:
+        - id: missing-authentication
+          patterns:
+            - pattern: |
+                def $HANDLER($REQ, ...):
+                  ...
+                  return $RESP
+            - pattern-not: |
+                def $HANDLER($REQ, ...):
+                  ...
+                  @login_required
+                  ...
+          message: "Endpoint missing authentication decorator"
+          severity: ERROR
+
+  WEAK_TOKEN_ENTROPY:
+    semgrep: |
+      rules:
+        - id: weak-jwt-secret
+          patterns:
+            - pattern-either:
+                - pattern: jwt.encode(..., "$SECRET", ...)
+                - pattern: jwt.encode(..., SECRET_KEY, ...)
+          message: "JWT secret may be weak; use env variable with min 256-bit entropy"
+          severity: WARNING
+
+  # Tampering → SAST Rules
+  UNSAFE_DESERIALIZATION:
+    semgrep: |
+      rules:
+        - id: unsafe-pickle
+          pattern: pickle.loads(...)
+          message: "pickle.loads is unsafe; use json or msgpack for untrusted data"
+          severity: ERROR
+    cppcheck: "--enable=warning --suppress=unusedFunction"
+
+  SQL_INJECTION:
+    cppcheck: "--enable=warning"
+    flawfinder: "--minlevel=3"
+    semgrep: |
+      rules:
+        - id: sql-string-concatenation
+          patterns:
+            - pattern-either:
+                - pattern: |
+                    $QUERY = "SELECT ..." + $VAR
+                - pattern: |
+                    sprintf($BUF, "SELECT ... %s", $VAR)
+          message: "SQL query built with string concatenation; use parameterized queries"
+          severity: ERROR
+
+  # Information Disclosure → SAST Rules
+  HARDCODED_SECRETS:
+    semgrep: |
+      rules:
+        - id: hardcoded-api-key
+          patterns:
+            - pattern-either:
+                - pattern: $KEY = "$HEX_STRING"
+                - pattern: api_key = "..."
+          message: "Potential hardcoded secret detected"
+          severity: ERROR
+    flawfinder: "--minlevel=2"
+
+  LOG_SENSITIVE_DATA:
+    semgrep: |
+      rules:
+        - id: sensitive-data-in-log
+          patterns:
+            - pattern-either:
+                - pattern: log.info($REQ.body)
+                - pattern: printf("...%s...", $PASSWORD)
+          message: "Sensitive data may be logged"
+          severity: WARNING
+
+  # DoS → SAST Rules
+  UNBOUNDED_ALLOCATION:
+    cppcheck: "--enable=warning,performance"
+    flawfinder: "--minlevel=2"
+
+  NO_RATE_LIMIT:
+    semgrep: |
+      rules:
+        - id: missing-rate-limit
+          pattern: |
+            def $HANDLER(...):
+              ...
+          message: "Handler may lack rate limiting; add @rate_limit decorator"
+          severity: WARNING
+
+  # Elevation of Privilege → SAST Rules
+  MISSING_AUTHORIZATION:
+    semgrep: |
+      rules:
+        - id: missing-authorization
+          patterns:
+            - pattern: |
+                def $ADMIN_HANDLER(...):
+                  ...
+            - pattern-not: |
+                def $ADMIN_HANDLER(...):
+                  ...
+                  @admin_required
+                  ...
+          message: "Admin endpoint missing authorization check"
+          severity: ERROR
+
+  # General safety lints (Rust)
+  RUST_SAFETY_LINTS:
+    cargo_clippy: "clippy::all,clippy::pedantic,clippy::cargo"

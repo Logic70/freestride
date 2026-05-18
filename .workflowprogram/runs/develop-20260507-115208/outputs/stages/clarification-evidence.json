@@ -1,0 +1,22 @@
+{
+  "clarification_rounds": null,
+  "challenge_rounds": 1,
+  "readback_confirmed": false,
+  "blocking_questions_cleared": false,
+  "challenge_roles_executed": [
+    "scenario-extractor",
+    "assumption-auditor",
+    "constraint-reviewer"
+  ],
+  "lead_role": "requirement-clarification-lead",
+  "evidence_checks": {
+    "clarification_rounds_sufficient": false,
+    "challenge_roles_executed": true,
+    "readback_confirmed": false,
+    "blocking_questions_cleared": false,
+    "logic_map_ready": false,
+    "question_backlog_design_consequential": true,
+    "s2_handoff_ready": false,
+    "s3_handoff_ready": false
+  }
+}

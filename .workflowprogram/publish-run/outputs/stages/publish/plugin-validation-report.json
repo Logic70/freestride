@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-12T10:42:46Z",
+  "status": "PASS",
+  "errors": [],
+  "warnings": [],
+  "package_root": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/publish-run/outputs/stages/publish/package-root",
+  "checks": [
+    {
+      "name": "package_root_exists",
+      "status": "PASS",
+      "detail": "package root: /mnt/d/Code/FreeSTRIDE/.workflowprogram/publish-run/outputs/stages/publish/package-root"
+    },
+    {
+      "name": "plugin_json_present",
+      "status": "PASS",
+      "detail": ".claude-plugin/plugin.json"
+    },
+    {
+      "name": "marketplace_json_present",
+      "status": "PASS",
+      "detail": ".claude-plugin/marketplace.json"
+    },
+    {
+      "name": "publish_metadata_present",
+      "status": "PASS",
+      "detail": ".claude-plugin/workflowprogram-publish.json"
+    },
+    {
+      "name": "marketplace_plugin_matches_manifest",
+      "status": "PASS",
+      "detail": "plugin=freestride; marketplace=freestride"
+    },
+    {
+      "name": "public_entry_assets_present",
+      "status": "PASS",
+      "detail": "commands=1 skills=9"
+    },
+    {
+      "name": "runtime_mode_declared",
+      "status": "PASS",
+      "detail": "runtime_mode=workflowprogram_dependency"
+    },
+    {
+      "name": "workflowprogram_dependency_instructions",
+      "status": "PASS",
+      "detail": "README includes WorkflowProgram dependency install instructions"
+    },
+    {
+      "name": "target_runtime_manifest_present",
+      "status": "PASS",
+      "detail": ".workflowprogram/runtime/runtime-manifest.json"
+    },
+    {
+      "name": "target_design_spec_present",
+      "status": "PASS",
+      "detail": ".workflowprogram/design/workflow-spec.yaml"
+    },
+    {
+      "name": "claude_plugin_validate",
+      "status": "PASS",
+      "detail": "claude plugin validate passed"
+    }
+  ],
+  "claude_plugin_validate": {
+    "status": "PASS",
+    "returncode": 0,
+    "stdout": "Validating marketplace manifest: /mnt/d/Code/FreeSTRIDE/.workflowprogram/publish-run/outputs/stages/publish/package-root/.claude-plugin/marketplace.json\n\n✔ Validation passed",
+    "stderr": ""
+  }
+}

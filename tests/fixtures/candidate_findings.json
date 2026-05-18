@@ -1,0 +1,125 @@
+{
+  "meta": {
+    "target": "/mnt/d/Code/STRIDEAnalyse/security_device_auth",
+    "classification": "partial",
+    "count": 4
+  },
+  "findings": [
+    {
+      "id": "T-009",
+      "name": "NULL dereference in session state machine on edge case",
+      "stride_category": "Denial of Service",
+      "severity": "MEDIUM",
+      "cwe": "CWE-476",
+      "file": "services/session_manager/src/session/v2/auth_sub_session/auth_sub_session.c:62",
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "conditional",
+      "impact_observed": false,
+      "poc_type": "static_evidence",
+      "exploitability_score": 3.5,
+      "source_evidence": "auth_sub_session.c:62-75: StartAuthSubSession NULL check returns error but caller dispatch may not validate",
+      "counter_evidence_checked": [
+        "All callers appear to check return values",
+        "NULL check exists at function entry"
+      ],
+      "missing_evidence": [
+        "Needs deeper static/dynamic analysis"
+      ],
+      "recommendation": "Add defensive NULL guard in dispatch layer",
+      "static_evidence_file": "services/session_manager/src/session/v2/auth_sub_session/auth_sub_session.c",
+      "static_evidence_line": 62,
+      "sink_function": "StartAuthSubSession",
+      "bug_pattern": "null_deref_edge_case"
+    },
+    {
+      "id": "T-010",
+      "name": "File path constructed via sprintf_s — no parent dir validation",
+      "stride_category": "Tampering",
+      "severity": "MEDIUM",
+      "cwe": "CWE-23",
+      "file": "services/data_manager/cred_data_manager/src/credential_data_manager.c:164",
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "conditional",
+      "impact_observed": false,
+      "poc_type": "static_evidence",
+      "exploitability_score": 3.5,
+      "source_evidence": "credential_data_manager.c:164: sprintf_s with osAccountId interpolated into path; sprintf_s prevents overflow but not path traversal via crafted osAccountId",
+      "counter_evidence_checked": [
+        "osAccountId is int32_t from caller",
+        "realpath() not called before file access"
+      ],
+      "missing_evidence": [
+        "Needs deeper static/dynamic analysis"
+      ],
+      "recommendation": "Validate osAccountId >= 0 and canonicalize path",
+      "static_evidence_file": "services/data_manager/cred_data_manager/src/credential_data_manager.c",
+      "static_evidence_line": 164,
+      "sink_function": "sprintf_s",
+      "bug_pattern": "path_traversal"
+    },
+    {
+      "id": "T-011",
+      "name": "KeyAgree sessionKey.length + 1 used as copy size — overflow risk",
+      "stride_category": "Information Disclosure",
+      "severity": "MEDIUM",
+      "cwe": "CWE-131",
+      "file": "services/key_agree_sdk/src/key_agree_sdk.c:291",
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "conditional",
+      "impact_observed": false,
+      "poc_type": "static_evidence",
+      "exploitability_score": 3.5,
+      "source_evidence": "key_agree_sdk.c:285-300: memcpy_s uses sessionKey.length + 1 as destination size, risking off-by-one if length is UINT32_MAX",
+      "counter_evidence_checked": [
+        "sessionKey.length originates from protocol message size field",
+        "memcpy_s provides bounds checking but +1 may still overflow"
+      ],
+      "missing_evidence": [
+        "Needs deeper static/dynamic analysis"
+      ],
+      "recommendation": "Check sessionKey.length < UINT32_MAX before adding 1",
+      "static_evidence_file": "services/key_agree_sdk/src/key_agree_sdk.c",
+      "static_evidence_line": 291,
+      "sink_function": "memcpy_s",
+      "bug_pattern": "length_plus_one_copy_size"
+    },
+    {
+      "id": "T-012",
+      "name": "IPC permission check limited to UID-based access control",
+      "stride_category": "Elevation of Privilege",
+      "severity": "MEDIUM",
+      "cwe": "CWE-862",
+      "file": "services/frameworks/src/permission_adapter/permission_adapter.cpp:192",
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "conditional",
+      "impact_observed": false,
+      "poc_type": "static_evidence",
+      "exploitability_score": 3.5,
+      "source_evidence": "permission_adapter.cpp:192: CheckPermission validates calling UID without checking SELinux context or process identity",
+      "counter_evidence_checked": [
+        "SELinux provides additional MAC at kernel level",
+        "Method ID routing limits surface"
+      ],
+      "missing_evidence": [
+        "Needs deeper static/dynamic analysis"
+      ],
+      "recommendation": "Add SELinux context verification in permission check",
+      "static_evidence_file": "services/frameworks/src/permission_adapter/permission_adapter.cpp",
+      "static_evidence_line": 192,
+      "sink_function": "CheckPermission",
+      "bug_pattern": "insufficient_permission_check"
+    }
+  ]
+}

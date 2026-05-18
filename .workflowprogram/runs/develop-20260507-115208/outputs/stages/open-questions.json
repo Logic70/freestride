@@ -1,0 +1,9 @@
+{
+  "blocking_questions": [],
+  "deferred_questions": [
+    "1. SAST 工具链版本约束与自动安装策略（S3 设计时确定）"
+  ],
+  "resolution_strategy": "延后问题在 S3 阶段作为设计决策项处理",
+  "blocking_count": 0,
+  "deferred_count": 1
+}

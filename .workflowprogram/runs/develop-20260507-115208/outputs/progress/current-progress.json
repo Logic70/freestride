@@ -1,0 +1,11 @@
+{
+  "run_id": "develop-20260507-115208",
+  "current_stage": "S6",
+  "current_node": "S6-complete",
+  "percent": 100,
+  "last_status": "ok",
+  "last_verdict": "PASS",
+  "next_action": "工作流就绪, 使用 /stride-audit <target> 执行",
+  "updated_at": "2026-05-07T12:50:55Z",
+  "approval_status": "approved"
+}

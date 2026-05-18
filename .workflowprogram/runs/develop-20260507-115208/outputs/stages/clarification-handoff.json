@@ -1,0 +1,164 @@
+{
+  "ready": true,
+  "logic_map_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/runs/develop-20260507-115208/outputs/stages/requirement-logic-map.json",
+  "question_backlog_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/runs/develop-20260507-115208/outputs/stages/question-backlog.json",
+  "source_files": {
+    "draft": "/mnt/d/Code/WorkflowProgram-CN/dist/plugin/skills/workflow-spec-support/spec-template.md",
+    "clarification_record": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/runs/develop-20260507-115208/outputs/stages/clarification-record.json",
+    "open_questions": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/runs/develop-20260507-115208/outputs/stages/open-questions.json",
+    "question_backlog": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/runs/develop-20260507-115208/outputs/stages/question-backlog.json",
+    "requirement_logic_map": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/runs/develop-20260507-115208/outputs/stages/requirement-logic-map.json",
+    "challenge_report": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/runs/develop-20260507-115208/outputs/stages/clarification-challenge-report.json"
+  },
+  "s2_inputs": {
+    "research_scope": [
+      "现有 .claude/ 资产（agents, skills, commands, settings, rules）",
+      "CLAUDE.md 中的项目约定和命名规则",
+      "目标仓库代码结构与语言分布",
+      "宿主 SAST 工具可用性（cppcheck, flawfinder, semgrep, rust-clippy）",
+      "Docker 可用性（PoC 沙箱执行环境）"
+    ],
+    "external_dependencies": [
+      "cppcheck（C/C++ 静态分析）",
+      "flawfinder（C/C++ 安全漏洞扫描）",
+      "Rust toolchain + clippy",
+      "semgrep（多语言通用 SAST）",
+      "Docker（PoC 沙箱执行，可选）"
+    ],
+    "assumptions": [
+      "用户环境已安装 Python 3.10+ 和 pip",
+      "SAST 工具可通过脚本自动安装或系统包管理",
+      "目标代码仓库以文件路径形式存在于本地或可克隆",
+      "HTML 报告在本地生成，不需要 Web 服务",
+      "用户有基础威胁建模知识或愿意接受引导"
+    ],
+    "edge_cases": [
+      "无代码仓库 → 对话引导模式",
+      "SAST 工具缺失 → 攻击模式 LLM 验证并标注",
+      "Docker 不可用 → PoC 仅生成代码，标注未执行验证",
+      "多语言混合仓库 → 综合调度多工具",
+      "大仓 >100K LOC → 分模块增量分析",
+      "代码无法解析结构 → 降级对话引导模式"
+    ],
+    "focus_questions": [
+      "攻击模式库初始条目数量和覆盖范围",
+      "PoC 沙箱执行环境的 Docker 镜像标准化",
+      "对比分析模式的历史数据存储方案"
+    ]
+  },
+  "s3_inputs": {
+    "success_criteria": [],
+    "trigger_model": {
+      "mode": "手动命令 / Hook / 混合",
+      "details": ""
+    },
+    "io_contract": {
+      "primary_inputs": [
+        "可选输入："
+      ],
+      "optional_inputs": [
+        "所需外部上下文："
+      ],
+      "primary_outputs": [
+        "次级产物："
+      ],
+      "secondary_outputs": [
+        "输出格式："
+      ],
+      "output_formats": []
+    },
+    "quality_gates": {
+      "blocking_conditions": [
+        "必需验证："
+      ],
+      "required_validations": [
+        "完成定义："
+      ],
+      "definition_of_done": []
+    },
+    "design_constraints": [
+      "必需验证："
+    ],
+    "workflow_node_candidates": [
+      "复杂请求中目标 workflow_graph.nodes[*] 的候选节点"
+    ],
+    "acceptance_scenarios": [
+      {
+        "id": "ACC-001",
+        "summary": "happy path=提供C++仓库→解析→阅读代码生成DFD→六维威胁识别→攻击模式匹配→SAST验证→PoC生成+沙箱执行→HTML报告输出"
+      },
+      {
+        "id": "ACC-002",
+        "summary": "负向场景=无代码输入→进入对话引导→用户自评六维度→简化验证→生成报告"
+      },
+      {
+        "id": "ACC-003",
+        "summary": "空仓库或无安全问题→生成\"未发现威胁\"报告"
+      },
+      {
+        "id": "ACC-004",
+        "summary": "SAST不可用→攻击模式LLM验证并标注"
+      },
+      {
+        "id": "ACC-005",
+        "summary": "沙箱不可用→PoC仅生成代码+标注\"未执行验证\""
+      }
+    ],
+    "requirement_logic_links": [
+      {
+        "requirement_id": "REQ-001",
+        "priority": "must",
+        "process_refs": [
+          "PROC-001",
+          "PROC-002",
+          "PROC-003"
+        ],
+        "decision_refs": [
+          "DEC-001",
+          "DEC-002",
+          "DEC-003",
+          "DEC-004",
+          "DEC-005",
+          "DEC-006",
+          "DEC-007"
+        ],
+        "evidence_refs": [
+          "EVD-001",
+          "EVD-002"
+        ],
+        "acceptance_refs": [
+          "ACC-001",
+          "ACC-002",
+          "ACC-003",
+          "ACC-004",
+          "ACC-005"
+        ],
+        "boundary_refs": [
+          "BND-001",
+          "BND-002",
+          "BND-003",
+          "BND-004"
+        ]
+      }
+    ],
+    "question_backlog": [
+      {
+        "id": "Q-001",
+        "lens": "purpose",
+        "question": "1)攻击模式库的基线条目数量和覆盖范围？2)PoC沙箱执行环境的标准化配置？3)对比分析模式的历史数据存储方案？",
+        "why_it_matters": "Different answers can alter workflow nodes, decisions, evidence, acceptance tests, or boundaries.",
+        "blocking": false,
+        "expected_answer_shape": "Concrete object/process/decision/evidence/acceptance/boundary rule, not a generic preference.",
+        "linked_requirement_ids": [
+          "REQ-001"
+        ],
+        "design_consequence": true,
+        "source": "draft",
+        "status": "open"
+      }
+    ],
+    "deferred_questions": [
+      "问题处理策略："
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "mappings": [
+    {"threat_id": "T-001", "cape_id": "CAPEC-112", "name": "Brute Force", "match_quality": "direct"},
+    {"threat_id": "T-002", "cape_id": "CAPEC-126", "name": "Path Traversal", "match_quality": "direct"},
+    {"threat_id": "T-003", "cape_id": "CAPEC-39", "name": "Manipulating Opaque Client-based Data Tokens", "match_quality": "related"},
+    {"threat_id": "T-004", "cape_id": "CAPEC-37", "name": "Retrieve Embedded Sensitive Data", "match_quality": "direct"},
+    {"threat_id": "T-005", "cape_id": null, "name": null, "match_quality": "false_positive"},
+    {"threat_id": "T-006", "cape_id": "CAPEC-117", "name": "Interception", "match_quality": "related"},
+    {"threat_id": "T-007", "cape_id": "CAPEC-87", "name": "Forceful Browsing", "match_quality": "related"},
+    {"threat_id": "T-008", "cape_id": "CAPEC-545", "name": "Pull Data from System Resources", "match_quality": "direct"},
+    {"threat_id": "T-009", "cape_id": "CAPEC-130", "name": "Excessive Allocation", "match_quality": "related"},
+    {"threat_id": "T-010", "cape_id": "CAPEC-641", "name": "DLL Side-Loading", "match_quality": "direct"},
+    {"threat_id": "T-011", "cape_id": "CAPEC-130", "name": "Excessive Allocation", "match_quality": "related"},
+    {"threat_id": "T-012", "cape_id": "CAPEC-58", "name": "Restful Privilege Elevation", "match_quality": "related"},
+    {"threat_id": "T-013", "cape_id": "CAPEC-130", "name": "Excessive Allocation", "match_quality": "direct"},
+    {"threat_id": "T-014", "cape_id": "CAPEC-220", "name": "Client-Side Enforcement of Server-Side Security", "match_quality": "related"},
+    {"threat_id": "T-015", "cape_id": "CAPEC-117", "name": "Interception", "match_quality": "related"},
+    {"threat_id": "T-016", "cape_id": "CAPEC-545", "name": "Pull Data from System Resources", "match_quality": "related"},
+    {"threat_id": "T-017", "cape_id": "CAPEC-112", "name": "Brute Force", "match_quality": "direct"},
+    {"threat_id": "T-018", "cape_id": "CAPEC-641", "name": "DLL Side-Loading", "match_quality": "related"},
+    {"threat_id": "T-019", "cape_id": "CAPEC-130", "name": "Excessive Allocation", "match_quality": "related"},
+    {"threat_id": "T-020", "cape_id": null, "name": null, "match_quality": "false_positive"}
+  ]
+}

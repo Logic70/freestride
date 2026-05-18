@@ -1,0 +1,1116 @@
+{
+  "external_entities": {
+    "EE1": {
+      "name": "Caller App / Service",
+      "type": "external_entities",
+      "threats": [
+        {
+          "threat_id": "T-012",
+          "name": "IPC permission check limited to UID-based access control",
+          "severity": "MEDIUM",
+          "stride": "Elevation of Privilege",
+          "classification": "partial"
+        },
+        {
+          "threat_id": "T-013",
+          "name": "Dynamic plugin loaded via dlopen without signature verification",
+          "severity": "MEDIUM",
+          "stride": "Elevation of Privilege",
+          "classification": "design"
+        }
+      ],
+      "threat_count": 2,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "IPC调用方，通过OHOS IPC调用设备认证服务API。此维度未发现显著风险。",
+          "code_path": "interfaces/inner_api/"
+        },
+        "Tampering": {
+          "risk": "低",
+          "summary": "IPC调用方，通过OHOS IPC调用设备认证服务API。此维度未发现显著风险。",
+          "code_path": "interfaces/inner_api/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "IPC调用方，通过OHOS IPC调用设备认证服务API。此维度未发现显著风险。",
+          "code_path": "interfaces/inner_api/"
+        },
+        "Information Disclosure": {
+          "risk": "低",
+          "summary": "IPC调用方，通过OHOS IPC调用设备认证服务API。此维度未发现显著风险。",
+          "code_path": "interfaces/inner_api/"
+        },
+        "Denial of Service": {
+          "risk": "低",
+          "summary": "IPC调用方，通过OHOS IPC调用设备认证服务API。此维度未发现显著风险。",
+          "code_path": "interfaces/inner_api/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "IPC调用方，通过OHOS IPC调用设备认证服务API。此维度未发现显著风险。",
+          "code_path": "interfaces/inner_api/"
+        }
+      }
+    },
+    "EE2": {
+      "name": "Remote Peer Device",
+      "type": "external_entities",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "远程对等OHOS设备，通过分布式软总线进行PAKE/ISO协议通信。此维度未发现显著风险。",
+          "code_path": "services/protocol/"
+        },
+        "Tampering": {
+          "risk": "低",
+          "summary": "远程对等OHOS设备，通过分布式软总线进行PAKE/ISO协议通信。此维度未发现显著风险。",
+          "code_path": "services/protocol/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "远程对等OHOS设备，通过分布式软总线进行PAKE/ISO协议通信。此维度未发现显著风险。",
+          "code_path": "services/protocol/"
+        },
+        "Information Disclosure": {
+          "risk": "低",
+          "summary": "远程对等OHOS设备，通过分布式软总线进行PAKE/ISO协议通信。此维度未发现显著风险。",
+          "code_path": "services/protocol/"
+        },
+        "Denial of Service": {
+          "risk": "低",
+          "summary": "远程对等OHOS设备，通过分布式软总线进行PAKE/ISO协议通信。此维度未发现显著风险。",
+          "code_path": "services/protocol/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "远程对等OHOS设备，通过分布式软总线进行PAKE/ISO协议通信。此维度未发现显著风险。",
+          "code_path": "services/protocol/"
+        }
+      }
+    },
+    "EE3": {
+      "name": "HUKS KeyStore",
+      "type": "external_entities",
+      "threats": [
+        {
+          "threat_id": "T-006",
+          "name": "Global session slots have no per-source limit — single source exhaustion",
+          "severity": "MEDIUM",
+          "stride": "Denial of Service",
+          "classification": "confirmed_code_defect"
+        }
+      ],
+      "threat_count": 1,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "HUKS密钥管理，提供硬件支持的密钥生成、存储和密码学运算。此维度未发现显著风险。",
+          "code_path": "deps_adapter/key_management_adapter/"
+        },
+        "Tampering": {
+          "risk": "低",
+          "summary": "HUKS密钥管理，提供硬件支持的密钥生成、存储和密码学运算。此维度未发现显著风险。",
+          "code_path": "deps_adapter/key_management_adapter/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "HUKS密钥管理，提供硬件支持的密钥生成、存储和密码学运算。此维度未发现显著风险。",
+          "code_path": "deps_adapter/key_management_adapter/"
+        },
+        "Information Disclosure": {
+          "risk": "低",
+          "summary": "HUKS密钥管理，提供硬件支持的密钥生成、存储和密码学运算。此维度未发现显著风险。",
+          "code_path": "deps_adapter/key_management_adapter/"
+        },
+        "Denial of Service": {
+          "risk": "低",
+          "summary": "HUKS密钥管理，提供硬件支持的密钥生成、存储和密码学运算。此维度未发现显著风险。",
+          "code_path": "deps_adapter/key_management_adapter/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "HUKS密钥管理，提供硬件支持的密钥生成、存储和密码学运算。此维度未发现显著风险。",
+          "code_path": "deps_adapter/key_management_adapter/"
+        }
+      }
+    },
+    "EE4": {
+      "name": "Distributed Soft Bus",
+      "type": "external_entities",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "。此维度未发现显著风险。",
+          "code_path": ""
+        },
+        "Tampering": {
+          "risk": "低",
+          "summary": "。此维度未发现显著风险。",
+          "code_path": ""
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "。此维度未发现显著风险。",
+          "code_path": ""
+        },
+        "Information Disclosure": {
+          "risk": "低",
+          "summary": "。此维度未发现显著风险。",
+          "code_path": ""
+        },
+        "Denial of Service": {
+          "risk": "低",
+          "summary": "。此维度未发现显著风险。",
+          "code_path": ""
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "。此维度未发现显著风险。",
+          "code_path": ""
+        }
+      }
+    }
+  },
+  "processes": {
+    "P1": {
+      "name": "SA Entry",
+      "type": "processes",
+      "threats": [
+        {
+          "threat_id": "T-005",
+          "name": "Task queue has no capacity limit — unbounded growth",
+          "severity": "MEDIUM",
+          "stride": "Denial of Service",
+          "classification": "confirmed_code_defect"
+        },
+        {
+          "threat_id": "T-007",
+          "name": "Credential ID generated with timestamp — predictable identifier",
+          "severity": "MEDIUM",
+          "stride": "Spoofing",
+          "classification": "confirmed_code_defect"
+        },
+        {
+          "threat_id": "T-009",
+          "name": "NULL dereference in session state machine on edge case",
+          "severity": "MEDIUM",
+          "stride": "Denial of Service",
+          "classification": "partial"
+        },
+        {
+          "threat_id": "T-013",
+          "name": "Dynamic plugin loaded via dlopen without signature verification",
+          "severity": "MEDIUM",
+          "stride": "Elevation of Privilege",
+          "classification": "design"
+        },
+        {
+          "threat_id": "T-017",
+          "name": "No rate limiting for PIN-based authentication attempts",
+          "severity": "MEDIUM",
+          "stride": "Spoofing",
+          "classification": "design"
+        },
+        {
+          "threat_id": "T-020",
+          "name": "PRINT_SENSITIVE_DATA exposed peer UDID in debug logs",
+          "severity": "LOW",
+          "stride": "Information Disclosure",
+          "classification": "false_positive"
+        }
+      ],
+      "threat_count": 6,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "中等",
+          "summary": "IPC入口依赖进程名白名单+AccessTokenKit验证。若伪造成功可冒充合法调用方。",
+          "code_path": "services/sa/"
+        },
+        "Tampering": {
+          "risk": "低",
+          "summary": "系统能力入口，IPC请求分发、任务调度、事件与进程生命周期管理。此维度未发现显著风险。",
+          "code_path": "services/sa/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "系统能力入口，IPC请求分发、任务调度、事件与进程生命周期管理。此维度未发现显著风险。",
+          "code_path": "services/sa/"
+        },
+        "Information Disclosure": {
+          "risk": "中等",
+          "summary": "PRINT_SENSITIVE_DATA输出UDID片段，会话密钥经IPC回传。",
+          "code_path": "services/sa/"
+        },
+        "Denial of Service": {
+          "risk": "高",
+          "summary": "任务队列无上限(PushTask)，临界计数器无下界保护。",
+          "code_path": "services/sa/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "系统能力入口，IPC请求分发、任务调度、事件与进程生命周期管理。此维度未发现显著风险。",
+          "code_path": "services/sa/"
+        }
+      }
+    },
+    "P2": {
+      "name": "Group Mgr",
+      "type": "processes",
+      "threats": [
+        {
+          "threat_id": "T-002",
+          "name": "Seed value not zeroed before free in identity_group.c",
+          "severity": "MEDIUM",
+          "stride": "Information Disclosure",
+          "classification": "confirmed_code_defect"
+        },
+        {
+          "threat_id": "T-003",
+          "name": "Account-related group membership bypass",
+          "severity": "MEDIUM",
+          "stride": "Spoofing",
+          "classification": "confirmed_code_defect"
+        },
+        {
+          "threat_id": "T-015",
+          "name": "No transport-layer encryption for handshake metadata",
+          "severity": "LOW",
+          "stride": "Information Disclosure",
+          "classification": "design"
+        },
+        {
+          "threat_id": "T-016",
+          "name": "Credential DB file paths constructed from static format strings",
+          "severity": "LOW",
+          "stride": "Information Disclosure",
+          "classification": "design"
+        }
+      ],
+      "threat_count": 4,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "信任群组CRUD：创建、删除、成员增删、查询与回调注册。此维度未发现显著风险。",
+          "code_path": "services/legacy/group_manager/"
+        },
+        "Tampering": {
+          "risk": "低",
+          "summary": "信任群组CRUD：创建、删除、成员增删、查询与回调注册。此维度未发现显著风险。",
+          "code_path": "services/legacy/group_manager/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "信任群组CRUD：创建、删除、成员增删、查询与回调注册。此维度未发现显著风险。",
+          "code_path": "services/legacy/group_manager/"
+        },
+        "Information Disclosure": {
+          "risk": "低",
+          "summary": "信任群组CRUD：创建、删除、成员增删、查询与回调注册。此维度未发现显著风险。",
+          "code_path": "services/legacy/group_manager/"
+        },
+        "Denial of Service": {
+          "risk": "低",
+          "summary": "信任群组CRUD：创建、删除、成员增删、查询与回调注册。此维度未发现显著风险。",
+          "code_path": "services/legacy/group_manager/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "信任群组CRUD：创建、删除、成员增删、查询与回调注册。此维度未发现显著风险。",
+          "code_path": "services/legacy/group_manager/"
+        }
+      }
+    },
+    "P3": {
+      "name": "Group Auth",
+      "type": "processes",
+      "threats": [
+        {
+          "threat_id": "T-001",
+          "name": "DecreaseCriticalCnt no lower bound — integer underflow",
+          "severity": "MEDIUM",
+          "stride": "Tampering",
+          "classification": "confirmed_code_defect"
+        },
+        {
+          "threat_id": "T-004",
+          "name": "Credential listener callback invoked under mutex — re-entrancy deadlock",
+          "severity": "MEDIUM",
+          "stride": "Denial of Service",
+          "classification": "confirmed_code_defect"
+        }
+      ],
+      "threat_count": 2,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "群组认证编排，设备间信任认证与会话密钥协商流程控制。此维度未发现显著风险。",
+          "code_path": "services/legacy/group_auth/"
+        },
+        "Tampering": {
+          "risk": "低",
+          "summary": "群组认证编排，设备间信任认证与会话密钥协商流程控制。此维度未发现显著风险。",
+          "code_path": "services/legacy/group_auth/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "群组认证编排，设备间信任认证与会话密钥协商流程控制。此维度未发现显著风险。",
+          "code_path": "services/legacy/group_auth/"
+        },
+        "Information Disclosure": {
+          "risk": "低",
+          "summary": "群组认证编排，设备间信任认证与会话密钥协商流程控制。此维度未发现显著风险。",
+          "code_path": "services/legacy/group_auth/"
+        },
+        "Denial of Service": {
+          "risk": "低",
+          "summary": "群组认证编排，设备间信任认证与会话密钥协商流程控制。此维度未发现显著风险。",
+          "code_path": "services/legacy/group_auth/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "群组认证编排，设备间信任认证与会话密钥协商流程控制。此维度未发现显著风险。",
+          "code_path": "services/legacy/group_auth/"
+        }
+      }
+    },
+    "P4": {
+      "name": "Identity Svc",
+      "type": "processes",
+      "threats": [
+        {
+          "threat_id": "T-008",
+          "name": "Shared key material in malloc buffer not zeroed after use",
+          "severity": "MEDIUM",
+          "stride": "Information Disclosure",
+          "classification": "confirmed_code_defect"
+        }
+      ],
+      "threat_count": 1,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "身份服务，凭据操作、监听器分发和会话管理。此维度未发现显著风险。",
+          "code_path": "services/identity_service/"
+        },
+        "Tampering": {
+          "risk": "低",
+          "summary": "身份服务，凭据操作、监听器分发和会话管理。此维度未发现显著风险。",
+          "code_path": "services/identity_service/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "身份服务，凭据操作、监听器分发和会话管理。此维度未发现显著风险。",
+          "code_path": "services/identity_service/"
+        },
+        "Information Disclosure": {
+          "risk": "低",
+          "summary": "身份服务，凭据操作、监听器分发和会话管理。此维度未发现显著风险。",
+          "code_path": "services/identity_service/"
+        },
+        "Denial of Service": {
+          "risk": "中等",
+          "summary": "凭据监听器持锁调用回调，重入可致死锁。",
+          "code_path": "services/identity_service/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "身份服务，凭据操作、监听器分发和会话管理。此维度未发现显著风险。",
+          "code_path": "services/identity_service/"
+        }
+      }
+    },
+    "P5": {
+      "name": "Protocol Eng",
+      "type": "processes",
+      "threats": [
+        {
+          "threat_id": "T-001",
+          "name": "DecreaseCriticalCnt no lower bound — integer underflow",
+          "severity": "MEDIUM",
+          "stride": "Tampering",
+          "classification": "confirmed_code_defect"
+        }
+      ],
+      "threat_count": 1,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "协议引擎，PAKE v1/v2(EC-SPEKE/DL-SPEKE)与ISO认证协议实现。此维度未发现显著风险。",
+          "code_path": "services/protocol/"
+        },
+        "Tampering": {
+          "risk": "低",
+          "summary": "协议引擎，PAKE v1/v2(EC-SPEKE/DL-SPEKE)与ISO认证协议实现。此维度未发现显著风险。",
+          "code_path": "services/protocol/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "协议引擎，PAKE v1/v2(EC-SPEKE/DL-SPEKE)与ISO认证协议实现。此维度未发现显著风险。",
+          "code_path": "services/protocol/"
+        },
+        "Information Disclosure": {
+          "risk": "中等",
+          "summary": "种子/PSK/nonce释放前未清零，残留于堆内存。",
+          "code_path": "services/protocol/"
+        },
+        "Denial of Service": {
+          "risk": "低",
+          "summary": "协议引擎，PAKE v1/v2(EC-SPEKE/DL-SPEKE)与ISO认证协议实现。此维度未发现显著风险。",
+          "code_path": "services/protocol/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "协议引擎，PAKE v1/v2(EC-SPEKE/DL-SPEKE)与ISO认证协议实现。此维度未发现显著风险。",
+          "code_path": "services/protocol/"
+        }
+      }
+    },
+    "P6": {
+      "name": "KeyAgree SDK",
+      "type": "processes",
+      "threats": [
+        {
+          "threat_id": "T-011",
+          "name": "KeyAgree sessionKey.length + 1 used as copy size — overflow risk",
+          "severity": "MEDIUM",
+          "stride": "Information Disclosure",
+          "classification": "partial"
+        }
+      ],
+      "threat_count": 1,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "密钥协商SDK，会话密钥协商的会话管理。此维度未发现显著风险。",
+          "code_path": "services/key_agree_sdk/"
+        },
+        "Tampering": {
+          "risk": "低",
+          "summary": "密钥协商SDK，会话密钥协商的会话管理。此维度未发现显著风险。",
+          "code_path": "services/key_agree_sdk/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "密钥协商SDK，会话密钥协商的会话管理。此维度未发现显著风险。",
+          "code_path": "services/key_agree_sdk/"
+        },
+        "Information Disclosure": {
+          "risk": "低",
+          "summary": "密钥协商SDK，会话密钥协商的会话管理。此维度未发现显著风险。",
+          "code_path": "services/key_agree_sdk/"
+        },
+        "Denial of Service": {
+          "risk": "低",
+          "summary": "密钥协商SDK，会话密钥协商的会话管理。此维度未发现显著风险。",
+          "code_path": "services/key_agree_sdk/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "密钥协商SDK，会话密钥协商的会话管理。此维度未发现显著风险。",
+          "code_path": "services/key_agree_sdk/"
+        }
+      }
+    },
+    "P8": {
+      "name": "Session Mgr",
+      "type": "processes",
+      "threats": [
+        {
+          "threat_id": "T-010",
+          "name": "File path constructed via sprintf_s — no parent dir validation",
+          "severity": "MEDIUM",
+          "stride": "Tampering",
+          "classification": "partial"
+        },
+        {
+          "threat_id": "T-014",
+          "name": "No audit trail for credential CRUD operations",
+          "severity": "LOW",
+          "stride": "Repudiation",
+          "classification": "design"
+        }
+      ],
+      "threat_count": 2,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "会话管理器，认证会话生命周期：创建、状态跟踪、超时与销毁。此维度未发现显著风险。",
+          "code_path": "services/session_manager/"
+        },
+        "Tampering": {
+          "risk": "低",
+          "summary": "会话管理器，认证会话生命周期：创建、状态跟踪、超时与销毁。此维度未发现显著风险。",
+          "code_path": "services/session_manager/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "会话管理器，认证会话生命周期：创建、状态跟踪、超时与销毁。此维度未发现显著风险。",
+          "code_path": "services/session_manager/"
+        },
+        "Information Disclosure": {
+          "risk": "低",
+          "summary": "会话管理器，认证会话生命周期：创建、状态跟踪、超时与销毁。此维度未发现显著风险。",
+          "code_path": "services/session_manager/"
+        },
+        "Denial of Service": {
+          "risk": "中等",
+          "summary": "全局会话槽位10个，无每来源限制。",
+          "code_path": "services/session_manager/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "会话管理器，认证会话生命周期：创建、状态跟踪、超时与销毁。此维度未发现显著风险。",
+          "code_path": "services/session_manager/"
+        }
+      }
+    },
+    "P12": {
+      "name": "Data Mgr",
+      "type": "processes",
+      "threats": [
+        {
+          "threat_id": "T-002",
+          "name": "Seed value not zeroed before free in identity_group.c",
+          "severity": "MEDIUM",
+          "stride": "Information Disclosure",
+          "classification": "confirmed_code_defect"
+        },
+        {
+          "threat_id": "T-003",
+          "name": "Account-related group membership bypass",
+          "severity": "MEDIUM",
+          "stride": "Spoofing",
+          "classification": "confirmed_code_defect"
+        },
+        {
+          "threat_id": "T-015",
+          "name": "No transport-layer encryption for handshake metadata",
+          "severity": "LOW",
+          "stride": "Information Disclosure",
+          "classification": "design"
+        },
+        {
+          "threat_id": "T-018",
+          "name": "Session timeout not enforced — stale sessions accumulate",
+          "severity": "LOW",
+          "stride": "Denial of Service",
+          "classification": "design"
+        },
+        {
+          "threat_id": "T-019",
+          "name": "PIN code length treated as security strength (6 chars ≠ 6 bits)",
+          "severity": "LOW",
+          "stride": "Information Disclosure",
+          "classification": "false_positive"
+        }
+      ],
+      "threat_count": 5,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "数据持久层，群组和凭据的TLV编码存储、读取与查询。此维度未发现显著风险。",
+          "code_path": "services/data_manager/"
+        },
+        "Tampering": {
+          "risk": "高",
+          "summary": "群组/凭据数据明文TLV存储，无MAC或签名保护。",
+          "code_path": "services/data_manager/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "数据持久层，群组和凭据的TLV编码存储、读取与查询。此维度未发现显著风险。",
+          "code_path": "services/data_manager/"
+        },
+        "Information Disclosure": {
+          "risk": "高",
+          "summary": "信任凭据和群组数据明文存储，FS读取可泄露令牌和标识。",
+          "code_path": "services/data_manager/"
+        },
+        "Denial of Service": {
+          "risk": "低",
+          "summary": "数据持久层，群组和凭据的TLV编码存储、读取与查询。此维度未发现显著风险。",
+          "code_path": "services/data_manager/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "数据持久层，群组和凭据的TLV编码存储、读取与查询。此维度未发现显著风险。",
+          "code_path": "services/data_manager/"
+        }
+      }
+    },
+    "P15": {
+      "name": "Framework",
+      "type": "processes",
+      "threats": [
+        {
+          "threat_id": "T-009",
+          "name": "NULL dereference in session state machine on edge case",
+          "severity": "MEDIUM",
+          "stride": "Denial of Service",
+          "classification": "partial"
+        },
+        {
+          "threat_id": "T-012",
+          "name": "IPC permission check limited to UID-based access control",
+          "severity": "MEDIUM",
+          "stride": "Elevation of Privilege",
+          "classification": "partial"
+        }
+      ],
+      "threat_count": 2,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "中等",
+          "summary": "权限检查基于进程名白名单，若进程名可伪造存在绕过风险。",
+          "code_path": "services/frameworks/"
+        },
+        "Tampering": {
+          "risk": "低",
+          "summary": "框架层，权限检查、安全标签、任务管理、账户订阅等基础能力。此维度未发现显著风险。",
+          "code_path": "services/frameworks/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "框架层，权限检查、安全标签、任务管理、账户订阅等基础能力。此维度未发现显著风险。",
+          "code_path": "services/frameworks/"
+        },
+        "Information Disclosure": {
+          "risk": "低",
+          "summary": "框架层，权限检查、安全标签、任务管理、账户订阅等基础能力。此维度未发现显著风险。",
+          "code_path": "services/frameworks/"
+        },
+        "Denial of Service": {
+          "risk": "中等",
+          "summary": "任务队列hc_task_thread无容量检查。",
+          "code_path": "services/frameworks/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "框架层，权限检查、安全标签、任务管理、账户订阅等基础能力。此维度未发现显著风险。",
+          "code_path": "services/frameworks/"
+        }
+      }
+    },
+    "P16": {
+      "name": "Crypto Adapter",
+      "type": "processes",
+      "threats": [
+        {
+          "threat_id": "T-005",
+          "name": "Task queue has no capacity limit — unbounded growth",
+          "severity": "MEDIUM",
+          "stride": "Denial of Service",
+          "classification": "confirmed_code_defect"
+        },
+        {
+          "threat_id": "T-006",
+          "name": "Global session slots have no per-source limit — single source exhaustion",
+          "severity": "MEDIUM",
+          "stride": "Denial of Service",
+          "classification": "confirmed_code_defect"
+        }
+      ],
+      "threat_count": 2,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "密码学适配器，封装HUKS和mbedTLS的哈希/签名/验证/密钥协商。此维度未发现显著风险。",
+          "code_path": "deps_adapter/key_management_adapter/"
+        },
+        "Tampering": {
+          "risk": "中等",
+          "summary": "插件dlopen无签名验证。system分区只读提供部分保护。",
+          "code_path": "deps_adapter/key_management_adapter/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "密码学适配器，封装HUKS和mbedTLS的哈希/签名/验证/密钥协商。此维度未发现显著风险。",
+          "code_path": "deps_adapter/key_management_adapter/"
+        },
+        "Information Disclosure": {
+          "risk": "低",
+          "summary": "密码学适配器，封装HUKS和mbedTLS的哈希/签名/验证/密钥协商。此维度未发现显著风险。",
+          "code_path": "deps_adapter/key_management_adapter/"
+        },
+        "Denial of Service": {
+          "risk": "低",
+          "summary": "密码学适配器，封装HUKS和mbedTLS的哈希/签名/验证/密钥协商。此维度未发现显著风险。",
+          "code_path": "deps_adapter/key_management_adapter/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "密码学适配器，封装HUKS和mbedTLS的哈希/签名/验证/密钥协商。此维度未发现显著风险。",
+          "code_path": "deps_adapter/key_management_adapter/"
+        }
+      }
+    },
+    "P17": {
+      "name": "Plugin Mgr",
+      "type": "processes",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "。此维度未发现显著风险。",
+          "code_path": ""
+        },
+        "Tampering": {
+          "risk": "低",
+          "summary": "。此维度未发现显著风险。",
+          "code_path": ""
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "。此维度未发现显著风险。",
+          "code_path": ""
+        },
+        "Information Disclosure": {
+          "risk": "低",
+          "summary": "。此维度未发现显著风险。",
+          "code_path": ""
+        },
+        "Denial of Service": {
+          "risk": "低",
+          "summary": "。此维度未发现显著风险。",
+          "code_path": ""
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "。此维度未发现显著风险。",
+          "code_path": ""
+        }
+      }
+    }
+  },
+  "data_stores": {
+    "DS1": {
+      "name": "Group DB",
+      "type": "data_stores",
+      "threats": [
+        {
+          "threat_id": "T-018",
+          "name": "Session timeout not enforced — stale sessions accumulate",
+          "severity": "LOW",
+          "stride": "Denial of Service",
+          "classification": "design"
+        },
+        {
+          "threat_id": "T-019",
+          "name": "PIN code length treated as security strength (6 chars ≠ 6 bits)",
+          "severity": "LOW",
+          "stride": "Information Disclosure",
+          "classification": "false_positive"
+        }
+      ],
+      "threat_count": 2,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "群组数据存储，持久化信任群组条目、成员列表和元数据。此维度未发现显著风险。",
+          "code_path": "services/data_manager/group_data_manager/"
+        },
+        "Tampering": {
+          "risk": "高",
+          "summary": "群组数据明文TLV无完整性保护。",
+          "code_path": "services/data_manager/group_data_manager/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "群组数据存储，持久化信任群组条目、成员列表和元数据。此维度未发现显著风险。",
+          "code_path": "services/data_manager/group_data_manager/"
+        },
+        "Information Disclosure": {
+          "risk": "高",
+          "summary": "群组条目和成员列表明文存储，可泄露信任拓扑。",
+          "code_path": "services/data_manager/group_data_manager/"
+        },
+        "Denial of Service": {
+          "risk": "低",
+          "summary": "群组数据存储，持久化信任群组条目、成员列表和元数据。此维度未发现显著风险。",
+          "code_path": "services/data_manager/group_data_manager/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "群组数据存储，持久化信任群组条目、成员列表和元数据。此维度未发现显著风险。",
+          "code_path": "services/data_manager/group_data_manager/"
+        }
+      }
+    },
+    "DS2": {
+      "name": "Cred DB",
+      "type": "data_stores",
+      "threats": [
+        {
+          "threat_id": "T-018",
+          "name": "Session timeout not enforced — stale sessions accumulate",
+          "severity": "LOW",
+          "stride": "Denial of Service",
+          "classification": "design"
+        },
+        {
+          "threat_id": "T-019",
+          "name": "PIN code length treated as security strength (6 chars ≠ 6 bits)",
+          "severity": "LOW",
+          "stride": "Information Disclosure",
+          "classification": "false_positive"
+        }
+      ],
+      "threat_count": 2,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "凭据数据存储，持久化设备凭据、认证标识符和密钥引用。此维度未发现显著风险。",
+          "code_path": "services/data_manager/cred_data_manager/"
+        },
+        "Tampering": {
+          "risk": "高",
+          "summary": "凭据数据明文TLV无完整性保护。",
+          "code_path": "services/data_manager/cred_data_manager/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "凭据数据存储，持久化设备凭据、认证标识符和密钥引用。此维度未发现显著风险。",
+          "code_path": "services/data_manager/cred_data_manager/"
+        },
+        "Information Disclosure": {
+          "risk": "高",
+          "summary": "设备凭据和认证标识符明文存储。",
+          "code_path": "services/data_manager/cred_data_manager/"
+        },
+        "Denial of Service": {
+          "risk": "低",
+          "summary": "凭据数据存储，持久化设备凭据、认证标识符和密钥引用。此维度未发现显著风险。",
+          "code_path": "services/data_manager/cred_data_manager/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "凭据数据存储，持久化设备凭据、认证标识符和密钥引用。此维度未发现显著风险。",
+          "code_path": "services/data_manager/cred_data_manager/"
+        }
+      }
+    },
+    "DS3": {
+      "name": "Session Store",
+      "type": "data_stores",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {
+        "Spoofing": {
+          "risk": "低",
+          "summary": "会话缓存，内存维护活跃认证会话与状态。此维度未发现显著风险。",
+          "code_path": "services/session_manager/src/session/"
+        },
+        "Tampering": {
+          "risk": "低",
+          "summary": "会话缓存，内存维护活跃认证会话与状态。此维度未发现显著风险。",
+          "code_path": "services/session_manager/src/session/"
+        },
+        "Repudiation": {
+          "risk": "低",
+          "summary": "会话缓存，内存维护活跃认证会话与状态。此维度未发现显著风险。",
+          "code_path": "services/session_manager/src/session/"
+        },
+        "Information Disclosure": {
+          "risk": "低",
+          "summary": "会话缓存，内存维护活跃认证会话与状态。此维度未发现显著风险。",
+          "code_path": "services/session_manager/src/session/"
+        },
+        "Denial of Service": {
+          "risk": "低",
+          "summary": "会话缓存，内存维护活跃认证会话与状态。此维度未发现显著风险。",
+          "code_path": "services/session_manager/src/session/"
+        },
+        "Elevation of Privilege": {
+          "risk": "低",
+          "summary": "会话缓存，内存维护活跃认证会话与状态。此维度未发现显著风险。",
+          "code_path": "services/session_manager/src/session/"
+        }
+      }
+    }
+  },
+  "data_flows": {
+    "DF1": {
+      "name": "EE1→P1",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF2": {
+      "name": "P1→P2",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF3": {
+      "name": "P1→P3",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF4": {
+      "name": "P1→P4",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF5": {
+      "name": "P2→P12",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF6": {
+      "name": "P12→DS1",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF7": {
+      "name": "P12→DS2",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF8": {
+      "name": "P3→P5",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF9": {
+      "name": "P5→P8",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF10": {
+      "name": "P5→P6",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF11": {
+      "name": "P5→EE2",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF12": {
+      "name": "P5→P16",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF13": {
+      "name": "P4→P12",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF14": {
+      "name": "P16→EE3",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF15": {
+      "name": "P8→DS3",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF16": {
+      "name": "P5→EE4",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF17": {
+      "name": "P1→P15",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF18": {
+      "name": "P15→P17",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF19": {
+      "name": "P4→P5",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF20": {
+      "name": "P4→EE1",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "DF21": {
+      "name": "P1→EE1",
+      "type": "data_flows",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    }
+  },
+  "trust_boundaries": {
+    "TB1": {
+      "name": "IPC Trust Boundary",
+      "type": "trust_boundaries",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "TB2": {
+      "name": "Network Protocol Boundary",
+      "type": "trust_boundaries",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "TB3": {
+      "name": "Crypto Boundary",
+      "type": "trust_boundaries",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    },
+    "TB4": {
+      "name": "Storage Boundary",
+      "type": "trust_boundaries",
+      "threats": [],
+      "threat_count": 0,
+      "stride_analysis": {}
+    }
+  }
+}

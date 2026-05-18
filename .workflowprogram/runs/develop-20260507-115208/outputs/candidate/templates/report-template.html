@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STRIDE Security Audit — {{ meta.system_name }}</title>
+<style>
+  :root {
+    --critical: #dc3545; --high: #fd7e14; --medium: #ffc107; --low: #17a2b8;
+    --bg: #f8f9fa; --card-bg: #ffffff; --text: #212529; --border: #dee2e6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         background: var(--bg); color: var(--text); line-height: 1.6; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+  header { background: #1a1a2e; color: #fff; padding: 2rem; text-align: center; }
+  header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+  .meta { color: #aaa; font-size: 0.9rem; }
+  .card { background: var(--card-bg); border: 1px solid var(--border);
+          border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .severity-Critical { color: var(--critical); font-weight: bold; }
+  .severity-High { color: var(--high); font-weight: bold; }
+  .severity-Medium { color: var(--medium); font-weight: bold; }
+  .severity-Low { color: var(--low); font-weight: bold; }
+  .badge { display: inline-block; padding: 0.25em 0.6em; border-radius: 4px;
+           font-size: 0.85em; font-weight: 600; color: #fff; }
+  .badge-critical { background: var(--critical); }
+  .badge-high { background: var(--high); }
+  .badge-medium { background: var(--medium); color: #333; }
+  .badge-low { background: var(--low); }
+  .classification-VULN { border-left: 4px solid var(--critical); }
+  .classification-DESIGN { border-left: 4px solid var(--high); }
+  .classification-HARDENING { border-left: 4px solid var(--medium); }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border); }
+  th { background: #e9ecef; font-weight: 600; }
+  .mermaid { background: #fff; padding: 1rem; border-radius: 4px; overflow-x: auto; }
+  .provenance { font-size: 0.8rem; color: #6c757d; }
+  .section-nav { position: sticky; top: 0; background: #fff; z-index: 100;
+                 padding: 1rem; border-bottom: 2px solid var(--border); }
+  .section-nav a { margin-right: 1.5rem; color: #0d6efd; text-decoration: none; }
+  summary { cursor: pointer; padding: 0.5rem 0; }
+  @media print {
+    .section-nav { display: none; }
+    .card { break-inside: avoid; }
+  }
+</style>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+</script>
+</head>
+<body>
+<header>
+  <h1>STRIDE Security Audit Report</h1>
+  <div class="meta">
+    System: <strong>{{ meta.system_name }}</strong> |
+    Date: {{ meta.analysis_date }} |
+    Workflow: stride-security-audit v{{ meta.workflow_version }}
+  </div>
+</header>
+
+<nav class="section-nav">
+  <a href="#summary">Executive Summary</a>
+  <a href="#dfd">Data Flow Diagram</a>
+  <a href="#dashboard">Threat Dashboard</a>
+  <a href="#details">Vulnerability Details</a>
+  <a href="#poc">PoC Appendix</a>
+  <a href="#methodology">Methodology</a>
+</nav>
+
+<div class="container">
+
+<!-- Section 1: Executive Summary -->
+<section id="summary" class="card">
+  <h2>1. Executive Summary</h2>
+  <p>
+    Total threats identified: <strong>{{ executive_summary.total_threats }}</strong>
+  </p>
+  <p>
+    <span class="badge badge-critical">{{ executive_summary.severity_counts.Critical }} Critical</span>
+    <span class="badge badge-high">{{ executive_summary.severity_counts.High }} High</span>
+    <span class="badge badge-medium">{{ executive_summary.severity_counts.Medium }} Medium</span>
+    <span class="badge badge-low">{{ executive_summary.severity_counts.Low }} Low</span>
+  </p>
+  <p>Classification: VULN={{ executive_summary.classification_counts.VULN }},
+     DESIGN={{ executive_summary.classification_counts.DESIGN }},
+     HARDENING={{ executive_summary.classification_counts.HARDENING }},
+     FP={{ executive_summary.classification_counts.FP }},
+     OOS={{ executive_summary.classification_counts.OOS }}</p>
+
+  <h3>Top Critical Findings</h3>
+  <ul>
+    {% for finding in executive_summary.top_findings %}
+    <li>
+      <span class="severity-{{ finding.severity }}">{{ finding.severity }}</span>
+      — {{ finding.title }}
+    </li>
+    {% endfor %}
+  </ul>
+
+  <h3>Environment</h3>
+  <ul>
+    {% for tool, info in sast_tools_available.items() %}
+    <li>{{ tool }}: {{ "Available" if info.available else "Not available" }}</li>
+    {% endfor %}
+  </ul>
+</section>
+
+<!-- Section 2: Data Flow Diagram -->
+<section id="dfd" class="card">
+  <h2>2. Data Flow Diagram</h2>
+  <div class="mermaid">{{ dfd_mermaid }}</div>
+</section>
+
+<!-- Section 3: Threat Dashboard -->
+<section id="dashboard" class="card">
+  <h2>3. Threat Analysis Dashboard</h2>
+  <h3>Threats by STRIDE Dimension</h3>
+  <table>
+    <tr><th>Dimension</th><th>Count</th><th>Critical</th><th>High</th><th>Medium</th><th>Low</th></tr>
+    {% for dim in charts.dimension_data %}
+    <tr>
+      <td>{{ dim.name }}</td>
+      <td>{{ dim.total }}</td>
+      <td class="severity-Critical">{{ dim.critical }}</td>
+      <td class="severity-High">{{ dim.high }}</td>
+      <td class="severity-Medium">{{ dim.medium }}</td>
+      <td class="severity-Low">{{ dim.low }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</section>
+
+<!-- Section 4: Vulnerability Details -->
+<section id="details" class="card">
+  <h2>4. Vulnerability Details</h2>
+  {% for threat in threats %}
+  <details class="classification-{{ threat.classification | replace('[', '') | replace(']', '') }}" style="margin:1rem 0; padding:1rem; border-radius:4px;">
+    <summary>
+      <strong>{{ threat.id }}</strong>
+      <span class="severity-{{ threat.severity }}">[{{ threat.severity }}]</span>
+      <span class="badge badge-{{ threat.severity | lower }}">{{ threat.classification }}</span>
+      — {{ threat.title }}
+    </summary>
+    <div style="margin-top:1rem;">
+      <p><strong>STRIDE Dimension:</strong> {{ threat.stride_dimension }}</p>
+      <p><strong>DFD Element:</strong> {{ threat.dfd_element_type }} ({{ threat.dfd_element_ref }})</p>
+      <p><strong>Description:</strong> {{ threat.description }}</p>
+      <p><strong>Exploitability Score:</strong> {{ threat.exploitability_score }}/10</p>
+      <table>
+        <tr><th>Factor</th><th>Score</th><th>Weight</th></tr>
+        {% for axis, score in threat.score_breakdown.items() %}
+        <tr><td>{{ axis }}</td><td>{{ score }}</td><td>{{ "30%" if axis == "preconditions" else "25%" if axis in ["access_vector", "impact"] else "20%" }}</td></tr>
+        {% endfor %}
+      </table>
+      {% if threat.attack_patterns %}
+      <p><strong>Attack Patterns:</strong>
+        {% for ap in threat.attack_patterns %}
+        {{ ap.ref }} ({{ ap.name }}){% if not loop.last %}, {% endif %}
+        {% endfor %}
+      </p>
+      {% endif %}
+      {% if threat.sast_evidence %}
+      <p><strong>SAST Evidence:</strong> {{ threat.sast_evidence }}</p>
+      {% endif %}
+      <p><strong>Mitigation:</strong> {{ threat.mitigation }}</p>
+      {% if threat.poc_ref %}
+      <p><strong>PoC:</strong> <a href="{{ threat.poc_ref }}">{{ threat.poc_ref }}</a></p>
+      {% endif %}
+      <p class="provenance">Provenance: {{ threat.provenance }}</p>
+    </div>
+  </details>
+  {% endfor %}
+</section>
+
+<!-- Section 5: PoC Appendix -->
+<section id="poc" class="card">
+  <h2>5. PoC Appendix</h2>
+  {% for poc in poc_summary.items %}
+  <h3>{{ poc.threat_id }}</h3>
+  <p>Isolation: {{ poc.isolation_method }}</p>
+  <p>Status: {{ poc.status }}</p>
+  {% if poc.stdout %}<pre>{{ poc.stdout }}</pre>{% endif %}
+  {% endfor %}
+  {% if not poc_summary.items %}
+  <p>No PoC artifacts generated (no [VULN] threats requiring PoC).</p>
+  {% endif %}
+</section>
+
+<!-- Section 6: Methodology -->
+<section id="methodology" class="card">
+  <h2>6. Methodology</h2>
+  <p>{{ methodology.framework }}</p>
+  <p><strong>Analysis Pipeline:</strong> {{ methodology.pipeline }}</p>
+  <p><strong>Tools Used:</strong> {{ methodology.tools | join(", ") }}</p>
+  <p><strong>Limitations:</strong> {{ methodology.limitations }}</p>
+</section>
+
+</div>
+</body>
+</html>

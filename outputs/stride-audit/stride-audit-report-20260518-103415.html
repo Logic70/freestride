@@ -1,0 +1,2130 @@
+<!doctype html>
+<!-- FreeSTRIDE report-template v2.0 — interactive SVG DFD, no Mermaid CDN -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STRIDE 安全审计报告 - OpenHarmony device_auth</title>
+<style>
+:root {
+  color-scheme: light;
+  --ink: #17211b;
+  --muted: #65736b;
+  --quiet: #8b978f;
+  --paper: #fbf7ef;
+  --panel: #fffdf8;
+  --panel-strong: #f4ead8;
+  --line: #ded3c0;
+  --line-strong: #bfae91;
+  --green: #1f7a4d;
+  --green-soft: #dff1e5;
+  --red: #b7352d;
+  --red-soft: #fae1dc;
+  --amber: #b56b12;
+  --amber-soft: #f7e8c9;
+  --blue: #245f86;
+  --blue-soft: #dceaf2;
+  --violet: #7153a6;
+  --violet-soft: #e8e1f4;
+  --slate: #6d7372;
+  --slate-soft: #e9ece8;
+  --shadow: 0 24px 80px rgba(46, 36, 22, .12);
+  --mono: "Cascadia Code", "SFMono-Regular", "Fira Code", "JetBrains Mono", monospace;
+  --sans: "Source Han Sans SC", "Noto Sans CJK SC", "Microsoft YaHei UI", "PingFang SC", sans-serif;
+  --serif: "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 8% 2%, rgba(31,122,77,.13), transparent 24rem),
+    radial-gradient(circle at 92% 0%, rgba(181,107,18,.15), transparent 26rem),
+    linear-gradient(180deg, #f5ead7 0%, var(--paper) 42rem);
+  font-family: var(--sans);
+  line-height: 1.62;
+}
+a { color: inherit; }
+.shell { max-width: 1440px; margin: 0 auto; padding: 28px; }
+.hero {
+  display: grid;
+  grid-template-columns: 1.4fr .8fr;
+  gap: 24px;
+  min-height: 280px;
+  padding: 34px;
+  border: 1px solid rgba(23,33,27,.12);
+  border-radius: 30px;
+  background:
+    linear-gradient(135deg, rgba(255,253,248,.95), rgba(244,234,216,.86)),
+    repeating-linear-gradient(90deg, transparent, transparent 28px, rgba(23,33,27,.035) 29px);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  position: relative;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  right: -120px;
+  top: -140px;
+  width: 360px;
+  height: 360px;
+  border-radius: 999px;
+  border: 56px solid rgba(31,122,77,.08);
+}
+.eyebrow {
+  color: var(--green);
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+h1 {
+  margin: 14px 0 12px;
+  font-family: var(--serif);
+  font-size: clamp(34px, 4.6vw, 68px);
+  line-height: 1.02;
+  letter-spacing: -.045em;
+}
+.hero p { max-width: 820px; margin: 0; color: var(--muted); font-size: 16px; }
+.run-meta {
+  display: grid;
+  gap: 10px;
+  align-content: end;
+  position: relative;
+  z-index: 1;
+}
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 1px solid rgba(23,33,27,.1);
+  border-radius: 14px;
+  background: rgba(255,253,248,.72);
+  font-size: 13px;
+}
+.meta-row b { color: var(--ink); }
+.meta-row span { color: var(--muted); text-align: right; }
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  margin: 18px 0 24px;
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  border: 1px solid rgba(23,33,27,.1);
+  border-radius: 18px;
+  background: rgba(255,253,248,.84);
+  backdrop-filter: blur(18px);
+}
+.nav a {
+  flex: 0 0 auto;
+  padding: 9px 13px;
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 750;
+  text-decoration: none;
+}
+.nav a:hover { background: var(--panel-strong); color: var(--ink); }
+.grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.card {
+  border: 1px solid rgba(23,33,27,.12);
+  border-radius: 24px;
+  background: rgba(255,253,248,.9);
+  box-shadow: 0 10px 40px rgba(46,36,22,.07);
+}
+.pad { padding: 22px; }
+.metric {
+  min-height: 126px;
+  padding: 18px;
+  position: relative;
+  overflow: hidden;
+}
+.metric::after {
+  content: "";
+  position: absolute;
+  inset: auto -24px -38px auto;
+  width: 120px;
+  height: 120px;
+  border-radius: 100px;
+  background: var(--tint, var(--panel-strong));
+}
+.metric .label { color: var(--muted); font-size: 13px; font-weight: 750; }
+.metric .num { margin-top: 8px; font-size: 42px; line-height: 1; font-weight: 900; letter-spacing: -.06em; }
+.metric .hint { margin-top: 8px; color: var(--quiet); font-size: 12px; }
+.section {
+  margin-top: 22px;
+  padding: 24px;
+}
+.section-head {
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 18px;
+}
+.section h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 28px;
+  letter-spacing: -.025em;
+}
+.section-note { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 850;
+  white-space: nowrap;
+  background: var(--slate-soft);
+  color: var(--slate);
+}
+.pill.confirmed { background: var(--red-soft); color: var(--red); }
+.pill.confirmed_exploitable { background: var(--red); color: white; }
+.pill.confirmed_code_defect { background: var(--amber-soft); color: var(--amber); }
+.pill.partial { background: var(--amber-soft); color: var(--amber); }
+.pill.design { background: var(--violet-soft); color: var(--violet); }
+.pill.false_positive, .pill.fp { background: var(--green-soft); color: var(--green); }
+.pill.oos, .pill.out_of_scope { background: var(--slate-soft); color: var(--slate); }
+.pill.high, .pill.HIGH, .pill.High { background: var(--red-soft); color: var(--red); }
+.pill.medium, .pill.MEDIUM, .pill.Medium { background: var(--amber-soft); color: var(--amber); }
+.pill.low, .pill.LOW, .pill.Low { background: var(--blue-soft); color: var(--blue); }
+.pill.critical, .pill.CRITICAL, .pill.Critical { background: var(--red); color: white; }
+.audit-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+.audit-item {
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255,253,248,.72);
+}
+.audit-item b { display: block; margin-bottom: 4px; }
+.audit-item span { color: var(--muted); font-size: 13px; }
+.warn { border-color: rgba(181,107,18,.35); background: var(--amber-soft); }
+.pass { border-color: rgba(31,122,77,.28); background: var(--green-soft); }
+.fail { border-color: rgba(183,53,45,.3); background: var(--red-soft); }
+.layout-2 { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 18px; align-items: start; }
+.dfd-box {
+  min-height: 430px;
+  padding: 16px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255,253,248,.95), rgba(250,244,232,.78)),
+    linear-gradient(90deg, rgba(23,33,27,.035) 1px, transparent 1px),
+    linear-gradient(rgba(23,33,27,.035) 1px, transparent 1px);
+  background-size: auto, 28px 28px, 28px 28px;
+  overflow: auto;
+}
+.mermaid { min-width: 760px; }
+.dfd-clickable { cursor: pointer; }
+.dfd-clickable:hover { filter: brightness(0.88); }
+.dfd-edge-label { text-decoration: underline; text-decoration-style: dotted; }
+.dfd-side {
+  position: sticky;
+  top: 86px;
+  padding: 18px;
+  border-radius: 22px;
+  background: #17211b;
+  color: #f7f0e5;
+}
+.dfd-side h3 { margin: 0 0 8px; font-size: 16px; }
+.dfd-side p { margin: 0 0 12px; color: #d7cbbb; font-size: 13px; }
+.dfd-list { display: grid; gap: 8px; margin-top: 14px; }
+.dfd-chip {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 11px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.08);
+  font-size: 12px;
+}
+.finding-list { display: grid; gap: 12px; }
+.finding {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255,253,248,.86);
+  overflow: hidden;
+}
+.finding summary {
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: auto auto auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  list-style: none;
+}
+.finding summary::-webkit-details-marker { display: none; }
+.finding summary::after {
+  content: "展开";
+  color: var(--quiet);
+  font-size: 12px;
+}
+.finding[open] summary::after { content: "收起"; }
+.finding-title { min-width: 0; font-weight: 850; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.finding-body {
+  border-top: 1px solid var(--line);
+  padding: 16px;
+  background: rgba(255,253,248,.62);
+}
+.kv {
+  display: grid;
+  grid-template-columns: 150px minmax(0,1fr);
+  gap: 8px 14px;
+  margin: 0;
+  font-size: 13px;
+}
+.kv dt { color: var(--muted); font-weight: 850; }
+.kv dd { margin: 0; min-width: 0; word-break: break-word; }
+.evidence {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-left: 4px solid var(--green);
+  border-radius: 12px;
+  background: var(--green-soft);
+  color: #17482f;
+  font-size: 13px;
+}
+.counter {
+  border-left-color: var(--amber);
+  background: var(--amber-soft);
+  color: #5a3509;
+}
+.mono { font-family: var(--mono); font-size: 11px; }
+.code {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: rgba(23,33,27,.07);
+  border: 1px solid rgba(23,33,27,.1);
+  border-radius: 10px;
+  padding: 8px 10px;
+  overflow-x: auto;
+}
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th, td {
+  padding: 11px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+tr:hover td { background: rgba(244,234,216,.42); }
+.empty {
+  padding: 28px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 18px;
+  color: var(--muted);
+  text-align: center;
+}
+.footer {
+  margin: 28px 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+@media (max-width: 980px) {
+  .hero, .layout-2, .audit-strip { grid-template-columns: 1fr; }
+  .grid-4, .grid-3 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .dfd-side { position: static; }
+}
+@media (max-width: 620px) {
+  .shell { padding: 14px; }
+  .hero { padding: 24px; border-radius: 22px; }
+  .grid-4, .grid-3 { grid-template-columns: 1fr; }
+  .section { padding: 18px; }
+  .finding summary { grid-template-columns: auto auto 1fr; }
+  .finding-title { grid-column: 1 / -1; white-space: normal; }
+  .kv { grid-template-columns: 1fr; }
+}
+@media print {
+  body { background: white; }
+  .nav, .dfd-side { display: none; }
+  .card, .hero, .section { box-shadow: none; break-inside: avoid; }
+  .finding { break-inside: avoid; }
+}
+</style>
+<!-- DFD interaction is handled by inline SVG + vanilla JS below. No Mermaid CDN needed. -->
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="shell">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">STRIDE Audit Report</div>
+      <h1>OpenHarmony device_auth</h1>
+      <p>
+        面向工程验收的安全审计报告模板。重点展示结论可信度、证据等级、误报压制、
+        DFD 覆盖和 result-auditor 门禁状态，避免把设计风险、模拟 PoC 和真实可利用漏洞混在一起。
+      </p>
+    </div>
+    <div class="run-meta">
+      <div class="meta-row"><b>工作流版本</b><span>0.5.0</span></div>
+      <div class="meta-row"><b>分析时间</b><span>2026-05-18T10:33:46.470496</span></div>
+      <div class="meta-row"><b>攻击者模型</b><span>mobile_device_remote_attacker</span></div>
+      <div class="meta-row"><b>目标路径</b><span>OpenHarmony device_auth</span></div>
+    </div>
+  </header>
+
+  <nav class="nav">
+    <a href="#overview">概览</a>
+    <a href="#quality">质量门禁</a>
+    <a href="#dfd">DFD</a>
+    <a href="#confirmed">确认漏洞</a>
+    <a href="#candidate">候选发现</a>
+    <a href="#design">设计建议</a>
+    <a href="#fp">误报</a>
+    <a href="#poc">PoC</a>
+    <a href="#method">方法与限制</a>
+  </nav>
+
+  <section id="overview" class="grid-4">
+    <div class="card metric" style="--tint:var(--slate-soft)"><div class="label">总发现</div><div class="num">25</div><div class="hint">canonical threat list</div></div>
+<div class="card metric" style="--tint:var(--red-soft)"><div class="label">确认漏洞</div><div class="num">14</div><div class="hint">通过门禁后保留</div></div>
+<div class="card metric" style="--tint:var(--amber-soft)"><div class="label">候选发现</div><div class="num">0</div><div class="hint">需补证据或降级</div></div>
+<div class="card metric" style="--tint:var(--violet-soft)"><div class="label">设计建议</div><div class="num">7</div><div class="hint">不直接等同漏洞</div></div>
+  </section>
+
+  <section class="section card">
+    <div class="section-head">
+      <div>
+        <h2>严重度与结论分布</h2>
+        <p class="section-note">先看整体风险轮廓，再进入单项证据。</p>
+      </div>
+    </div>
+    <div class="grid-4">
+      <div class="audit-item"><b>Critical</b><span>1</span></div>
+      <div class="audit-item"><b>High</b><span>5</span></div>
+      <div class="audit-item"><b>Medium</b><span>19</span></div>
+      <div class="audit-item"><b>Low</b><span>0</span></div>
+    </div>
+    
+    <div class="table-wrap" style="margin-top:18px">
+      <table>
+        <thead><tr><th>优先级</th><th>发现</th><th>严重度</th><th>分类</th></tr></thead>
+        <tbody>
+        
+        <tr>
+          <td>1</td>
+          <td>IPC appId 无 UID 绑定导致调用方身份欺诈</td>
+          <td><span class="pill medium">MEDIUM</span></td>
+          <td><span class="pill confirmed_code_defect">confirmed_code_defect</span></td>
+        </tr>
+        
+        <tr>
+          <td>2</td>
+          <td>回调 Stub 索引复用导致回调身份仿冒</td>
+          <td><span class="pill medium">MEDIUM</span></td>
+          <td><span class="pill confirmed_code_defect">confirmed_code_defect</span></td>
+        </tr>
+        
+        <tr>
+          <td>3</td>
+          <td>osAccountId 参数伪造绕过账户隔离访问跨账户群组/凭据</td>
+          <td><span class="pill medium">MEDIUM</span></td>
+          <td><span class="pill confirmed_code_defect">confirmed_code_defect</span></td>
+        </tr>
+        
+        <tr>
+          <td>4</td>
+          <td>SoftBus JSON 认证协议消息缺乏完整性保护可被篡改</td>
+          <td><span class="pill medium">MEDIUM</span></td>
+          <td><span class="pill confirmed_code_defect">confirmed_code_defect</span></td>
+        </tr>
+        
+        <tr>
+          <td>5</td>
+          <td>HUKS 密钥别名可被恶意构造操纵密钥操作目标</td>
+          <td><span class="pill medium">MEDIUM</span></td>
+          <td><span class="pill confirmed_code_defect">confirmed_code_defect</span></td>
+        </tr>
+        
+        <tr>
+          <td>6</td>
+          <td>会话密钥通过 IPC 回调明文回传导致密钥泄露</td>
+          <td><span class="pill medium">MEDIUM</span></td>
+          <td><span class="pill confirmed_code_defect">confirmed_code_defect</span></td>
+        </tr>
+        
+        <tr>
+          <td>7</td>
+          <td>onTransmit 回调泄露完整认证协议消息</td>
+          <td><span class="pill medium">MEDIUM</span></td>
+          <td><span class="pill confirmed_code_defect">confirmed_code_defect</span></td>
+        </tr>
+        
+        <tr>
+          <td>8</td>
+          <td>PIN 码暴力破解无速率限制和账户锁定机制</td>
+          <td><span class="pill medium">MEDIUM</span></td>
+          <td><span class="pill confirmed_code_defect">confirmed_code_defect</span></td>
+        </tr>
+        
+        </tbody>
+      </table>
+    </div>
+    
+  </section>
+
+  <section id="quality" class="section card">
+    <div class="section-head">
+      <div>
+        <h2>质量门禁</h2>
+        <p class="section-note">报告可信度来自 result-auditor、语义一致性、PoC 分级，而不是模型口头声明。</p>
+      </div>
+      <span class="pill fail">FAIL</span>
+    </div>
+    <div class="audit-strip">
+      <div class="audit-item pass">
+        <b>Hard Fail</b>
+        <span>0 项</span>
+      </div>
+      <div class="audit-item pass">
+        <b>Soft Warn</b>
+        <span>0 项</span>
+      </div>
+      <div class="audit-item pass">
+        <b>Must-Detect</b>
+        <span>
+          
+          1 covered /
+          6 missed
+          
+        </span>
+      </div>
+    </div>
+    
+    
+    
+  </section>
+
+  <section id="dfd" class="section card">
+    <div class="section-head">
+      <div>
+        <h2>数据流图</h2>
+        <p class="section-note">点击 DFD 元素查看 STRIDE 六维安全分析。蓝框=外部实体, 橙圆=处理过程, 绿开放线=存储, 红虚线=IPC信任边界。</p>
+      </div>
+    </div>
+    <div class="layout-2">
+      <div class="dfd-box" id="dfd-svg-container" style="min-height:600px;display:flex;align-items:center;justify-content:center">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1300 850" width="100%" height="100%">
+<defs>
+  <marker id="arw" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#868e96"/>
+  </marker>
+</defs>
+<rect width="1300" height="850" fill="#f8f9fa" rx="8"/>
+<rect x="30" y="40" width="720" height="790" fill="none" stroke="#dc3545" stroke-width="2" stroke-dasharray="8,4" rx="12"/><text x="44" y="60" font-size="12" fill="#dc3545" font-weight="bold">IPC 信任边界</text>
+<line x1="210.0" y1="100.1" x2="380.1" y2="110.9" stroke="transparent" stroke-width="14" id="dfd-DF_EE1_P1" data-eid="DF_EE1_P1" data-name="EE1→P1" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>EE1→P1: IPC API</title></line>
+<line x1="210.0" y1="100.1" x2="380.1" y2="110.9" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="295" y="100" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_EE1_P1-lbl" data-eid="DF_EE1_P1" data-name="EE1→P1" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">IPC API</text>
+<line x1="405.1" y1="166.3" x2="338.8" y2="251.6" stroke="transparent" stroke-width="14" id="dfd-DF_P1_P2" data-eid="DF_P1_P2" data-name="P1→P2" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>P1→P2: Group</title></line>
+<line x1="405.1" y1="166.3" x2="338.8" y2="251.6" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="372" y="204" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_P1_P2-lbl" data-eid="DF_P1_P2" data-name="P1→P2" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">Group</text>
+<line x1="421.9" y1="175.8" x2="274.5" y2="563.6" stroke="transparent" stroke-width="14" id="dfd-DF_P1_P3" data-eid="DF_P1_P3" data-name="P1→P3" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>P1→P3: Auth</title></line>
+<line x1="421.9" y1="175.8" x2="274.5" y2="563.6" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="348" y="365" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_P1_P3-lbl" data-eid="DF_P1_P3" data-name="P1→P3" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">Auth</text>
+<line x1="457.1" y1="178.9" x2="508.8" y2="451.1" stroke="transparent" stroke-width="14" id="dfd-DF_P1_P4" data-eid="DF_P1_P4" data-name="P1→P4" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>P1→P4: Identity</title></line>
+<line x1="457.1" y1="178.9" x2="508.8" y2="451.1" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="483" y="310" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_P1_P4-lbl" data-eid="DF_P1_P4" data-name="P1→P4" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">Identity</text>
+<line x1="250.0" y1="293.1" x2="210.0" y2="291.7" stroke="transparent" stroke-width="14" id="dfd-DF_P2_P12" data-eid="DF_P2_P12" data-name="P2→P12" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>P2→P12: Persist</title></line>
+<line x1="250.0" y1="293.1" x2="210.0" y2="291.7" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="230" y="287" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_P2_P12-lbl" data-eid="DF_P2_P12" data-name="P2→P12" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">Persist</text>
+<line x1="168.2" y1="339.3" x2="225.0" y2="680.0" stroke="transparent" stroke-width="14" id="dfd-DF_P12_DS1" data-eid="DF_P12_DS1" data-name="P12→DS1" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>P12→DS1: R/W</title></line>
+<line x1="168.2" y1="339.3" x2="225.0" y2="680.0" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="197" y="505" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_P12_DS1-lbl" data-eid="DF_P12_DS1" data-name="P12→DS1" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">R/W</text>
+<line x1="192.9" y1="327.6" x2="483.8" y2="660.0" stroke="transparent" stroke-width="14" id="dfd-DF_P12_DS2" data-eid="DF_P12_DS2" data-name="P12→DS2" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>P12→DS2: R/W</title></line>
+<line x1="192.9" y1="327.6" x2="483.8" y2="660.0" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="338" y="489" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_P12_DS2-lbl" data-eid="DF_P12_DS2" data-name="P12→DS2" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">R/W</text>
+<line x1="296.1" y1="578.4" x2="575.2" y2="329.9" stroke="transparent" stroke-width="14" id="dfd-DF_P3_P5" data-eid="DF_P3_P5" data-name="P3→P5" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>P3→P5: Protocol</title></line>
+<line x1="296.1" y1="578.4" x2="575.2" y2="329.9" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="436" y="449" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_P3_P5-lbl" data-eid="DF_P3_P5" data-name="P3→P5" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">Protocol</text>
+<line x1="676.4" y1="269.6" x2="1090.8" y2="120.0" stroke="transparent" stroke-width="14" id="dfd-DF_P5_EE2" data-eid="DF_P5_EE2" data-name="P5→EE2" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>P5→EE2: Network</title></line>
+<line x1="676.4" y1="269.6" x2="1090.8" y2="120.0" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="884" y="190" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_P5_EE2-lbl" data-eid="DF_P5_EE2" data-name="P5→EE2" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">Network</text>
+<line x1="677.7" y1="306.5" x2="772.3" y2="333.5" stroke="transparent" stroke-width="14" id="dfd-DF_P5_P16" data-eid="DF_P5_P16" data-name="P5→P16" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>P5→P16: Crypto</title></line>
+<line x1="677.7" y1="306.5" x2="772.3" y2="333.5" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="725" y="315" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_P5_P16-lbl" data-eid="DF_P5_P16" data-name="P5→P16" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">Crypto</text>
+<line x1="889.8" y1="354.5" x2="1080.0" y2="368.9" stroke="transparent" stroke-width="14" id="dfd-DF_P16_EE3" data-eid="DF_P16_EE3" data-name="P16→EE3" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>P16→EE3: HUKS</title></line>
+<line x1="889.8" y1="354.5" x2="1080.0" y2="368.9" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="985" y="357" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_P16_EE3-lbl" data-eid="DF_P16_EE3" data-name="P16→EE3" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">HUKS</text>
+<line x1="564.4" y1="312.5" x2="196.4" y2="461.3" stroke="transparent" stroke-width="14" id="dfd-DF_P5_P8" data-eid="DF_P5_P8" data-name="P5→P8" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>P5→P8: SessKey</title></line>
+<line x1="564.4" y1="312.5" x2="196.4" y2="461.3" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="380" y="382" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_P5_P8-lbl" data-eid="DF_P5_P8" data-name="P5→P8" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">SessKey</text>
+<line x1="492.4" y1="159.4" x2="1133.3" y2="760.0" stroke="transparent" stroke-width="14" id="dfd-DF_P1_EE5" data-eid="DF_P1_EE5" data-name="P1→EE5" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>P1→EE5: Callback</title></line>
+<line x1="492.4" y1="159.4" x2="1133.3" y2="760.0" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="813" y="455" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_P1_EE5-lbl" data-eid="DF_P1_EE5" data-name="P1→EE5" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">Callback</text>
+<line x1="510.0" y1="116.5" x2="600.0" y2="118.6" stroke="transparent" stroke-width="14" id="dfd-DF_P1_P15" data-eid="DF_P1_P15" data-name="P1→P15" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>P1→P15: Perm</title></line>
+<line x1="510.0" y1="116.5" x2="600.0" y2="118.6" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="555" y="113" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_P1_P15-lbl" data-eid="DF_P1_P15" data-name="P1→P15" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">Perm</text>
+<line x1="660.4" y1="334.4" x2="788.0" y2="474.3" stroke="transparent" stroke-width="14" id="dfd-DF_P5_P6" data-eid="DF_P5_P6" data-name="P5→P6" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>P5→P6: KeyAgree</title></line>
+<line x1="660.4" y1="334.4" x2="788.0" y2="474.3" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="724" y="399" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_P5_P6-lbl" data-eid="DF_P5_P6" data-name="P5→P6" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">KeyAgree</text>
+<line x1="196.8" y1="497.6" x2="640.0" y2="663.8" stroke="transparent" stroke-width="14" id="dfd-DF_P8_DS3" data-eid="DF_P8_DS3" data-name="P8→DS3" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable"><title>P8→DS3: Session</title></line>
+<line x1="196.8" y1="497.6" x2="640.0" y2="663.8" stroke="#adb5bd" stroke-width="2" marker-end="url(#arw)" pointer-events="none"/>
+<text x="418" y="576" font-size="9" fill="#0d6efd" text-anchor="middle" id="dfd-DF_P8_DS3-lbl" data-eid="DF_P8_DS3" data-name="P8→DS3" data-type="data_flows" data-threats="[]" data-analysis="&#123;&#125;" class="dfd-clickable dfd-edge-label">Session</text>
+<rect x="50" y="70" width="160" height="50" rx="6" fill="#cfe2ff" stroke="#0d6efd" stroke-width="2" id="dfd-EE1" data-eid="EE1" data-name="Normal App Process (Client App)" data-desc="IPC调用方，通过OHOS IPC调用设备认证服务API" data-type="external_entities" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;IPC调用方，通过OHOS IPC调用设备认证服务API。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;interfaces/inner_api/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;IPC调用方，通过OHOS IPC调用设备认证服务API。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;interfaces/inner_api/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;IPC调用方，通过OHOS IPC调用设备认证服务API。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;interfaces/inner_api/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;IPC调用方，通过OHOS IPC调用设备认证服务API。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;interfaces/inner_api/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;IPC调用方，通过OHOS IPC调用设备认证服务API。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;interfaces/inner_api/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;IPC调用方，通过OHOS IPC调用设备认证服务API。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;interfaces/inner_api/&quot;}}" class="dfd-clickable"><title>Normal App Process (Client App) — 0 威胁</title></rect>
+<text x="130" y="92" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Normal App Process</text>
+<text x="130" y="106" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">(Client App)</text>
+<rect x="1080" y="760" width="160" height="50" rx="6" fill="#cfe2ff" stroke="#0d6efd" stroke-width="2" id="dfd-EE5" data-eid="EE5" data-name="DSoftBus Transport" data-desc="分布式软总线，消费设备认证会话密钥建立加密通道" data-type="external_entities" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;分布式软总线，消费设备认证会话密钥建立加密通道。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;interfaces/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;分布式软总线，消费设备认证会话密钥建立加密通道。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;interfaces/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;分布式软总线，消费设备认证会话密钥建立加密通道。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;interfaces/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;分布式软总线，消费设备认证会话密钥建立加密通道。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;interfaces/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;分布式软总线，消费设备认证会话密钥建立加密通道。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;interfaces/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;分布式软总线，消费设备认证会话密钥建立加密通道。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;interfaces/&quot;}}" class="dfd-clickable"><title>DSoftBus Transport — 0 威胁</title></rect>
+<text x="1160" y="782" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">DSoftBus</text>
+<text x="1160" y="796" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Transport</text>
+<rect x="1080" y="70" width="160" height="50" rx="6" fill="#cfe2ff" stroke="#0d6efd" stroke-width="2" id="dfd-EE2" data-eid="EE2" data-name="Remote Peer Device" data-desc="远程对等OHOS设备，通过分布式软总线进行PAKE/ISO协议通信" data-type="external_entities" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;远程对等OHOS设备，通过分布式软总线进行PAKE/ISO协议通信。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/protocol/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;远程对等OHOS设备，通过分布式软总线进行PAKE/ISO协议通信。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/protocol/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;远程对等OHOS设备，通过分布式软总线进行PAKE/ISO协议通信。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/protocol/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;远程对等OHOS设备，通过分布式软总线进行PAKE/ISO协议通信。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/protocol/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;远程对等OHOS设备，通过分布式软总线进行PAKE/ISO协议通信。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/protocol/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;远程对等OHOS设备，通过分布式软总线进行PAKE/ISO协议通信。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/protocol/&quot;}}" class="dfd-clickable"><title>Remote Peer Device — 0 威胁</title></rect>
+<text x="1160" y="92" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Remote Peer</text>
+<text x="1160" y="106" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Device</text>
+<rect x="1080" y="350" width="160" height="50" rx="6" fill="#cfe2ff" stroke="#0d6efd" stroke-width="2" id="dfd-EE3" data-eid="EE3" data-name="HUKS (Hardware Unique Key Store)" data-desc="HUKS密钥管理，提供硬件支持的密钥生成、存储和密码学运算" data-type="external_entities" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;HUKS密钥管理，提供硬件支持的密钥生成、存储和密码学运算。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;deps_adapter/key_management_adapter/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;HUKS密钥管理，提供硬件支持的密钥生成、存储和密码学运算。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;deps_adapter/key_management_adapter/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;HUKS密钥管理，提供硬件支持的密钥生成、存储和密码学运算。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;deps_adapter/key_management_adapter/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;HUKS密钥管理，提供硬件支持的密钥生成、存储和密码学运算。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;deps_adapter/key_management_adapter/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;HUKS密钥管理，提供硬件支持的密钥生成、存储和密码学运算。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;deps_adapter/key_management_adapter/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;HUKS密钥管理，提供硬件支持的密钥生成、存储和密码学运算。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;deps_adapter/key_management_adapter/&quot;}}" class="dfd-clickable"><title>HUKS (Hardware Unique Key Store) — 0 威胁</title></rect>
+<text x="1160" y="372" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">HUKS (Hardware</text>
+<text x="1160" y="386" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Unique Key Store)</text>
+<ellipse cx="445" cy="115" rx="65" ry="65" fill="#fff3cd" stroke="#fd7e14" stroke-width="2" id="dfd-P1" data-eid="P1" data-name="System Ability Entry (SA 4701)" data-desc="系统能力入口，IPC请求分发、任务调度、事件与进程生命周期管理" data-type="processes" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;中等&quot;, &quot;summary&quot;: &quot;IPC入口依赖进程名白名单+AccessTokenKit验证。若伪造成功可冒充合法调用方。&quot;, &quot;code_path&quot;: &quot;services/sa/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;系统能力入口，IPC请求分发、任务调度、事件与进程生命周期管理。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/sa/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;系统能力入口，IPC请求分发、任务调度、事件与进程生命周期管理。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/sa/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;中等&quot;, &quot;summary&quot;: &quot;PRINT_SENSITIVE_DATA输出UDID片段，会话密钥经IPC回传。&quot;, &quot;code_path&quot;: &quot;services/sa/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;高&quot;, &quot;summary&quot;: &quot;任务队列无上限(PushTask)，临界计数器无下界保护。&quot;, &quot;code_path&quot;: &quot;services/sa/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;系统能力入口，IPC请求分发、任务调度、事件与进程生命周期管理。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/sa/&quot;}}" class="dfd-clickable"><title>System Ability Entry (SA 4701) — 0 威胁</title></ellipse>
+<text x="445" y="112" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">System Ability</text>
+<text x="445" y="126" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Entry (SA 4701)</text>
+<ellipse cx="660" cy="120" rx="60" ry="60" fill="#fff3cd" stroke="#fd7e14" stroke-width="2" id="dfd-P15" data-eid="P15" data-name="Framework Layer" data-desc="框架层，权限检查、安全标签、任务管理、账户订阅等基础能力" data-type="processes" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;中等&quot;, &quot;summary&quot;: &quot;权限检查基于进程名白名单，若进程名可伪造存在绕过风险。&quot;, &quot;code_path&quot;: &quot;services/frameworks/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;框架层，权限检查、安全标签、任务管理、账户订阅等基础能力。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/frameworks/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;框架层，权限检查、安全标签、任务管理、账户订阅等基础能力。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/frameworks/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;框架层，权限检查、安全标签、任务管理、账户订阅等基础能力。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/frameworks/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;中等&quot;, &quot;summary&quot;: &quot;任务队列hc_task_thread无容量检查。&quot;, &quot;code_path&quot;: &quot;services/frameworks/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;框架层，权限检查、安全标签、任务管理、账户订阅等基础能力。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/frameworks/&quot;}}" class="dfd-clickable"><title>Framework Layer — 0 威胁</title></ellipse>
+<text x="660" y="118" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Framework</text>
+<text x="660" y="130" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Layer</text>
+<ellipse cx="160" cy="290" rx="50" ry="50" fill="#fff3cd" stroke="#fd7e14" stroke-width="2" id="dfd-P12" data-eid="P12" data-name="Data Persistence Layer" data-desc="数据持久层，群组和凭据的TLV编码存储、读取与查询" data-type="processes" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;数据持久层，群组和凭据的TLV编码存储、读取与查询。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/data_manager/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;高&quot;, &quot;summary&quot;: &quot;群组/凭据数据明文TLV存储，无MAC或签名保护。&quot;, &quot;code_path&quot;: &quot;services/data_manager/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;数据持久层，群组和凭据的TLV编码存储、读取与查询。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/data_manager/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;高&quot;, &quot;summary&quot;: &quot;信任凭据和群组数据明文存储，FS读取可泄露令牌和标识。&quot;, &quot;code_path&quot;: &quot;services/data_manager/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;数据持久层，群组和凭据的TLV编码存储、读取与查询。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/data_manager/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;数据持久层，群组和凭据的TLV编码存储、读取与查询。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/data_manager/&quot;}}" class="dfd-clickable"><title>Data Persistence Layer — 0 威胁</title></ellipse>
+<text x="160" y="288" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Data</text>
+<text x="160" y="300" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Persistence Layer</text>
+<ellipse cx="305" cy="295" rx="55" ry="55" fill="#fff3cd" stroke="#fd7e14" stroke-width="2" id="dfd-P2" data-eid="P2" data-name="Group Manager" data-desc="信任群组CRUD：创建、删除、成员增删、查询与回调注册" data-type="processes" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;信任群组CRUD：创建、删除、成员增删、查询与回调注册。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/legacy/group_manager/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;信任群组CRUD：创建、删除、成员增删、查询与回调注册。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/legacy/group_manager/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;信任群组CRUD：创建、删除、成员增删、查询与回调注册。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/legacy/group_manager/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;信任群组CRUD：创建、删除、成员增删、查询与回调注册。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/legacy/group_manager/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;信任群组CRUD：创建、删除、成员增删、查询与回调注册。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/legacy/group_manager/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;信任群组CRUD：创建、删除、成员增删、查询与回调注册。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/legacy/group_manager/&quot;}}" class="dfd-clickable"><title>Group Manager — 0 威胁</title></ellipse>
+<text x="305" y="292" text-anchor="middle" font-size="10" font-weight="bold" fill="#495057" pointer-events="none">Group</text>
+<text x="305" y="306" text-anchor="middle" font-size="10" font-weight="bold" fill="#495057" pointer-events="none">Manager</text>
+<ellipse cx="620" cy="290" rx="60" ry="60" fill="#fff3cd" stroke="#fd7e14" stroke-width="2" id="dfd-P5" data-eid="P5" data-name="Protocol Engine" data-desc="协议引擎，PAKE v1/v2(EC-SPEKE/DL-SPEKE)与ISO认证协议实现" data-type="processes" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;协议引擎，PAKE v1/v2(EC-SPEKE/DL-SPEKE)与ISO认证协议实现。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/protocol/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;协议引擎，PAKE v1/v2(EC-SPEKE/DL-SPEKE)与ISO认证协议实现。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/protocol/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;协议引擎，PAKE v1/v2(EC-SPEKE/DL-SPEKE)与ISO认证协议实现。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/protocol/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;中等&quot;, &quot;summary&quot;: &quot;种子/PSK/nonce释放前未清零，残留于堆内存。&quot;, &quot;code_path&quot;: &quot;services/protocol/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;协议引擎，PAKE v1/v2(EC-SPEKE/DL-SPEKE)与ISO认证协议实现。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/protocol/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;协议引擎，PAKE v1/v2(EC-SPEKE/DL-SPEKE)与ISO认证协议实现。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/protocol/&quot;}}" class="dfd-clickable"><title>Protocol Engine — 0 威胁</title></ellipse>
+<text x="620" y="288" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Protocol</text>
+<text x="620" y="300" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Engine</text>
+<ellipse cx="830" cy="350" rx="60" ry="60" fill="#fff3cd" stroke="#fd7e14" stroke-width="2" id="dfd-P16" data-eid="P16" data-name="Crypto Adapter (HUKS/mbedTLS)" data-desc="密码学适配器，封装HUKS和mbedTLS的哈希/签名/验证/密钥协商" data-type="processes" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;密码学适配器，封装HUKS和mbedTLS的哈希/签名/验证/密钥协商。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;deps_adapter/key_management_adapter/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;中等&quot;, &quot;summary&quot;: &quot;插件dlopen无签名验证。system分区只读提供部分保护。&quot;, &quot;code_path&quot;: &quot;deps_adapter/key_management_adapter/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;密码学适配器，封装HUKS和mbedTLS的哈希/签名/验证/密钥协商。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;deps_adapter/key_management_adapter/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;密码学适配器，封装HUKS和mbedTLS的哈希/签名/验证/密钥协商。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;deps_adapter/key_management_adapter/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;密码学适配器，封装HUKS和mbedTLS的哈希/签名/验证/密钥协商。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;deps_adapter/key_management_adapter/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;密码学适配器，封装HUKS和mbedTLS的哈希/签名/验证/密钥协商。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;deps_adapter/key_management_adapter/&quot;}}" class="dfd-clickable"><title>Crypto Adapter (HUKS/mbedTLS) — 0 威胁</title></ellipse>
+<text x="830" y="348" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Crypto Adapter</text>
+<text x="830" y="360" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">(HUKS/mbedTLS)</text>
+<ellipse cx="150" cy="480" rx="50" ry="50" fill="#fff3cd" stroke="#fd7e14" stroke-width="2" id="dfd-P8" data-eid="P8" data-name="Session Manager" data-desc="会话管理器，认证会话生命周期：创建、状态跟踪、超时与销毁" data-type="processes" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;会话管理器，认证会话生命周期：创建、状态跟踪、超时与销毁。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/session_manager/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;会话管理器，认证会话生命周期：创建、状态跟踪、超时与销毁。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/session_manager/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;会话管理器，认证会话生命周期：创建、状态跟踪、超时与销毁。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/session_manager/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;会话管理器，认证会话生命周期：创建、状态跟踪、超时与销毁。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/session_manager/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;中等&quot;, &quot;summary&quot;: &quot;全局会话槽位10个，无每来源限制。&quot;, &quot;code_path&quot;: &quot;services/session_manager/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;会话管理器，认证会话生命周期：创建、状态跟踪、超时与销毁。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/session_manager/&quot;}}" class="dfd-clickable"><title>Session Manager — 0 威胁</title></ellipse>
+<text x="150" y="478" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Session</text>
+<text x="150" y="490" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Manager</text>
+<ellipse cx="255" cy="615" rx="55" ry="55" fill="#fff3cd" stroke="#fd7e14" stroke-width="2" id="dfd-P3" data-eid="P3" data-name="Group Auth Manager" data-desc="群组认证编排，设备间信任认证与会话密钥协商流程控制" data-type="processes" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;群组认证编排，设备间信任认证与会话密钥协商流程控制。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/legacy/group_auth/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;群组认证编排，设备间信任认证与会话密钥协商流程控制。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/legacy/group_auth/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;群组认证编排，设备间信任认证与会话密钥协商流程控制。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/legacy/group_auth/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;群组认证编排，设备间信任认证与会话密钥协商流程控制。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/legacy/group_auth/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;群组认证编排，设备间信任认证与会话密钥协商流程控制。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/legacy/group_auth/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;群组认证编排，设备间信任认证与会话密钥协商流程控制。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/legacy/group_auth/&quot;}}" class="dfd-clickable"><title>Group Auth Manager — 0 威胁</title></ellipse>
+<text x="255" y="612" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Group Auth</text>
+<text x="255" y="626" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Manager</text>
+<ellipse cx="520" cy="510" rx="60" ry="60" fill="#fff3cd" stroke="#fd7e14" stroke-width="2" id="dfd-P4" data-eid="P4" data-name="Identity Service" data-desc="身份服务，凭据操作、监听器分发和会话管理" data-type="processes" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;身份服务，凭据操作、监听器分发和会话管理。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/identity_service/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;身份服务，凭据操作、监听器分发和会话管理。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/identity_service/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;身份服务，凭据操作、监听器分发和会话管理。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/identity_service/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;身份服务，凭据操作、监听器分发和会话管理。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/identity_service/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;中等&quot;, &quot;summary&quot;: &quot;凭据监听器持锁调用回调，重入可致死锁。&quot;, &quot;code_path&quot;: &quot;services/identity_service/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;身份服务，凭据操作、监听器分发和会话管理。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/identity_service/&quot;}}" class="dfd-clickable"><title>Identity Service — 0 威胁</title></ellipse>
+<text x="520" y="508" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Identity</text>
+<text x="520" y="520" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Service</text>
+<ellipse cx="825" cy="515" rx="55" ry="55" fill="#fff3cd" stroke="#fd7e14" stroke-width="2" id="dfd-P6" data-eid="P6" data-name="Key Agreement SDK" data-desc="密钥协商SDK，会话密钥协商的会话管理" data-type="processes" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;密钥协商SDK，会话密钥协商的会话管理。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/key_agree_sdk/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;密钥协商SDK，会话密钥协商的会话管理。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/key_agree_sdk/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;密钥协商SDK，会话密钥协商的会话管理。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/key_agree_sdk/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;密钥协商SDK，会话密钥协商的会话管理。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/key_agree_sdk/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;密钥协商SDK，会话密钥协商的会话管理。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/key_agree_sdk/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;密钥协商SDK，会话密钥协商的会话管理。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/key_agree_sdk/&quot;}}" class="dfd-clickable"><title>Key Agreement SDK — 0 威胁</title></ellipse>
+<text x="825" y="512" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Key</text>
+<text x="825" y="526" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Agreement SDK</text>
+<line x1="168" y1="680" x2="292" y2="680" stroke="#198754" stroke-width="2" stroke-linecap="round"/><line x1="168" y1="740" x2="292" y2="740" stroke="#198754" stroke-width="2" stroke-linecap="round"/><rect x="160" y="680" width="140" height="60" fill="transparent" id="dfd-DS1" data-eid="DS1" data-name="Group Membership Database" data-desc="群组数据存储，持久化信任群组条目、成员列表和元数据" data-type="data_stores" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;群组数据存储，持久化信任群组条目、成员列表和元数据。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/data_manager/group_data_manager/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;高&quot;, &quot;summary&quot;: &quot;群组数据明文TLV无完整性保护。&quot;, &quot;code_path&quot;: &quot;services/data_manager/group_data_manager/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;群组数据存储，持久化信任群组条目、成员列表和元数据。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/data_manager/group_data_manager/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;高&quot;, &quot;summary&quot;: &quot;群组条目和成员列表明文存储，可泄露信任拓扑。&quot;, &quot;code_path&quot;: &quot;services/data_manager/group_data_manager/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;群组数据存储，持久化信任群组条目、成员列表和元数据。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/data_manager/group_data_manager/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;群组数据存储，持久化信任群组条目、成员列表和元数据。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/data_manager/group_data_manager/&quot;}}" class="dfd-clickable"><title>Group Membership Database — 0 威胁</title></rect>
+<text x="230" y="708" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Group</text>
+<text x="230" y="720" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Membership Database</text>
+<line x1="448" y1="660" x2="572" y2="660" stroke="#198754" stroke-width="2" stroke-linecap="round"/><line x1="448" y1="720" x2="572" y2="720" stroke="#198754" stroke-width="2" stroke-linecap="round"/><rect x="440" y="660" width="140" height="60" fill="transparent" id="dfd-DS2" data-eid="DS2" data-name="Credential Database" data-desc="凭据数据存储，持久化设备凭据、认证标识符和密钥引用" data-type="data_stores" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;凭据数据存储，持久化设备凭据、认证标识符和密钥引用。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/data_manager/cred_data_manager/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;高&quot;, &quot;summary&quot;: &quot;凭据数据明文TLV无完整性保护。&quot;, &quot;code_path&quot;: &quot;services/data_manager/cred_data_manager/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;凭据数据存储，持久化设备凭据、认证标识符和密钥引用。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/data_manager/cred_data_manager/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;高&quot;, &quot;summary&quot;: &quot;设备凭据和认证标识符明文存储。&quot;, &quot;code_path&quot;: &quot;services/data_manager/cred_data_manager/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;凭据数据存储，持久化设备凭据、认证标识符和密钥引用。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/data_manager/cred_data_manager/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;凭据数据存储，持久化设备凭据、认证标识符和密钥引用。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/data_manager/cred_data_manager/&quot;}}" class="dfd-clickable"><title>Credential Database — 0 威胁</title></rect>
+<text x="510" y="688" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Credential</text>
+<text x="510" y="700" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Database</text>
+<line x1="648" y1="660" x2="772" y2="660" stroke="#198754" stroke-width="2" stroke-linecap="round"/><line x1="648" y1="720" x2="772" y2="720" stroke="#198754" stroke-width="2" stroke-linecap="round"/><rect x="640" y="660" width="140" height="60" fill="transparent" id="dfd-DS3" data-eid="DS3" data-name="Session Cache (In-Memory)" data-desc="会话缓存，内存维护活跃认证会话与状态" data-type="data_stores" data-threats="[]" data-analysis="{&quot;Spoofing&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;会话缓存，内存维护活跃认证会话与状态。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/session_manager/src/session/&quot;}, &quot;Tampering&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;会话缓存，内存维护活跃认证会话与状态。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/session_manager/src/session/&quot;}, &quot;Repudiation&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;会话缓存，内存维护活跃认证会话与状态。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/session_manager/src/session/&quot;}, &quot;Information Disclosure&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;会话缓存，内存维护活跃认证会话与状态。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/session_manager/src/session/&quot;}, &quot;Denial of Service&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;会话缓存，内存维护活跃认证会话与状态。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/session_manager/src/session/&quot;}, &quot;Elevation of Privilege&quot;: {&quot;risk&quot;: &quot;低&quot;, &quot;summary&quot;: &quot;会话缓存，内存维护活跃认证会话与状态。此维度未发现显著风险。&quot;, &quot;code_path&quot;: &quot;services/session_manager/src/session/&quot;}}" class="dfd-clickable"><title>Session Cache (In-Memory) — 0 威胁</title></rect>
+<text x="710" y="688" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">Session Cache</text>
+<text x="710" y="700" text-anchor="middle" font-size="9" font-weight="bold" fill="#495057" pointer-events="none">(In-Memory)</text>
+</svg>
+        
+      </div>
+      <aside class="dfd-side" id="dfd-sidebar">
+        <h3 id="dfd-sidebar-title">元素统计</h3>
+        <p id="dfd-sidebar-hint">点击 DFD 元素查看 STRIDE 六维安全分析</p>
+        <div class="dfd-list" id="dfd-sidebar-threats" style="display:none"></div>
+        <div class="dfd-list" id="dfd-sidebar-chips" style="margin-top:14px">
+          <div class="dfd-chip"><span>外部实体</span><b>4</b></div>
+          <div class="dfd-chip"><span>处理过程</span><b>9</b></div>
+          <div class="dfd-chip"><span>数据存储</span><b>4</b></div>
+          <div class="dfd-chip"><span>数据流</span><b>16</b></div>
+          <div class="dfd-chip"><span>信任边界</span><b>7</b></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="confirmed" class="section card">
+  <div class="section-head">
+    <div>
+      <h2>确认漏洞</h2>
+      <p class="section-note">代码证据和调用路径足够强，但仍需看 PoC 级别区分机制成立和目标代码验证。</p>
+    </div>
+    <span class="pill confirmed">14</span>
+  </div>
+  <div class="finding-list">
+    
+    
+      
+      <details class="finding" id="threat-STRIDE-S-001">
+  <summary>
+    <b>STRIDE-S-001</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill confirmed_code_defect">confirmed_code_defect</span>
+    <span class="finding-title">IPC appId 无 UID 绑定导致调用方身份欺诈</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>spoofing</dd>
+
+      
+      
+<dt>源码位置</dt><dd>frameworks/src/ipc_sdk.c:63-76 (AddIpcCliCallbackCtx — 无UID绑定仅字符串比较)</dd>
+
+	      
+	      
+      
+      
+<dt>PoC 级别</dt><dd>static_evidence</dd>
+
+      
+<dt>确认层级</dt><dd>confirmed_code_defect</dd>
+
+      
+    </dl>
+    <p>IPC 客户端代理层在注册回调(regCallback/regDataChangeListener)时仅基于 appId 字符串进行身份标识，缺少与调用方 UID/PID/进程令牌的强制绑定。攻击者可在同一设备上安装恶意应用，伪造合法应用的 appId 字符串，通过 Binder IPC 调用 AddIpcCliCallbackCtx 注册伪造回调，从而拦截或篡改目标应用的认证流程回调。AddIpcCliCallbackCtx 函数(ipc_sdk.c:63-76)仅做字符串拷贝无权限绑定，IpcGmRegCallback(ipc_sdk.c:164-168)直接信任调用方传入的 appId 参数。攻击者也可伪造 osAccountId 参数访问其他账户数据。</p>
+    <div class="evidence"><b>源码证据</b><br>ipc_sdk.c:53-54 定义全局单例 g_ipcProxyCbList（IpcProxyCbInfo 结构体，仅存一份 appId+uintptr_t 映射），非哈希表或多槽位结构。ipc_sdk.c:63-76 AddIpcCliCallbackCtx 仅通过 memcpy_s 写入 appId 字符串和 cbInst，无 UID/PID/进程令牌绑定。ipc_sdk.c:137-162 IpcGmRegCallbackInner 将调用方声称的 appId 原样通过 IPC 发送至服务端并写入本地缓存。攻击者 normal_app 可安装恶意应用，调用 regCallback 时传入任意合法应用 appId 字符串，覆盖或抢占目标应用的回调映射。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      服务端 callback_manager.c:36-56 UpdateCallbackIfExist 使用 IsStrEqual 校验 appId 匹配，但 appId 本身由调用方在 IPC 参数中自由指定，服务端不验证 appId 与调用方真实身份的绑定关系。ipc_dev_auth_stub.cpp:277 CheckPermission 仅检查调用方是否拥有系统权限，不校验 appId 与包名一致性。服务端回调分发基于 requestId→callback 映射（ipc_adapt.cpp:787 GetIpcCallBackByReqId），非直接基于 appId，降低了部分利用风险，但客户端侧 g_ipcProxyCbList 单例问题仍存在。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: frameworks/src/ipc_sdk.c:63-76 (AddIpcCliCallbackCtx — 无UID绑定仅字符串比较)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 在 AddIpcCliCallbackCtx 中增加 UID/PID 绑定校验，通过 IPC skeleton 获取调用方实际 UID
+• 注册回调时验证调用方 AccessToken 与 appId 的权限一致性
+• 在 IPCCallbackStub 分发时校验 cbStub 的 remote_object 与注册时一致</div>
+    <div class="evidence counter"><b>降级原因</b><br>GATE-STATIC-EVIDENCE-HIGH: static_evidence cannot support HIGH severity; downgraded to MEDIUM per v0.5 rules</div>
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-S-002">
+  <summary>
+    <b>STRIDE-S-002</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill confirmed_code_defect">confirmed_code_defect</span>
+    <span class="finding-title">回调 Stub 索引复用导致回调身份仿冒</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>spoofing</dd>
+
+      
+      
+<dt>源码位置</dt><dd>frameworks/inc/standard/ipc_dev_auth_stub.h:30 (MAX_CBSTUB_SIZE=64 — 固定大小索引池)</dd>
+
+	      
+	      
+      
+      
+<dt>PoC 级别</dt><dd>static_evidence</dd>
+
+      
+<dt>确认层级</dt><dd>confirmed_code_defect</dd>
+
+      
+    </dl>
+    <p>IPC 回调 Stub 管理使用固定大小索引表(MAX_CBSTUB_SIZE=64)管理回调桩，当 Stub 被注销后其索引可能被新注册的 Stub 复用。由于回调分发仅通过 proxyId 索引查找 Stub 而缺少额外的身份二次验证，攻击者可先注册临时回调、记录其分配的索引、注销后立即注册恶意回调抢占同一索引槽位，使后续认证结果回调被导向恶意 Stub。标准模式(DeviceAuthStub)与轻量模式(LiteIPC Stub)均存在此问题。</p>
+    <div class="evidence"><b>源码证据</b><br>ipc_adapt.cpp:799-800 ActCallback 通过 node->proxyId 索引直接分发回调，无随机 nonce 或 appId 二次身份验证。MAX_CBSTUB_SIZE=64 固定大小索引池 (ipc_dev_auth_stub.h:30)。当 Stub 被注销后其索引槽位可被新注册 Stub 复用，回调分发仅依赖 proxyId 匹配。ipc_adapt.cpp:831-839 GaCbOnSessionKeyRetWithType 中通过 GetIpcCallBackByReqId 查找回调节点后直接使用 proxyId 分发，无额外身份校验。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      g_cbListLock (std::lock_guard) 保护了回调节点链表的并发访问，单次查找与分发在临界区内完成，降低了查找-分发窗口内的竞态，但索引复用问题本身无法被锁机制解决。proxyId 为非随机递增整数，可被攻击者预测。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: frameworks/inc/standard/ipc_dev_auth_stub.h:30 (MAX_CBSTUB_SIZE=64 — 固定大小索引池)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 为每个回调 Stub 生成随机 nonce 令牌，分发时要求双因素匹配(proxyId + nonce)
+• 使用引用计数防止活跃回调的 Stub 槽位被复用
+• 在 ActCallback 调用时增加 appId/UID 的二次交叉验证</div>
+    <div class="evidence counter"><b>降级原因</b><br>GATE-STATIC-EVIDENCE-HIGH: static_evidence cannot support HIGH severity; downgraded to MEDIUM per v0.5 rules</div>
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-S-003">
+  <summary>
+    <b>STRIDE-S-003</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill confirmed_code_defect">confirmed_code_defect</span>
+    <span class="finding-title">osAccountId 参数伪造绕过账户隔离访问跨账户群组/凭据</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>spoofing</dd>
+
+      
+      
+<dt>源码位置</dt><dd>frameworks/src/ipc_sdk.c:263-264 (PARAM_TYPE_OS_ACCOUNT_ID — 直接传递调用方声称的osAccountId)</dd>
+
+	      
+	      
+      
+      
+<dt>PoC 级别</dt><dd>static_evidence</dd>
+
+      
+<dt>确认层级</dt><dd>confirmed_code_defect</dd>
+
+      
+    </dl>
+    <p>所有 IPC API(IpcGmCreateGroup/IpcGmDeleteGroup/IpcGmProcessData等)将 osAccountId 作为调用方传入的 JSON 参数，通过 PARAM_TYPE_OS_ACCOUNT_ID 类型标签直接序列化到 IPC 消息中，服务端在 device_auth.c 入口处未验证调用方声称的 osAccountId 是否与其实际所属 OS 账户一致。攻击者安装恶意应用到账户 A，在 IPC 参数中填入账户 B 的 osAccountId，即可访问账户 B 的群组数据、凭据信息和认证会话。IsOsAccountUnlocked 仅检查账户锁定状态(device_auth.c:169/530)不验证调用方身份。</p>
+    <div class="evidence"><b>源码证据</b><br>device_auth.c:169 仅检查 osAccountId == INVALID_OS_ACCOUNT(-1)，不验证调用方声称的 osAccountId 是否与其实际归属一致。device_auth.c:253 将 osAccountId 默认初始化为 ANY_OS_ACCOUNT(-2)。credential_data_manager.c:498-520 GetCredInfoByOsAccountId 直接使用传入 osAccountId 在向量中线性搜索匹配，无调用方身份校验。ipc_sdk.c:263 将调用方传入的 osAccountId 以 PARAM_TYPE_OS_ACCOUNT_ID 标签直接序列化到 IPC 消息中。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      device_auth.c:173 CheckIsForegroundOsAccountId 检查 osAccountId 是否为前台活跃账户，阻止后台账户的访问请求，提供了一层防护。device_auth.c:177 IsOsAccountUnlocked 检查账户锁定状态。但这些检查仅验证账户状态，不验证调用方是否属于目标账户。CheckPermission (ipc_dev_auth_stub.cpp:277) 提供系统级权限校验，但权限粒度不区分具体 osAccountId。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: frameworks/src/ipc_sdk.c:263-264 (PARAM_TYPE_OS_ACCOUNT_ID — 直接传递调用方声称的osAccountId)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 在 SA 服务入口(deviceauth_sa.cpp OnRemoteRequest)从 IPC skeleton 提取调用方真实 osAccountId
+• 对比调用方声称的 osAccountId 与实际 osAccountId，不一致时拒绝请求
+• 对 DEFAULT_OS_ACCOUNT(0) 和 ANY_OS_ACCOUNT(-2) 特殊值进行白名单限制</div>
+    <div class="evidence counter"><b>降级原因</b><br>GATE-STATIC-EVIDENCE-HIGH: static_evidence cannot support HIGH severity; downgraded to MEDIUM per v0.5 rules</div>
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-T-001">
+  <summary>
+    <b>STRIDE-T-001</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill confirmed_code_defect">confirmed_code_defect</span>
+    <span class="finding-title">SoftBus JSON 认证协议消息缺乏完整性保护可被篡改</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>tampering</dd>
+
+      
+      
+<dt>源码位置</dt><dd>services/legacy/group_manager/src/channel_manager/soft_bus_channel/soft_bus_channel.c:92-127 (GenRecvData — JSON解析无完整性校验)</dd>
+
+	      
+	      
+      
+      
+<dt>PoC 级别</dt><dd>static_evidence</dd>
+
+      
+<dt>确认层级</dt><dd>confirmed_code_defect</dd>
+
+      
+    </dl>
+    <p>设备间通过 SoftBus 通道传输的认证协议消息(EC-SPEKE/DL-SPEKE/ISO)以 JSON 明文格式封装，在 GenRecvData(soft_bus_channel.c:92-127)中通过 CreateJsonFromString 解析接收到的字节流，仅进行 JSON 格式验证而缺乏消息认证码(MAC)或数字签名完整性保护。OnBytesReceivedCb(soft_bus_channel.c:162-176)接收回调也未进行任何完整性校验。攻击者可在网络层(MITM)拦截并篡改 JSON 字段，如修改 protocolType 强制降级协议、篡改 challenge/response 破坏认证协议状态机、注入额外字段操纵认证结果。</p>
+    <div class="evidence"><b>源码证据</b><br>soft_bus_channel.c:92-127 GenRecvData 中通过 CreateJsonFromString 解析接收到的字节流，仅进行 JSON 格式验证，无 HMAC/SHA256 完整性校验。soft_bus_channel.c:162-176 OnBytesReceivedCb 接收回调仅检查 dataLen > MAX_DATA_BUFFER_SIZE，无消息认证码验证。soft_bus_channel.c:211-221 SendSoftBusMsg 直接调用 SendBytes 发送原始数据，发送前未附加签名或 MAC。channel_manager.c:98 ProcessTransmitCallback 直接转发协议消息无完整性处理。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      认证协议层（EC-SPEKE/DL-SPEKE/ISO）本身提供了密码学保护（挑战-响应、密钥协商），应用层 JSON 消息即使被篡改，若协议层校验失败会导致认证失败——但攻击者仍可通过篡改 protocolType/groupType 等元数据进行降级攻击。MAX_DATA_BUFFER_SIZE 检查提供了基本输入验证，但不替代完整性保护。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: services/legacy/group_manager/src/channel_manager/soft_bus_channel/soft_bus_channel.c:92-127 (GenRecvData — JSON解析无完整性校验)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 在认证协议消息中添加 HMAC-SHA256 完整性保护，使用预共享密钥或协商密钥生成 MAC
+• 在 SendSoftBusMsg 发送前和 OnBytesReceivedCb 接收后各增加一次 HMAC 校验
+• 对关键 JSON 字段(protocolType/groupType/authForm/challenge)实施字段级签名</div>
+    <div class="evidence counter"><b>降级原因</b><br>GATE-STATIC-EVIDENCE-HIGH: static_evidence cannot support CRITICAL severity; downgraded to MEDIUM per v0.5 rules</div>
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-T-003">
+  <summary>
+    <b>STRIDE-T-003</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill confirmed_code_defect">confirmed_code_defect</span>
+    <span class="finding-title">HUKS 密钥别名可被恶意构造操纵密钥操作目标</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>tampering</dd>
+
+      
+      
+<dt>源码位置</dt><dd>deps_adapter/key_management_adapter/impl/src/huks_adapter.c:85-129 (CheckKeyExist — 使用原始keyAlias直接调用HUKS)</dd>
+
+	      
+	      
+      
+      
+<dt>PoC 级别</dt><dd>static_evidence</dd>
+
+      
+<dt>确认层级</dt><dd>confirmed_code_defect</dd>
+
+      
+    </dl>
+    <p>Crypto Adapter 通过 HUKS SDK API 执行密钥操作时，密钥别名(keyAlias)由上层协议引擎通过 Uint8Buff 传递，从认证协议 JSON 参数中解析构造。CheckKeyExist(huks_adapter.c:85-129)和 DeleteKey(huks_adapter.c:131-155)使用调用方传入的 keyAlias 直接调用 HksKeyExist/HksDeleteKey，未验证密钥别名格式合法性或与当前操作上下文的关联性。GenerateKeyPair(huks_adapter.c:679-700)中的 sharedKeyAliasBlob 由输入参数构造。攻击者可通过注入恶意构造的密钥别名指向 HUKS 中其他应用的密钥，实现跨应用密钥操作(共享密钥协商时写入攻击者可控的别名路径)。</p>
+    <div class="evidence"><b>源码证据</b><br>huks_adapter.c:85-129 CheckKeyExist 将调用方传入的 Uint8Buff keyAlias 转换为 HksBlob 后直接调用 HksKeyExist，无别名格式合法性校验。huks_adapter.c:131-155 DeleteKey 同样直接使用原始 keyAlias 调用 HksDeleteKey。huks_adapter.c:638-700 GenerateKeyPair 中 sharedKeyAliasBlob 由输入参数构造。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      密钥别名(keyAlias)由协议引擎层从认证参数中派生构造，非直接接受未过滤的外部输入。HUKS 层自身有别名格式限制和命名空间隔离。攻击者需同时控制协议参数中的多个字段（peerUdid + authId + 密钥协商参数）才能构造指向其他应用密钥的有效别名，利用链长。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: deps_adapter/key_management_adapter/impl/src/huks_adapter.c:85-129 (CheckKeyExist — 使用原始keyAlias直接调用HUKS)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 在 HUKS 适配层增加密钥别名格式校验，仅允许符合白名单格式的别名(如固定前缀+hash)
+• 使用 KDF 派生实际 HUKS 别名，使外部输入无法直接控制 HUKS 存储路径
+• 对密钥别名添加 HMAC 签名，验证别名由 SA 合法生成而非外部注入</div>
+    <div class="evidence counter"><b>降级原因</b><br>GATE-STATIC-EVIDENCE-HIGH: static_evidence cannot support HIGH severity; downgraded to MEDIUM per v0.5 rules</div>
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-I-001">
+  <summary>
+    <b>STRIDE-I-001</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill confirmed_code_defect">confirmed_code_defect</span>
+    <span class="finding-title">会话密钥通过 IPC 回调明文回传导致密钥泄露</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>information_disclosure</dd>
+
+      
+      
+<dt>源码位置</dt><dd>services/legacy/group_manager/src/callback_manager/callback_manager.c:112-122 (ProcessSessionKeyCallback — 直接传递原始sessionKey)</dd>
+
+	      
+	      
+      
+      
+<dt>PoC 级别</dt><dd>static_evidence</dd>
+
+      
+<dt>确认层级</dt><dd>confirmed_code_defect</dd>
+
+      
+    </dl>
+    <p>认证完成后生成的会话密钥通过 onSessionKeyReturned 回调通道回传给调用方应用。ProcessSessionKeyCallback(callback_manager.c:112-122)将 sessionKey 原始字节和 sessionKeyLen 直接通过 callback->onSessionKeyReturned 函数指针调用。在标准 IPC 适配层(ipc_adapt.cpp:838-839)，sessionKey 原始字节被放入 MessageParcel(PARAM_TYPE_SESS_KEY) 通过 Binder IPC 回传给客户端，传输过程未经过加密保护。攻击者注册恶意回调(参见 STRIDE-S-001)可拦截回传的 sessionKey，或通过 Android/Linux Binder 调试接口(trace)嗅探 IPC 传输的敏感数据。</p>
+    <div class="evidence"><b>源码证据</b><br>callback_manager.c:112-122 ProcessSessionKeyCallback 将 sessionKey 原始字节和 sessionKeyLen 直接通过 callback->onSessionKeyReturned 函数指针回调。ipc_adapt.cpp:838-839 GaCbOnSessionKeyRetWithType 将 sessKey 原始字节通过 EncodeCallData(dataParcel, PARAM_TYPE_SESS_KEY, sessKey, sessKeyLen) 放入 Binder MessageParcel，明文传输至客户端。ipc_adapt.cpp:844-845 ActCallback 将 sessionKey 数据通过 Binder IPC 回调通道分发给客户端。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      g_cbListLock (std::lock_guard) 保护回调节点访问，防止并发篡改。GetIpcCallBackByReqId 基于 requestId 查找对应回调，限定回调接收方为发起认证请求的应用——这意味着并非任意应用都能接收 sessionKey（需持有对应 requestId）。但 sessionKey 本身在 Binder IPC 通道中无端到端加密，具有 Binder 调试权限的进程可能嗅探。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: services/legacy/group_manager/src/callback_manager/callback_manager.c:112-122 (ProcessSessionKeyCallback — 直接传递原始sessionKey)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 在 IPC 回传 sessionKey 前使用调用方公钥加密(如 EC-IES)，确保只有合法调用方可解密
+• 为 sessionKey IPC 传输通道启用端到端加密(基于调用方-auth-id 的密钥派生)
+• 在 onSessionKeyReturned 分发前验证回调接收方身份与 appId/UID 绑定的合法性</div>
+    <div class="evidence counter"><b>降级原因</b><br>GATE-STATIC-EVIDENCE-HIGH: static_evidence cannot support CRITICAL severity; downgraded to MEDIUM per v0.5 rules</div>
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-I-005">
+  <summary>
+    <b>STRIDE-I-005</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill confirmed_code_defect">confirmed_code_defect</span>
+    <span class="finding-title">onTransmit 回调泄露完整认证协议消息</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>information_disclosure</dd>
+
+      
+      
+<dt>源码位置</dt><dd>services/legacy/group_manager/src/callback_manager/callback_manager.c:99-110 (ProcessTransmitCallback — 直接透传协议消息)</dd>
+
+	      
+	      
+      
+      
+<dt>PoC 级别</dt><dd>static_evidence</dd>
+
+      
+<dt>确认层级</dt><dd>confirmed_code_defect</dd>
+
+      
+    </dl>
+    <p>认证协议引擎在执行 EC-SPEKE/DL-SPEKE/ISO 协议时需要发送认证数据到对端设备。ProcessTransmitCallback(callback_manager.c:99-110)将协议消息(data)通过 callback->onTransmit 回传给调用方，由调用方通过 SoftBus 发送。这些协议消息(由 ConstructOutJson 构造，pake_task_common.c:22-63 和 iso_task_common.c 中类似函数)包含完整的协议负载(payload)，包括 challenge/response/authId/peerUserType 等敏感认证参数。任何注册了 onTransmit 回调的恶意应用均可拦截查看完整的认证交互内容。</p>
+    <div class="evidence"><b>源码证据</b><br>callback_manager.c:99-110 ProcessTransmitCallback 将协议消息 data 直接通过 callback->onTransmit 回传给调用方，无数据过滤或接收方身份验证。pake_task_common.c:22-63 ConstructOutJson 构造包含完整 challenge/response/authId 等敏感认证参数的 JSON 消息。ipc_adapt.cpp:792-806 GaCbOnTransmitWithType 将协议消息通过 Binder IPC 明文传输至客户端。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      callback_manager.c 中 ProcessTransmitCallback 接收的 callback 参数来自会话上下文（DevSession.callback），与特定 requestId 绑定。攻击者需先建立有效认证会话才能接收对应 onTransmit 回调，无法被动监听任意设备的认证流量。但注册 DeviceAuthCallback 后，攻击者可获取自身参与（或通过 requestId 覆盖参与）的认证会话的完整协议消息。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: services/legacy/group_manager/src/callback_manager/callback_manager.c:99-110 (ProcessTransmitCallback — 直接透传协议消息)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 验证 onTransmit 回调接收方 appId 与当前认证会话的发起方 appId 一致
+• 对通过 IPC 回传的 onTransmit 数据进行调用方公钥加密
+• 在 onTransmit 分发前检查回调注册来源的 UID 匹配性</div>
+    
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-D-001">
+  <summary>
+    <b>STRIDE-D-001</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill confirmed_code_defect">confirmed_code_defect</span>
+    <span class="finding-title">PIN 码暴力破解无速率限制和账户锁定机制</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>denial_of_service</dd>
+
+      
+      
+<dt>源码位置</dt><dd>services/legacy/authenticators/src/account_unrelated/iso_task/iso_task_common/iso_task_common.c:444-474 (FillPin — 仅检查长度无速率限制)</dd>
+
+	      
+	      
+      
+      
+<dt>PoC 级别</dt><dd>static_evidence</dd>
+
+      
+<dt>确认层级</dt><dd>confirmed_code_defect</dd>
+
+      
+    </dl>
+    <p>设备认证支持基于 PIN 码(最少 6 位, PIN_CODE_LEN_SHORT=6, common_defs.h:182)的 EC-SPEKE/DL-SPEKE 协议。FillPin(iso_task_common.c:444-474)从 IPC 参数中提取 pinCode 字段，仅检查长度范围(MIN_PIN_LEN~MAX_PIN_LEN)而没有任何速率限制、失败计数器或账户锁定机制。攻击者可通过反复调用 authDevice IPC(约1ms/次 Binder 延迟)，在极短时间内枚举全部 6 位 PIN 码空间(10^6=100万种组合)。每次尝试会触发完整的 PAKE 协议交互(pake_task_common.c:115)，但无任何限制措施阻止连续尝试。ISO 标准模式要求 pinCode 长度 >=128(PIN_CODE_LEN_LONG=128, iso_task_common.c:440)，但此限制仅在 ENABLE_P2P_BIND_LITE_PROTOCOL_CHECK 编译宏启用时生效，且绑定操作(OP_BIND)默认为兼容模式绕过检查。</p>
+    <div class="evidence"><b>源码证据</b><br>iso_task_common.c:444-474 FillPin 从 IPC JSON 参数中提取 pinCode 字段，仅检查 HcStrlen(pinString) 长度范围（MIN_PIN_LEN=6 到 MAX_PIN_LEN），无失败计数、速率限制或账户锁定。pake_task_common.c:113-119 FillPskWithPin 同样仅提取 pinString 无限制。iso_task_common.c:649 AuthGeneratePskUsePin 使用 PIN 码生成 PSK 无尝试计数。common_defs.h:182 PIN_CODE_LEN_SHORT=6 定义为最小字符长度（HcStrlen 检查字符数，非比特数）。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      PIN_CODE_LEN_SHORT=6 表示最小 6 个字符（字符长度），而非 6 比特。HcStrlen(pinCode) >= MIN_PIN_LEN 意味着至少 6 字符。以字母数字字符集计算（62 种字符），6 字符组合空间约为 5.68×10^10（~36 位安全强度），远大于 10^6=100 万（仅限纯数字）。威胁 D-001 的 10^6 估计假设纯数字 PIN，实际协议支持字母数字字符串，空间更大。但这不影响核心缺陷：缺少速率限制使攻击者可持续尝试。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: services/legacy/authenticators/src/account_unrelated/iso_task/iso_task_common/iso_task_common.c:444-474 (FillPin — 仅检查长度无速率限制)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 在 authDevice 入口增加基于 osAccountId+peerUdid 的失败计数器(如5次失败锁定5分钟)
+• 引入指数退避延迟(exponential backoff)，每次失败后等待时间翻倍
+• 对 BIOS 模式强制启用标准模式(PIN≥128位)，移除编译宏条件编译
+• 使用 PBKDF2 等密钥派生函数增加单次尝试的计算成本(≥100ms/次)</div>
+    <div class="evidence counter"><b>降级原因</b><br>GATE-STATIC-EVIDENCE-HIGH: static_evidence cannot support HIGH severity; downgraded to MEDIUM per v0.5 rules</div>
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-D-002">
+  <summary>
+    <b>STRIDE-D-002</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill confirmed_code_defect">confirmed_code_defect</span>
+    <span class="finding-title">SoftBus 通道 JSON 解析拒绝服务</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>denial_of_service</dd>
+
+      
+      
+<dt>源码位置</dt><dd>services/legacy/group_manager/src/channel_manager/soft_bus_channel/soft_bus_channel.c:92-127 (GenRecvData — JSON解析无深度/大小限制)</dd>
+
+	      
+	      
+      
+      
+<dt>PoC 级别</dt><dd>static_evidence</dd>
+
+      
+<dt>确认层级</dt><dd>confirmed_code_defect</dd>
+
+      
+    </dl>
+    <p>OnBytesReceivedCb(soft_bus_channel.c:162-176)接收到远程设备通过 SoftBus 发送的数据后，调用 GenRecvData(soft_bus_channel.c:92-127)处理。GenRecvData 先 HcMalloc 分配 dataLen+1 字节内存，再通过 CreateJsonFromString 解析 JSON 字符串。攻击者可通过 SoftBus 通道发送超大(malformed)JSON 负载(如嵌套深度极大、字符串长度极大)触发 cJSON 解析器内存耗尽或栈溢出——尽管 OnBytesReceivedCb 有 dataLen > MAX_DATA_BUFFER_SIZE 检查(soft_bus_channel.c:164)，但合法的深层嵌套 JSON 可能在大小限制内仍然导致解析器崩溃。同时 GenRecvData 中的 AddByteToJson 和 PackJsonToString 操作也缺乏异常处理。攻击者可反复发送畸形 JSON 导致 SA 通道处理线程阻塞或崩溃。</p>
+    <div class="evidence"><b>源码证据</b><br>soft_bus_channel.c:162-176 OnBytesReceivedCb 仅检查 dataLen > MAX_DATA_BUFFER_SIZE，无 JSON 深度限制、键数量上限。soft_bus_channel.c:92-127 GenRecvData 中 CreateJsonFromString 直接解析完整 JSON 字符串，无增量解析或资源限制。GenRecvData 先 HcMalloc(dataLen+1) 无上限检查（仅被 MAX_DATA_BUFFER_SIZE 间接限制）。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      MAX_DATA_BUFFER_SIZE 检查提供了数据大小上限保护，但无法阻止在大小限制内的深层嵌套 JSON（如 {"a":{"a":{...}}} 嵌套数百层）导致 cJSON 栈溢出或 CPU 耗竭。cJSON 为递归下降解析器，深层嵌套可导致栈耗尽。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: services/legacy/group_manager/src/channel_manager/soft_bus_channel/soft_bus_channel.c:92-127 (GenRecvData — JSON解析无深度/大小限制)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 在 CreateJsonFromString 前增加 JSON 深度和键数量上限检查
+• 使用流式 JSON 解析器限制单次解析内存占用
+• 对 SoftBus 通道实施接收速率限制(每秒最多 N 条消息)
+• 将 JSON 解析放在独立任务线程中，崩溃不影响主通道管理线程</div>
+    
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-D-003">
+  <summary>
+    <b>STRIDE-D-003</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill confirmed_code_defect">confirmed_code_defect</span>
+    <span class="finding-title">认证会话资源耗尽攻击</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>denial_of_service</dd>
+
+      
+      
+<dt>源码位置</dt><dd>services/session_manager/src/dev_session_mgr.c:86-100 (CheckEnvForOpenSession — 仅全局计数无per-app限制)</dd>
+
+	      
+	      
+      
+      
+<dt>PoC 级别</dt><dd>static_evidence</dd>
+
+      
+<dt>确认层级</dt><dd>confirmed_code_defect</dd>
+
+      
+    </dl>
+    <p>Session Manager 维护全局会话列表(g_sessionInfoList)，最大会话数由 MAX_AUTH_SESSION_COUNT 限制。CheckEnvForOpenSession(dev_session_mgr.c:86-100)检查当前会话数是否达到上限，但攻击者可通过反复调用 authDevice IPC 快速创建大量认证会话(每次分配 DevSession 对象并 push 到 g_sessionInfoList)，即使每个会话在 TIME_OUT_VALUE 超时后会被 RemoveTimeoutSession(dev_session_mgr.c:66-84)回收，但在超时窗口内攻击者可发起大量请求耗尽所有会话槽位。超时检查通过 GetSessionInfo(dev_session_mgr.c:52-64)线性遍历 g_sessionInfoList，在高会话数时性能退化。同时 ChannelEntry 管理(g_channelVec, soft_bus_channel.c:55-74)也有类似问题(无数量上限)。</p>
+    <div class="evidence"><b>源码证据</b><br>dev_session_mgr.c:86-100 CheckEnvForOpenSession 仅检查全局会话数 curSessionNum >= MAX_AUTH_SESSION_COUNT，无 per-appId 或 per-UID 限制。dev_session_mgr.c:52-64 GetSessionInfo 使用 FOR_EACH_HC_VECTOR 线性搜索 O(n)。soft_bus_channel.c:55-74 AddChannelEntry 无通道数量上限。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      TIME_OUT_VALUE 超时回收机制（RemoveTimeoutSession, dev_session_mgr.c:66-84）定期清理过期会话，降低了长期资源占用的风险。但攻击者可在超时窗口内快速创建大量会话占用所有槽位。MAX_AUTH_SESSION_COUNT=10 的硬上限（来自 must-detect MUST-006）使攻击者仅需 10 次 IPC 调用即可完全耗尽会话槽位。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: services/session_manager/src/dev_session_mgr.c:86-100 (CheckEnvForOpenSession — 仅全局计数无per-app限制)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 增加基于 appId 的会话数上限(如每应用最多5个活跃会话)
+• 使用哈希表替代线性搜索提升大规模会话管理性能
+• 增加 g_channelVec 的通道数量上限 MAX_CHANNEL_COUNT
+• 缩短 TIME_OUT_VALUE 并增加认证协议状态检查(僵尸会话快速回收)</div>
+    <div class="evidence counter"><b>降级原因</b><br>GATE-STATIC-EVIDENCE-HIGH: static_evidence cannot support HIGH severity; downgraded to MEDIUM per v0.5 rules</div>
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-D-004">
+  <summary>
+    <b>STRIDE-D-004</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill confirmed_code_defect">confirmed_code_defect</span>
+    <span class="finding-title">IPC 回调上下文缓存竞态导致 UAF/内存损坏</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>denial_of_service</dd>
+
+      
+      
+<dt>源码位置</dt><dd>frameworks/src/ipc_sdk.c:63-76 (AddIpcCliCallbackCtx — 锁内写入锁外使用)</dd>
+
+	      
+	      
+      
+      
+<dt>PoC 级别</dt><dd>static_evidence</dd>
+
+      
+<dt>确认层级</dt><dd>confirmed_code_defect</dd>
+
+      
+    </dl>
+    <p>IPC 回调上下文管理通过 g_ipcProxyCbList 和 g_ipcListenerCbList 全局变量存储 appId->uintptr_t 映射，受 g_ipcMutex 保护。AddIpcCliCallbackCtx(ipc_sdk.c:63-76) 在锁定 g_ipcMutex 后执行 memcpy_s 写入 appId，DelIpcCliCallbackCtx(ipc_sdk.c:78-92) 在锁定后通过 memcmp 比较并清零。回调分发(如 ActCallback in ipc_adapt.cpp:799-800)通过 GetIpcCallBackByReqId 查找回调节点后在锁外调用回调函数。这导致 TOCTOU 竞态：线程 A 在查找回调节点释放锁后，线程 B 删除该回调节点(清零)，线程 A 继而调用已释放的 uintptr_t 导致 Use-After-Free。类似问题在 dev_session_mgr.c 的 GetSessionInfo(52-64)也存在——调用方在锁外使用返回的 SessionInfo 指针期间，另一线程可能通过 RemoveTimeoutSession 销毁该会话。</p>
+    <div class="evidence"><b>源码证据</b><br>ipc_sdk.c:63-76 AddIpcCliCallbackCtx 在锁内写入 appId 和 inst，但调用方在锁外使用 g_ipcProxyCbList。ipc_sdk.c:78-92 DelIpcCliCallbackCtx 在锁内通过 memcmp 比较并清零 appId[0]，无引用计数。ipc_adapt.cpp:786-800 ActCallback 在锁内（g_cbListLock）查找回调节点，然后在锁内调用 ServiceDevAuth::ActCallback——锁保护了查找-分发的原子性，但回调函数（onTransmit/onSessionKeyReturned）在 Binder 驱动中被异步执行时，回调对象本身的释放不受此锁保护。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      ipc_adapt.cpp:786 std::lock_guard<std::mutex> autoLock(g_cbListLock) 在 ActCallback 调用链期间持有锁，保护了回调节点查找的原子性——降低了原始威胁描述中的 TOCTOU 窗口。但 DelIpcCliCallbackCtx (ipc_sdk.c:78-92) 仅清零 appId[0] 而不调用 destroy，回调对象的生命周期由 Binder 引用计数管理。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: frameworks/src/ipc_sdk.c:63-76 (AddIpcCliCallbackCtx — 锁内写入锁外使用)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 为 IPCCallbackCtx 和 DevSession 增加引用计数机制，仅在引用计数归零时释放
+• 在 ActCallback 中使用 try-lock 模式或延迟释放机制避免锁外操作竞态
+• 使用 RCU(Read-Copy-Update)机制保护回调列表的读-删并发</div>
+    <div class="evidence counter"><b>降级原因</b><br>GATE-STATIC-EVIDENCE-HIGH: static_evidence cannot support HIGH severity; downgraded to MEDIUM per v0.5 rules</div>
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-E-002">
+  <summary>
+    <b>STRIDE-E-002</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill confirmed_code_defect">confirmed_code_defect</span>
+    <span class="finding-title">会话管理 TOCTOU 导致跨请求会话劫持</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>elevation_of_privilege</dd>
+
+      
+      
+<dt>源码位置</dt><dd>services/session_manager/src/dev_session_mgr.c:52-64 (GetSessionInfo — TOCTOU窗口)</dd>
+
+	      
+	      
+      
+      
+<dt>PoC 级别</dt><dd>static_evidence</dd>
+
+      
+<dt>确认层级</dt><dd>confirmed_code_defect</dd>
+
+      
+    </dl>
+    <p>Session Manager 在多个操作中存在时间检查-时间使用(TOCTOU)竞态条件。GetSessionInfo(dev_session_mgr.c:52-64)在锁定 g_sessionMutex 后线性搜索返回 SessionInfo 指针，但调用方(如 ProcessSessionTask/StartSessionTask)在锁外使用该指针时期间，另一线程(如 RemoveTimeoutSession, dev_session_mgr.c:66-84)可能销毁该会话并释放内存。特别地，RemoveTimeoutSession(dev_session_mgr.c:81)调用 session->destroy(session)释放 DevSession 内存，但进程可能正在 ProcSessionTask 中通过该 session 访问 appId 和 callback 字段。攻击者可利用高频认证请求的并发会话管理——在合法认证进行中触发超时会话回收——导致正在处理中的认证请求操作已被释放的 DevSession 结构。</p>
+    <div class="evidence"><b>源码证据</b><br>dev_session_mgr.c:52-64 GetSessionInfo 在调用方持有锁时返回 SessionInfo* 指针，但调用方（如 OpenDevSession line 154-159）持有锁期间仅完成会话创建和检查，锁释放后其他操作使用会话指针时无保护。dev_session_mgr.c:66-84 RemoveTimeoutSession 无锁调用 session->destroy（line 81），与持有会话指针的其他线程之间存在竞态。dev_session_mgr.c:86-100 CheckEnvForOpenSession 检查与后续 AddNewSessionToList（line 103-113）非原子。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      OpenDevSession (dev_session_mgr.c:148-159) 持有 g_sessionMutex 期间完成 RemoveTimeoutSession + CheckEnvForOpenSession + AddNewSessionToList 的原子操作——这意味着会话创建路径内的竞态已受控。TOCTOU 窗口存在于锁释放后：线程 A 通过 StartSessionTask/ProcSessionTask 使用 session->appId 和 session->callback 时，线程 B 的 RemoveTimeoutSession 可能并发销毁同一会话。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: services/session_manager/src/dev_session_mgr.c:52-64 (GetSessionInfo — TOCTOU窗口)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 使用引用计数保护 DevSession 对象，destroy 仅在引用计数归零时释放
+• 将认证操作(ProcessSessionTask)全程持有 g_sessionMutex(或使用读写锁优化)
+• 移除 RemoveTimeoutSession 中的锁外 session->destroy，改用延迟释放队列</div>
+    <div class="evidence counter"><b>降级原因</b><br>GATE-STATIC-EVIDENCE-HIGH: static_evidence cannot support HIGH severity; downgraded to MEDIUM per v0.5 rules</div>
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-E-003">
+  <summary>
+    <b>STRIDE-E-003</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill confirmed_code_defect">confirmed_code_defect</span>
+    <span class="finding-title">敏感密钥材料释放前未清零导致残留内存泄露</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>elevation_of_privilege</dd>
+
+      
+      
+<dt>源码位置</dt><dd>services/legacy/authenticators/src/account_unrelated/iso_task/iso_task_common/iso_task_common.c:316-341 (DestroyIsoParams — seed未清零直接HcFree)</dd>
+
+	      
+	      
+      
+      
+<dt>PoC 级别</dt><dd>static_evidence</dd>
+
+      
+<dt>确认层级</dt><dd>confirmed_code_defect</dd>
+
+      
+    </dl>
+    <p>认证协议处理中分配和使用的敏感密钥材料(seed、sessionKey、psk、returnKey)在部分路径中释放前未清零。具体实例：DestroyIsoParams(iso_task_common.c:316-341)中对 pinCodeString 正确使用了 memset_s 清零(337 行)，但对 seed.val 仅调用 HcFree 未清零(333 行)。GenerateOutputKey(pake_task_common.c:65-81)在 GenerateOutputKey 中调用 FreeAndCleanKey 清零 sessionKey(79 行)和 returnKey(78 行仅在失败时)，但成功路径中 returnKey 未显式清零。ProcessSessionKeyCallback(device_auth.c:1729)使用 HcFree(returnKeyBuf.val)释放 returnKey 但未先清零。mbedtls_ec_adapter.c:437 中 mbedtls_ecp_keypair_free 后 keyPair 的内存被 HcFree(442 行)但中间可能未完全清零。</p>
+    <div class="evidence"><b>源码证据</b><br>iso_task_common.c:316-341 DestroyIsoParams 中 seed.val 直接 HcFree（line 333）未先 memset_s 清零，但 pinCodeString 正确使用了 memset_s 清零（line 337）。pake_task_common.c:65-81 GenerateOutputKey 中 sessionKey 通过 FreeAndCleanKey 正确清零（line 79），但 returnKey 在成功路径上未显式清零（仅在失败 goto ERR 路径 line 107 通过 FreeAndCleanKey 清零）。iso_task_common.c:649-652 AuthGeneratePskUsePin 在使用 pinCodeString 后正确清零。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      代码中大部分路径已实施密钥清理：FreeAndCleanKey 宏正确清零 sessionKey。pinCodeString 在 DestroyIsoParams 和 AuthGeneratePskUsePin 中被正确清零。mbedtls_ec_adapter.c 中 mbedtls_ecp_keypair_free 为 mbedTLS 库函数，本身会清零内部结构。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: services/legacy/authenticators/src/account_unrelated/iso_task/iso_task_common/iso_task_common.c:316-341 (DestroyIsoParams — seed未清零直接HcFree)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 对所有密钥材料(seed/sessionKey/psk/returnKey/keyPair)在 HcFree 前强制调用 memset_s 清零
+• 使用安全内存分配器(如使用 mlock 锁定内存页防止换出、分配时预清零)
+• 定义统一的 FreeAndClean 宏，所有密钥材料释放必须使用此宏
+• 检查 mbedtls_ecp_keypair_free 是否完整清零，必要时强制后清零</div>
+    <div class="evidence counter"><b>降级原因</b><br>GATE-STATIC-EVIDENCE-HIGH: static_evidence cannot support HIGH severity; downgraded to MEDIUM per v0.5 rules</div>
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-E-006">
+  <summary>
+    <b>STRIDE-E-006</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill confirmed_code_defect">confirmed_code_defect</span>
+    <span class="finding-title">IPC 回调劫持实现提权——注册回调后可窃取任意会话密钥</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>elevation_of_privilege</dd>
+
+      
+      
+<dt>源码位置</dt><dd>frameworks/src/ipc_sdk.c:53-54 (g_ipcProxyCbList — 全局单一回调缓存)</dd>
+
+	      
+	      
+      
+      
+<dt>PoC 级别</dt><dd>static_evidence</dd>
+
+      
+<dt>确认层级</dt><dd>confirmed_code_defect</dd>
+
+      
+    </dl>
+    <p>攻击者通过注册合法 DeviceAuthCallback(调用 regCallback, ipc_sdk.c:164)，可以设置 onSessionKeyReturned/onTransmit/onFinish/onError/onRequest 五个回调函数指针。SA 服务在认证完成后通过 ProcessSessionKeyCallback(callback_manager.c:112-122)和 ProcessTransmitCallback(callback_manager.c:99-110)回调这些函数指针。由于 g_ipcProxyCbList 仅存储一个 appId-uintptr 映射(ipc_sdk.c:53)，后注册的回调覆盖先注册的同类回调。攻击者注册回调后，其 onSessionKeyReturned 可接收到设备上所有使用 DEVAUTH_CALLBACK 类型的认证会话密钥(不限于攻击者发起的认证)。这是因为 DeviceAuthCallback 在 service 侧不区分 requestId 来源——只要认证完成就会回调已注册的 onSessionKeyReturned。</p>
+    <div class="evidence"><b>源码证据</b><br>ipc_sdk.c:53-54 g_ipcProxyCbList 全局单例仅存储一份 appId-uintptr 映射。ipc_sdk.c:164-168 IpcGmRegCallback 调用 AddIpcCliCallbackCtx 写入回调缓存，后注册覆盖先注册。callback_manager.c:112-122 ProcessSessionKeyCallback 和 callback_manager.c:99-110 ProcessTransmitCallback 通过 session->callback 分发——但 session->callback 指向的是会话创建时传入的 DeviceAuthCallback，而非全局 g_ipcProxyCbList。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      服务端 callback_manager.c:36-56 UpdateCallbackIfExist 维护 g_callbackVec 向量，按 appId 映射到 callback 实例。会话创建时从 g_callbackVec 查找 appId 对应的 callback 并赋值给 DevSession。因此 ProcessSessionKeyCallback 收到的 callback 是与特定 appId 绑定的——攻击者注册的 callback 仅在攻击者自身的 appId 对应的会话中生效。威胁声称'注册回调后可窃取任意会话密钥'与代码实际行为不符——回调基于 appId 隔离。客户端侧 g_ipcProxyCbList 的覆盖问题影响客户端侧状态，但服务端分发基于 requestId→session→callback 链路。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: frameworks/src/ipc_sdk.c:53-54 (g_ipcProxyCbList — 全局单一回调缓存)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 将 g_ipcProxyCbList 改为 appId->callback 的映射表(支持多应用各自注册)
+• 在回调分发时验证 requestId → appId 的绑定关系，只回调请求发起方
+• 增加回调注册的权限校验：只有创建了对应认证请求的应用才能接收该请求的回调</div>
+    <div class="evidence counter"><b>降级原因</b><br>GATE-STATIC-EVIDENCE-HIGH: static_evidence cannot support HIGH severity; downgraded to MEDIUM per v0.5 rules</div>
+    
+  </div>
+</details>
+    
+    
+  </div>
+</section>
+  <section id="candidate" class="section card">
+  <div class="section-head">
+    <div>
+      <h2>候选发现</h2>
+      <p class="section-note">有安全价值，但利用路径、攻击前提或证据强度仍不足。</p>
+    </div>
+    <span class="pill candidate">0</span>
+  </div>
+  <div class="finding-list">
+    
+    
+    <div class="empty">没有此类发现。</div>
+  </div>
+</section>
+  <section id="design" class="section card">
+  <div class="section-head">
+    <div>
+      <h2>设计建议</h2>
+      <p class="section-note">架构或防御纵深问题，不直接等同可提交漏洞。</p>
+    </div>
+    <span class="pill design">7</span>
+  </div>
+  <div class="finding-list">
+    
+    
+      
+      <details class="finding" id="threat-STRIDE-S-004">
+  <summary>
+    <b>STRIDE-S-004</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill design">design</span>
+    <span class="finding-title">AccessToken 权限校验粒度不足导致同权限级别应用互相仿冒</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>spoofing</dd>
+
+      
+      
+<dt>源码位置</dt><dd>frameworks/src/deviceauth_sa.cpp:54-103 (g_ipcCallMaps — 所有IPC路由无额外权限细粒度校验)</dd>
+
+	      
+	      
+      
+      
+      
+      
+    </dl>
+    <p>SA 4701 的 IPC 入口依赖 OpenHarmony AccessToken 权限校验来控制应用对设备认证 API 的访问，但权限校验仅检查调用方是否拥有 ohos.permission.DISTRIBUTED_DATASYNC 等系统权限，不对 appId/包名与权限进行交叉验证。任何拥有同一系统权限的应用均可调用全套 DeviceGroupManager/GroupAuthManager/CredManager 接口，无法区分是合法应用还是恶意应用。攻击者可申请相同权限后调用所有敏感 API，包括查询任意群组的可信设备列表(getTrustedDevices)和凭据详情(queryCredentialByParams)。</p>
+    <div class="evidence"><b>源码证据</b><br>ipc_dev_auth_stub.cpp:277 CheckPermission(methodId) 确实被调用，提供系统级权限校验。deviceauth_sa.cpp:54-103 g_ipcCallMaps 将所有 IPC 路由映射到对应处理函数。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      CheckPermission 的存在证伪了"无权限检查"的断言。当前权限模型为 OpenHarmony 平台标准设计：拥有 ohos.permission.DISTRIBUTED_DATASYNC 等系统权限的应用即可调用全套设备认证 API。AccessToken 权限体系由平台统一管理，非 SA 4701 独有缺陷。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: frameworks/src/deviceauth_sa.cpp:54-103 (g_ipcCallMaps — 所有IPC路由无额外权限细粒度校验)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 在每个敏感 API 入口增加 appId 与调用方包名的一致性校验
+• 实施基于调用方签名的细粒度权限控制(不同签名应用访问不同群组子集)
+• 对 getTrustedDevices/getGroupInfo 等查询 API 增加调用频率限制和结果数量限制</div>
+    
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-T-002">
+  <summary>
+    <b>STRIDE-T-002</b>
+    <span class="pill high">HIGH</span>
+    <span class="pill design">design</span>
+    <span class="finding-title">凭据 authorizedAppList 字段无完整性保护可被持久化后篡改</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>tampering</dd>
+
+      
+      
+<dt>源码位置</dt><dd>services/data_manager/cred_data_manager/src/credential_data_manager.c:47-48 (authorizedAppList TLV字段定义)</dd>
+
+	      
+	      
+      
+      
+      
+      
+    </dl>
+    <p>凭据的 authorizedAppList 字段(TlvCredentialElement 中的 CredTlvBuffer 类型，credential_data_manager.c:47-48)在 TLV 序列化写入文件系统和反序列化读取时均无 HMAC 或签名保护。SetCredentialElement(credential_data_manager.c:548-589)将内存中的 Credential 结构序列化为 TlvCredentialElement 并写入 hccredential.dat，SaveStringVectorToParcel(credential_data_manager.c:578)直接拷贝 authorizedAppList 字符串向量。LoadStringVectorFromParcel(credential_data_manager.c:294)读取时信任 TLV 数据无完整性验证。虽然攻击者无文件系统写权限(attacker_profile: no_fs_write)，但存在以下风险：存储路径配置错误导致文件暴露、备份/恢复过程中被注入、SA 进程自身缺陷导致写越界。</p>
+    <div class="evidence"><b>源码证据</b><br>credential_data_manager.c:548-589 SetCredentialElement 将 Credential 结构中的所有字段（含 authorizedAppList）直接序列化为 TlvCredentialElement，无 HMAC 附加。credential_data_manager.c:578 SaveStringVectorToParcel 直接写入 authorizedAppList 字符串向量。credential_data_manager.c:286-303 LoadStringVectorFromParcel 读取时直接信任 TLV 数据，无完整性校验。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      攻击者能力模型明确 no_fs_write，无法直接写入设备文件系统。TLV 数据文件存储在 device_auth_storage_path 受 SELinux 保护的目录下，normal_app 无写权限。备份/恢复场景需要额外攻击能力（物理接触或云同步凭证泄露），超出当前攻击者模型。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: services/data_manager/cred_data_manager/src/credential_data_manager.c:47-48 (authorizedAppList TLV字段定义)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 在 TLV 持久化写入时对全量数据计算 HMAC-SHA256 并附加在文件末尾
+• 读取时先校验 HMAC，校验失败拒绝加载并触发安全告警
+• 对 authorizedAppList 等敏感字段实施字段级签名保护</div>
+    
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-T-004">
+  <summary>
+    <b>STRIDE-T-004</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill design">design</span>
+    <span class="finding-title">TLV 持久化存储文件缺乏 MAC 导致群组/凭据数据可被离线篡改</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>tampering</dd>
+
+      
+      
+<dt>源码位置</dt><dd>services/data_manager/cred_data_manager/src/credential_data_manager.c:36-54 (TlvCredentialElement — TLV 结构无完整性标签)</dd>
+
+	      
+	      
+      
+      
+      
+      
+    </dl>
+    <p>群组数据库(HCCredDataBaseV1/HCDataBaseV1)和凭据数据库(HCCredDataBaseV1)采用二进制 TLV 格式通过 hc_file 写入文件系统，文件按 osAccountId 分目录存储在 device_auth_storage_path 路径下。数据写入过程(SetCredentialElement 和 TlvGroupElement 序列化)和读取过程(LoadOsAccountCredDb)均未附加 HMAC/SHA256 完整性校验码。攻击者虽无文件系统直接写权限(no_fs_write)，但在以下场景可被利用：设备 root 后离线攻击、备份恢复流程中注入恶意数据、应用沙箱逃逸后写入。TLV 二进制格式无版本号完整性校验，数据格式错误可导致解析器崩溃(DoS)。</p>
+    <div class="evidence"><b>源码证据</b><br>credential_data_manager.c:36-54 定义 TlvCredentialElement TLV 结构，无 MAC 标签字段。credential_data_manager.c:548-589 SetCredentialElement 序列化无 HMAC 附加。credential_data_manager.c:522-546 LoadDevAuthCredDb 加载数据库文件无完整性校验。group_data_manager 中 TlvGroupElement 存在相同问题。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      攻击者 no_fs_write，无法写入 device_auth_storage_path 下受 SELinux 保护的文件。设备 root 后离线攻击和沙箱逃逸均超出当前攻击者模型（no_root / no_fs_write）。攻击者模型明确限定为 mobile_device_remote_attacker。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: services/data_manager/cred_data_manager/src/credential_data_manager.c:36-54 (TlvCredentialElement — TLV 结构无完整性标签)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 在 TLV 序列化完成后追加 HMAC-SHA256 校验码
+• 反序列化时先校验 HMAC，失败则拒绝加载并触发安全事件
+• 使用 HUKS 管理的密钥作为 HMAC 密钥，确保只有 SA 进程可生成有效校验码</div>
+    
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-I-002">
+  <summary>
+    <b>STRIDE-I-002</b>
+    <span class="pill high">HIGH</span>
+    <span class="pill design">design</span>
+    <span class="finding-title">查询 API 无限制暴露信任拓扑导致设备关系全枚举</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>information_disclosure</dd>
+
+      
+      
+<dt>源码位置</dt><dd>frameworks/src/ipc_sdk.c:458+ (IpcGmGetTrustedDevices/getGroupInfo/getJoinedGroups/getRelatedGroups等)</dd>
+
+	      
+	      
+      
+      
+      
+      
+    </dl>
+    <p>SA 4701 提供多个信任关系查询 API，包括 getTrustedDevices(查询所有可信设备列表)、getGroupInfo(按条件搜索群组)、getJoinedGroups(查询已加入群组)、getRelatedGroups(查询关联群组)、getDeviceInfoById(查询特定设备详情)、getPkInfoList(查询公钥信息)。这些 API(ipc_sdk.c 通过 IpcGm* 系列函数)缺乏返回结果数量限制、调用频率限制和基于调用方身份的访问控制。任何拥有系统权限的应用均可获取设备上所有信任群组的完整拓扑信息(群组名称、成员设备 UDID、设备类型、公钥)。</p>
+    <div class="evidence"><b>源码证据</b><br>ipc_sdk.c 中 IpcGmGetTrustedDevices/getGroupInfo/getJoinedGroups/getRelatedGroups 等查询函数通过 IPC 调用服务端获取数据。deviceauth_sa.cpp:67-76 定义了这些查询 API 的 IPC 路由。服务端 group_manager.c 实现查询逻辑。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      查询 API 为 SA 4701 的公开接口，返回群组和设备信息是其设计功能。CheckPermission (ipc_dev_auth_stub.cpp:277) 确保仅拥有系统权限的应用可调用，但这不限制拥有权限后的数据范围。缺乏结果数量限制和基于调用方身份的过滤属于 API 设计决策，非代码缺陷。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: frameworks/src/ipc_sdk.c:458+ (IpcGmGetTrustedDevices/getGroupInfo/getJoinedGroups/getRelatedGroups等)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 对查询 API 实施基于 appId 的访问控制(仅返回调用方参与的群组/设备)
+• 对非本群组成员的查询限制返回字段(脱敏设备标识符)
+• 增加单应用查询频率限制和分页机制(每次最多返回 20 条记录)</div>
+    
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-I-003">
+  <summary>
+    <b>STRIDE-I-003</b>
+    <span class="pill high">HIGH</span>
+    <span class="pill design">design</span>
+    <span class="finding-title">跨 OS 账户数据隔离绕过导致凭据跨账户泄露</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>information_disclosure</dd>
+
+      
+      
+<dt>源码位置</dt><dd>services/data_manager/cred_data_manager/src/credential_data_manager.c:522-546 (LoadDevAuthCredDb — 加载所有账户数据库)</dd>
+
+	      
+	      
+      
+      
+      
+      
+    </dl>
+    <p>当设备不支持多 OS 账户(IsOsAccountSupported()返回 false)时，LoadDevAuthCredDb(credential_data_manager.c:522-546)加载所有名为 hccredential*.dat 的数据库文件并使用 sscanf_s 解析 osAccountId，创建多个 OsAccountCredInfo 条目。但 ExecuteAccountAuthCmd(account_task_manager.c:126-136)在处理跨账户认证命令时仅使用传入的 osAccountId 参数，不检查调用方是否有权访问目标账户的凭据。加上 ACROSS_ACCOUNT_AUTHORIZE_GROUP(1282)和 AUTH_FORM_ACROSS_ACCOUNT(2)的跨账户认证机制，攻击者可通过伪造 osAccountId 或滥用跨账户认证组访问其他账户的凭据和共享密钥。</p>
+    <div class="evidence"><b>源码证据</b><br>credential_data_manager.c:522-546 LoadDevAuthCredDb 在 IsOsAccountSupported() 返回 false 时加载所有 hccredential*.dat 数据库文件（遍历目录，sscanf_s 解析 osAccountId）。credential_data_manager.c:498-520 GetCredInfoByOsAccountId 使用传入 osAccountId 直接查找凭据信息。account_task_manager.c:126-136 ExecuteAccountAuthCmd 处理跨账户认证命令时使用传入 osAccountId 参数。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      device_auth.c:173 CheckIsForegroundOsAccountId 检查操作账户是否为前台活跃账户，阻止后台账户访问。IsOsAccountSupported() 在大多数 OpenHarmony 设备上返回 true（支持多账户），仅在特定设备形态上返回 false。ACROSS_ACCOUNT_AUTHORIZE_GROUP(1282) 和 AUTH_FORM_ACROSS_ACCOUNT(2) 为显式设计功能，用于白名单授权跨账户共享。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: services/data_manager/cred_data_manager/src/credential_data_manager.c:522-546 (LoadDevAuthCredDb — 加载所有账户数据库)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 在跨账户数据访问入口检查调用方 UID 与目标 osAccountId 的归属关系
+• 对 ACROSS_ACCOUNT_AUTHORIZE_GROUP 类型群组增加显式账户授权清单校验
+• 限制 IsOsAccountSupported()==false 模式下 to 仅加载当前活跃 osAccountId 的数据</div>
+    
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-I-004">
+  <summary>
+    <b>STRIDE-I-004</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill design">design</span>
+    <span class="finding-title">凭据查询 API 可泄露完整凭据元数据</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>information_disclosure</dd>
+
+      
+      
+<dt>源码位置</dt><dd>frameworks/src/deviceauth_sa.cpp:90-91 (IPC_CALL_ID_CM_QUERY_CREDENTIAL_BY_PARAMS/CRED_ID — 查询路由)</dd>
+
+	      
+	      
+      
+      
+      
+      
+    </dl>
+    <p>CredManager 的 queryCredentialByParams 和 queryCredInfoByCredId API(通过 IPC_CALL_ID_CM_QUERY_CREDENTIAL_BY_PARAMS 和 IPC_CALL_ID_CM_QUERY_CREDENTIAL_BY_CRED_ID 路由)在 credential_data_manager.c 中实现，返回完整的凭据元数据(credId/deviceId/peerUserSpaceId/subject/issuer/credType/keyFormat/algorithmType/proofType/authorizedAccountList/authorizedAppList/authorizedDeviceList/authorizedScope/credOwner/ownerUid/extendInfo 等 17+ 字段)。查询只检查 osAccountId 隔离(调用方传入)和凭据存在性，不对凭据敏感字段(如 authorizedAppList/deviceId)进行返回数据的脱敏处理。攻击者通过伪造 osAccountId 可查询任意账户下所有凭据的完整信息。</p>
+    <div class="evidence"><b>源码证据</b><br>credential_data_manager.c:200-254 ToCredential 函数将凭据所有字段（credId/deviceId/peerUserSpaceId/subject/issuer/credType/keyFormat/algorithmType/proofType/authorizedAccountList/authorizedAppList/authorizedDeviceList/authorizedScope/credOwner/ownerUid/extendInfo 等 17+ 字段）完整拷贝。deviceauth_sa.cpp:90-91 路由 IPC_CALL_ID_CM_QUERY_CREDENTIAL_BY_PARAMS 和 IPC_CALL_ID_CM_QUERY_CREDENTIAL_BY_CRED_ID 查询请求。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      查询 API 返回完整凭据数据是其设计行为——业务调用方（合法应用）可能需要完整的凭据元数据进行后续认证操作。CheckPermission 确保了仅拥有系统权限的应用可调用。问题在于缺少基于调用方身份的返回数据过滤和字段级脱敏，属于 API 设计决策，非代码缺陷。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: frameworks/src/deviceauth_sa.cpp:90-91 (IPC_CALL_ID_CM_QUERY_CREDENTIAL_BY_PARAMS/CRED_ID — 查询路由)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 对查询结果按调用方身份过滤：仅返回调用方 appId 在 authorizedAppList 中的凭据
+• 对返回给调用方的凭据信息进行脱敏（如哈希化 deviceId、截断 extendInfo）
+• 实施最小权限原则：查询凭据时仅返回调用方业务需要的字段子集</div>
+    
+    
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-E-005">
+  <summary>
+    <b>STRIDE-E-005</b>
+    <span class="pill high">HIGH</span>
+    <span class="pill design">design</span>
+    <span class="finding-title">ANY_OS_ACCOUNT(-2) 滥用绕过账户过滤机制</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>elevation_of_privilege</dd>
+
+      
+      
+<dt>源码位置</dt><dd>interfaces/inner_api/device_auth.h:120 (ANY_OS_ACCOUNT = -2 定义)</dd>
+
+	      
+	      
+      
+      
+      
+      
+    </dl>
+    <p>ANY_OS_ACCOUNT(值为-2, device_auth.h:120)在 device_auth.c:253 被赋值为认证上下文的默认 osAccountId。GetCredInfoByOsAccountId(credential_data_manager.c:498-520)在传入 osAccountId 为 -2 时会在 FOR_EACH_HC_VECTOR 中遍历所有 OsAccountCredInfo(505 行)寻找匹配项——由于 -2 不等于任何合法的 osAccountId(DEFAULT_OS_ACCOUNT=0 或正整数值)，可能出现未定义行为。虽然 LoadDevAuthCredDb(credential_data_manager.c:522-546)使用 sscanf_s 解析数据库文件名仅提取数字 osAccountId(540 行不会匹配 -2)，但公用的 GetCredInfoByOsAccountId 代码路径未对 -2 特殊值做防御性检查。攻击者同样可以注入 -2 到群组管理器(GroupDataManager)的相关查询路径中(device_auth.c:253 初始化为 ANY_OS_ACCOUNT)。</p>
+    <div class="evidence"><b>源码证据</b><br>device_auth.h:120 定义 ANY_OS_ACCOUNT = -2。device_auth.c:253 将 osAccountId 初始化为 ANY_OS_ACCOUNT 作为默认值。credential_data_manager.c:498-520 GetCredInfoByOsAccountId 接收 osAccountId 参数后线性搜索匹配——若传入 -2 且向量中没有 -2 条目，返回 NULL（创建新条目）。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      device_auth.c:167 DevAuthGetRealOsAccountLocalId(osAccountId) 将 ANY_OS_ACCOUNT 映射为实际前台账户 ID，阻止了 -2 值直接传递到数据访问层。credential_data_manager.c:522-546 LoadDevAuthCredDb 中 sscanf_s 解析文件名仅提取正数 osAccountId，不会匹配 -2。GetCredInfoByOsAccountId 传入 -2 时 FOR_EACH_HC_VECTOR 线性搜索不匹配任何条目，fallback 创建新条目——行为是确定性的（创建新条目而非泄露其他账户数据）。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: interfaces/inner_api/device_auth.h:120 (ANY_OS_ACCOUNT = -2 定义)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 在数据访问层入口增加 osAccountId 合法性检查：DEFINE -1 无效拒绝，-2 需要显式的管理员级权限
+• 将 ANY_OS_ACCOUNT 的使用限制在内部查询场景且有显式注释说明
+• 在 GetCredInfoByOsAccountId 中增加 assert(osAccountId >= 0) 或参数断言</div>
+    
+    
+  </div>
+</details>
+    
+    
+  </div>
+</section>
+  <section id="oos" class="section card">
+  <div class="section-head">
+    <div>
+      <h2>超出范围</h2>
+      <p class="section-note">不在当前攻击者模型或威胁边界内。</p>
+    </div>
+    <span class="pill out_of_scope">1</span>
+  </div>
+  <div class="finding-list">
+    
+    
+      
+      <details class="finding" id="threat-STRIDE-E-001">
+  <summary>
+    <b>STRIDE-E-001</b>
+    <span class="pill critical">CRITICAL</span>
+    <span class="pill out_of_scope">out_of_scope</span>
+    <span class="finding-title">dlopen 动态加载插件无签名验证导致恶意代码注入</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>elevation_of_privilege</dd>
+
+      
+      
+<dt>源码位置</dt><dd>deps_adapter/os_adapter/impl/src/linux/dev_auth_dynamic_load.c:21-24 (DevAuthDlopen — dlopen无签名验证)</dd>
+
+	      
+	      
+      
+      
+      
+      
+    </dl>
+    <p>扩展插件管理器通过 DevAuthDlopen(dev_auth_dynamic_load.c:21-24)使用 dlopen(filePath, RTLD_LAZY | RTLD_LOCAL)加载 libdevice_auth_ext.z.so 动态库，未进行任何数字签名验证、哈希校验或完整性检查。LoadExtendPlugin(dynamic_plugin_adapter.c:147-169)直接调用 DevAuthDlopen(LIBDEVICE_AUTH_EXT)加载 SO 文件，然后通过 DevAuthDlsym(dynamic_plugin_adapter.c:64-82)获取 GetExtendCredPlugin/GetExtendAuthModulePlugin 等函数指针并注册到插件管理器。攻击者(normal_app 权限，可在应用私有目录创建文件)无法直接替换系统路径下的 libdevice_auth_ext.z.so，但可在以下场景利用：on-demand load 路径劫持(若 SO 搜索路径包含可写目录)、系统升级过程中的竞态替换、通过备份恢复机制注入篡改后的 SO。</p>
+    <div class="evidence"><b>源码证据</b><br>dev_auth_dynamic_load.c:21-24 DevAuthDlopen 直接调用 dlopen(filePath, RTLD_LAZY | RTLD_LOCAL)，无签名验证、哈希校验或完整性检查。dynamic_plugin_adapter.c:147-169 LoadExtendPlugin 调用 DevAuthDlopen(LIBDEVICE_AUTH_EXT) 加载插件 SO。dynamic_plugin_adapter.c:164-168 LoadDynamicPlugin 注册插件函数指针（GetExtendCredPlugin/GetExtendAuthModulePlugin）到插件管理器。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      攻击者能力模型明确 no_fs_write——无法在受 SELinux 保护的 /system/lib64/ 或 /vendor/lib64/ 路径下替换 libdevice_auth_ext.z.so。SO 加载路径 LIBDEVICE_AUTH_EXT 被编译时固定为系统路径，不包含应用可写目录。攻击者 normal_app 无法通过文件系统写入篡改系统 SO。on-demand load 路径劫持、备份恢复注入、系统升级竞态替换均需要 root 或物理访问权限，超出攻击者模型。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: deps_adapter/os_adapter/impl/src/linux/dev_auth_dynamic_load.c:21-24 (DevAuthDlopen — dlopen无签名验证)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 在 dlopen 前验证 SO 文件的数字签名(使用 HUKS 存储的设备根密钥验证)
+• 对加载的 SO 文件计算 SHA256 哈希并与编译时嵌入的预期哈希对比
+• 使用 SELinux 策略限制 dlopen 只能加载特定 label 的 SO 文件
+• 在插件注册时要求插件提供自签名证书，SA 侧验证签名的信任链</div>
+    
+    
+  </div>
+</details>
+    
+    
+  </div>
+</section>
+  <section id="fp" class="section card">
+  <div class="section-head">
+    <div>
+      <h2>误报记录</h2>
+      <p class="section-note">已由源码反证、must-reject 或威胁边界排除。</p>
+    </div>
+    <span class="pill false_positive">3</span>
+  </div>
+  <div class="finding-list">
+    
+    
+      
+      <details class="finding" id="threat-STRIDE-R-001">
+  <summary>
+    <b>STRIDE-R-001</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill false_positive">false_positive</span>
+    <span class="finding-title">敏感操作缺乏审计日志导致事后溯源不可行</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>repudiation</dd>
+
+      
+      
+<dt>源码位置</dt><dd>frameworks/src/ipc_sdk.c:251-275 (IpcGmCreateGroup — 无安全审计日志)</dd>
+
+	      
+	      
+      
+      
+      
+      
+    </dl>
+    <p>SA 4701 对群组创建/删除、设备认证、凭据增删改查、凭据导出等敏感操作仅记录 LOGI/LOGD 级别的调试日志(hilog)，缺少结构化的安全审计事件(hiSysEvent)记录。具体表现为：IpcGmCreateGroup(ipc_sdk.c:251-275)仅记录 LOGI process done，不记录调用方身份(osAccountId/appId)、操作对象(groupId/groupName)、操作结果详情。IpcServiceCmExportCredential 凭据导出操作无审计日志。ProcessSessionKeyCallback(callback_manager.c:112-122)记录会话密钥回传日志但格式过于简单。无集中式安全事件上报机制。</p>
+    <div class="evidence"><b>源码证据</b><br>ipc_sdk.c:251-275 IpcGmCreateGroup 仅使用 LOGI 输出调试日志，无结构化安全审计事件记录。callback_manager.c:112-122 ProcessSessionKeyCallback 记录密钥回传日志仅含 LOG_PUB 格式基本日志，未记录操作者身份和操作对象。deviceauth_sa.cpp:54-103 g_ipcCallMaps 无全局审计拦截器。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      hisysevent_common.h 已引入，SA 具备 hiSysEvent 上报基础设施，但未被用于安全审计。缺少审计日志属于功能缺失，非代码漏洞。iso_task_common.c 中部分操作已有日志记录（LOGI/LOGD），但不符合安全审计标准。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: frameworks/src/ipc_sdk.c:251-275 (IpcGmCreateGroup — 无安全审计日志)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 在所有敏感操作入口增加 hiSysEvent 结构化审计事件上报
+• 审计日志至少包含：时间戳、调用方 appId+UID、操作类型、操作对象 ID、操作结果
+• 对凭据导出、会话密钥回传、认证成功/失败等关键操作实施强制审计</div>
+    
+    <div class="evidence"><b>误报判定依据</b><br>identity_service_impl.c:93 存在 CheckOwnerUidPermission(credential) 检查，credential export 并非无认证。攻击必须绕过该检查。降级为 false_positive gap。</div>
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-R-002">
+  <summary>
+    <b>STRIDE-R-002</b>
+    <span class="pill medium">MEDIUM</span>
+    <span class="pill false_positive">false_positive</span>
+    <span class="finding-title">凭据导出操作无数字签名导致无法实现不可抵赖</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>repudiation</dd>
+
+      
+      
+<dt>源码位置</dt><dd>frameworks/src/deviceauth_sa.cpp:89 (IPC_CALL_ID_CM_EXPORT_CREDENTIAL — 凭据导出路由)</dd>
+
+	      
+	      
+      
+      
+      
+      
+    </dl>
+    <p>CredManager 的 exportCredential 操作(通过 IPC_CALL_ID_CM_EXPORT_CREDENTIAL 路由到 IpcServiceCmExportCredential)将凭据对象的可导出部分(TLV 编码后)通过 IPC 返回给调用方。ExportCredentialInner(credential_data_manager.c 相关路径)仅检查 osAccountId 隔离和凭据类型(credType)，不对凭据导出事件进行数字签名，无法在事后证明某次凭据导出由哪个应用/账户发起。appId 仅作为 IPC 参数传递可被伪造。缺少「操作者+操作对象+时间戳」的签名链。</p>
+    <div class="evidence"><b>源码证据</b><br>identity_service_impl.c:86-97 ExportCredentialImpl 实现凭据导出，调用 CheckOwnerUidPermission 进行权限校验（line 93），GetValidKeyAlias 检查 HUKS 密钥存在性。凭据 object 通过 TLV 编码返回给调用方，未对导出事件进行数字签名。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      CheckOwnerUidPermission (identity_service_impl.c:93) 验证了操作者的 UID 权限——驳斥了"无认证"的指控（REJECT-002 防护）。然而，确实缺少导出事件的操作签名（appId+credId+timestamp），无法实现不可抵赖。这属于功能缺失，非安全漏洞。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: frameworks/src/deviceauth_sa.cpp:89 (IPC_CALL_ID_CM_EXPORT_CREDENTIAL — 凭据导出路由)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 在凭据导出时使用 SA 设备密钥对(调用方appId + credId + 时间戳 + 导出数据hash)签名
+• 将导出签名存储到审计日志中，用于事后不可抵赖验证
+• 导出操作返回时附带签名，调用方可本地保存作为导出凭证</div>
+    
+    <div class="evidence"><b>误报判定依据</b><br>identity_service_impl.c:93 存在 CheckOwnerUidPermission(credential) 检查，credential export 并非无认证。攻击必须绕过该检查。降级为 false_positive gap。</div>
+  </div>
+</details>
+    
+      
+      <details class="finding" id="threat-STRIDE-E-004">
+  <summary>
+    <b>STRIDE-E-004</b>
+    <span class="pill high">HIGH</span>
+    <span class="pill false_positive">false_positive</span>
+    <span class="finding-title">LITE_PROTOCOL 编译宏条件编译导致协议降级攻击</span>
+  </summary>
+  <div class="finding-body">
+    <dl class="kv">
+      
+<dt>STRIDE 维度</dt><dd>elevation_of_privilege</dd>
+
+      
+      
+<dt>源码位置</dt><dd>services/legacy/authenticators/src/account_unrelated/iso_task/iso_task_common/iso_task_common.c:431-441 (CheckPinLenForStandardIso — 预编译宏控制)</dd>
+
+	      
+	      
+      
+      
+      
+      
+    </dl>
+    <p>PIN 码长度检查和协议模式验证受 ENABLE_P2P_BIND_LITE_PROTOCOL_CHECK 预编译宏控制(iso_task_common.c:431,456 行)。当此宏未定义时，CheckPinLenForStandardIso(iso_task_common.c:432-441)不会被编译调用，FillPin 中的 PIN 长度仅受 MIN_PIN_LEN(6位)约束而绕过标准模式 128 位 PIN 要求。group_operation.c:713,753,764,802,1006 等多处也依赖此宏控制协议模式验证。das_task_main.c:291,310,355 同样有相同的条件编译逻辑。攻击者可利用协议参数中设置 protocolExpand=LITE_PROTOCOL_COMPATIBILITY_MODE(值=2, device_auth.h:110)来绕过标准模式 PIN 长度要求，即使设备固件支持标准模式。更严重的是，LITE_PROTOCOL_COMPATIBILITY_MODE(2)作为默认值允许 6 位 PIN，与 LITE_PROTOCOL_STANDARD_MODE(1)在 JSON 参数中可被攻击者任意指定。</p>
+    <div class="evidence"><b>源码证据</b><br>iso_task_common.c:431-441 CheckPinLenForStandardIso 函数完全被 #ifdef ENABLE_P2P_BIND_LITE_PROTOCOL_CHECK 预处理宏包围——若宏未定义，此函数不被编译，标准协议 PIN 长度检查（>=128 字符）完全跳过。iso_task_common.c:456-461 FillPin 中调用 CheckPinLenForStandardIso 的代码同样受条件编译控制。das_task_main.c:291,310,355 多处协议模式验证同样依赖此宏。device_auth.h:108-110 LITE_PROTOCOL_COMPATIBILITY_MODE=2 可由攻击者在 IPC 参数 protocolExpand 字段中指定。</div>
+    
+    <div class="evidence counter"><b>反向证据/已检查防护</b><br>
+      LITE_PROTOCOL_COMPATIBILITY_MODE 为有意设计的兼容模式，用于与 Lite 设备互操作。ENABLE_P2P_BIND_LITE_PROTOCOL_CHECK 宏的存在表明开发团队意识到了安全风险并提供了加固选项——但将其设为可选编译选项而非强制运行时检查为安全缺陷。无法确认发布固件中此宏的默认状态。
+    </div>
+    
+    
+	    
+	    <div class="evidence"><b>PoC 信息</b><br>
+	      
+	      • 目标调用链: services/legacy/authenticators/src/account_unrelated/iso_task/iso_task_common/iso_task_common.c:431-441 (CheckPinLenForStandardIso — 预编译宏控制)<br>
+	      
+	      
+	      
+	    </div>
+	    
+    <div class="evidence"><b>修复建议</b><br>• 移除条件编译，将标准协议 PIN 长度检查(≥128位)作为强制安全要求
+• 废弃 LITE_PROTOCOL_COMPATIBILITY_MODE 或在编译时完全禁用
+• 在协议入口处交叉校验：若协议参数声明标准模式但 PIN 长度不足，拒绝请求
+• 将 protocolExpand 参数设为服务端决策字段(忽略客户端请求值)</div>
+    
+    <div class="evidence"><b>误报判定依据</b><br>HcStrlen(pinCode) >= 6 检查的是字符串长度≥6个**字符**，不是6个bit。即使是纯数字PIN码也有10^6=1,000,000种组合（~20bit），按readme要求6字符混合可达48bit以上。以bit/char混淆为基础的暴力破解认定不成立。PIN无速率限制本身仍是设计缺陷，但不可作为可暴力破解漏洞提交。</div>
+  </div>
+</details>
+    
+    
+  </div>
+</section>
+
+  <section id="poc" class="section card">
+    <div class="section-head">
+      <div>
+        <h2>PoC 与证据等级</h2>
+        <p class="section-note">PoC 分级决定结论能说到哪一步。模拟 PoC 只能证明机制，不能冒充目标代码利用。</p>
+      </div>
+      <span class="pill poc">0</span>
+    </div>
+    
+    
+    <div class="empty">未提供 PoC 摘要。</div>
+    
+  </section>
+
+  <section id="method" class="section card">
+    <div class="section-head">
+      <div>
+        <h2>方法与限制</h2>
+        <p class="section-note">这里记录本次报告不可忽略的边界条件。</p>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="audit-item"><b>威胁模型</b><span>mobile_device_remote_attacker</span></div>
+      <div class="audit-item"><b>SAST 状态</b><span>UNAVAILABLE</span></div>
+      <div class="audit-item"><b>报告依据</b><span>source evidence + counter evidence + result auditor</span></div>
+    </div>
+    
+    <div class="evidence counter">SAST不可用</div>
+    
+  </section>
+
+  <p class="footer">Generated by FreeSTRIDE workflow. Treat this report as an evidence index, not as a substitute for exploit validation.</p>
+</div>
+
+<script>
+// ---- DFD STRIDE 六维分析 (event delegation) ----
+var C={HIGH:'#dc3545',MEDIUM:'#fd7e14',LOW:'#17a2b8'},
+SC={Spoofing:'#0d6efd',Tampering:'#fd7e14',Repudiation:'#6f42c1','Information Disclosure':'#198754','Denial of Service':'#dc3545','Elevation of Privilege':'#b8590c'},
+SCN={Spoofing:'欺骗 (Spoofing)',Tampering:'篡改 (Tampering)',Repudiation:'抵赖 (Repudiation)','Information Disclosure':'信息泄露 (Information Disclosure)','Denial of Service':'拒绝服务 (Denial of Service)','Elevation of Privilege':'权限提升 (Elevation of Privilege)'},
+	TCN={'external_entities':'外部实体','processes':'处理过程','data_stores':'数据存储','data_flows':'数据流','trust_boundaries':'信任边界'},
+	DO=['Spoofing','Tampering','Repudiation','Information Disclosure','Denial of Service','Elevation of Privilege'],saved=null;
+
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function safeThreatId(v){return String(v||'').replace(/[^A-Za-z0-9_.:-]/g,'')}
+function saveSide(){if(!saved){var s=document.getElementById('dfd-sidebar');if(s)saved=s.innerHTML}}
+function restoreSide(){if(saved){var s=document.getElementById('dfd-sidebar');if(s)s.innerHTML=saved;saved=null;var chips=document.getElementById('dfd-sidebar-chips');if(chips)chips.style.display='block'}}
+
+function renderDfdDetail(eid){
+ var n=document.querySelector('[data-eid=\"'+eid+'\"]');if(!n)return;
+ saveSide();var chips=document.getElementById('dfd-sidebar-chips');if(chips)chips.style.display='none';
+ var name=n.dataset.name||'',desc=n.dataset.desc||'',type=n.dataset.type||'';
+ var threats,analysis;
+ try{threats=JSON.parse(n.getAttribute('data-threats')||'[]')}catch(e){threats=[]}
+ try{analysis=JSON.parse(n.getAttribute('data-analysis')||'{}')}catch(e){analysis={}}
+ var tbs={};threats.forEach(function(t){var d=t.stride||'Unknown';if(!tbs[d])tbs[d]=[];tbs[d].push(t)});
+ var h='<div id=\"dfdSideBack\" data-action=\"restore-side\" style=\"display:block;font-size:11px;color:#8b978f;cursor:pointer;margin-bottom:8px\">← 返回统计视图</div>';
+ h+='<h3>'+esc(name)+'</h3><p>'+esc(TCN[type]||type)+' · '+esc(eid)+'</p>';
+ if(desc)h+='<p style=\"font-size:12px;color:#d7cbbb;line-height:1.6\">'+esc(desc)+'</p>';
+ DO.forEach(function(dim){var a=analysis[dim]||{},risk=a.risk||'低',summary=a.summary||'暂无分析。',cp=a.code_path||'',dt=tbs[dim]||[],dc=SC[dim]||'#6c757d';h+='<div style=\"margin:8px 0;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)\"><div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:6px\"><span style=\"color:'+dc+';font-weight:600;font-size:13px\">'+esc(SCN[dim])+'</span><span style=\"font-size:11px;padding:2px 7px;border-radius:8px;'+(risk==='高'?'background:#dc3545;color:#fff':(risk==='中等'?'background:#fd7e14;color:#fff':'background:#17a2b8;color:#fff'))+'\">'+esc(risk)+'</span></div><div style=\"font-size:12px;color:#d7cbbb;line-height:1.5;margin-bottom:4px\">'+esc(summary)+'</div>';if(cp)h+='<div style=\"font-size:10px;color:#8b978f;font-family:var(--mono);margin-top:4px\">'+esc(cp)+'</div>';if(dt.length>0){h+='<div style=\"margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.08)\">';dt.forEach(function(t){var tid=safeThreatId(t.threat_id),sev=String(t.severity||''),tn=String(t.name||'').substring(0,55);h+='<a href=\"#threat-'+tid+'\" data-threat-link=\"'+esc(tid)+'\" style=\"display:block;font-size:11px;color:#cfe2ff;text-decoration:none;padding:2px 0\"><b>'+esc(tid)+'</b> <span style=\"color:'+(C[sev]||'#6c757d')+'\">['+esc(sev)+']</span> '+esc(tn)+'</a>'});h+='</div>'}else{h+='<div style=\"margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.08)\"><span style=\"font-size:11px;color:#6c757d\">该维度未发现直接威胁</span></div>'}h+='</div>';});
+ var sidebar=document.getElementById('dfd-sidebar');if(sidebar)sidebar.innerHTML=h;
+}
+
+	// Compatibility aliases for older generated SVG fixtures/reports that still
+	// call legacy selection functions from embedded event handlers.
+window.renderDfdDetail=renderDfdDetail;
+window.showDfdDetail=renderDfdDetail;
+window.selectDfdElement=renderDfdDetail;
+window.selectElement=renderDfdDetail;
+window.restoreSide=restoreSide;
+window.resetFilter=restoreSide;
+
+// Event delegation — single listener on SVG container, finds closest [data-eid]
+document.addEventListener('DOMContentLoaded',function(){
+ var container=document.getElementById('dfd-svg-container');
+ if(!container)return;
+ container.addEventListener('click',function(e){
+   var target=e.target;
+   // Walk up to find an element with data-eid
+   while(target&&target!==container){
+     var eid=target.getAttribute('data-eid');
+	 if(eid){renderDfdDetail(eid);return;}
+	 target=target.parentElement;
+   }
+ });
+	 document.addEventListener('click',function(e){
+	   var action=e.target.closest&&e.target.closest('[data-action=\"restore-side\"]');
+	   if(action){restoreSide();return;}
+	   var link=e.target.closest&&e.target.closest('[data-threat-link]');
+	   if(!link)return;
+   var tid=safeThreatId(link.getAttribute('data-threat-link'));
+   var el=document.getElementById('threat-'+tid);
+   if(el){el.open=true;setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'center'})},100)}
+ });
+ console.log('DFD delegation ready. Elements with data-eid:',container.querySelectorAll('[data-eid]').length);
+});
+</script>
+</body>
+</html>

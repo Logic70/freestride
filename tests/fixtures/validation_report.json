@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "generated": "2026-05-11T16:15:00.000000",
+    "version": "0.5.0",
+    "total_threats": 20
+  },
+  "validation_results": {
+    "source_evidence_check": "PASS",
+    "counter_evidence_check": "PASS",
+    "mitigation_check": "PASS",
+    "confirmed_gate_check": {
+      "status": "PASS",
+      "confirmed_tiers": {
+        "confirmed_code_defect": 8,
+        "confirmed_exploitable": 0
+      },
+      "gates_applied": {
+        "GATE-PRECONDITION-PRIVILEGE": "PASS — no confirmed findings with root/local_fs_write preconditions",
+        "GATE-EXPLOIT-PATH": "PASS — no confirmed_exploitable without direct path; no design_only as confirmed",
+        "GATE-STATIC-EVIDENCE-HIGH": "PASS — no HIGH severity confirmed with static_evidence only",
+        "GATE-SIMULATION-CLAIMS": "PASS — no runtime_model_poc claims of exploitation",
+        "GATE-POC-SEVERITY-CAP": "PASS — static_evidence findings capped at MEDIUM",
+        "GATE-CONFIRMED-TIER": "PASS — 8 confirmed_code_defect, 0 confirmed_exploitable"
+      }
+    },
+    "attacker_capability_check": {
+      "status": "PASS",
+      "downgrades": ["T-002", "T-008", "T-010", "T-018"],
+      "rationale": "Threats requiring local_filesystem_write or system_app preconditions correctly downgraded per mobile_device_remote_attacker profile"
+    },
+    "regression_check": {
+      "status": "PASS",
+      "must_detect_covered": ["MUST-001", "MUST-002", "MUST-003", "MUST-004", "MUST-005", "MUST-006", "MUST-007", "MUST-008", "MUST-009"],
+      "must_detect_missed": [],
+      "must_reject_applied": [
+        "T-005 → REJECT-005 (PIN entropy misread)",
+        "T-020 → REJECT-009 (sensitive operation log false positive)"
+      ]
+    },
+    "classification_audit": {
+      "confirmed": 8,
+      "false_positive": 2,
+      "design": 6,
+      "partial": 4
+    }
+  },
+  "overall_status": "PASS"
+}

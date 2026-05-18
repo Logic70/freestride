@@ -1,0 +1,87 @@
+{
+  "lead_role": "requirement-clarification-lead",
+  "review_roles": [
+    {
+      "id": "scenario-extractor",
+      "focus": "Identify missing scenarios, edge cases, and workflow output expectations.",
+      "direct_user_contact": false,
+      "status": "CHALLENGE",
+      "weak_logic_lenses": [],
+      "proposed_questions": [
+        "还缺哪些失败路径、边界场景或明确不自动化的情形？",
+        "问题处理策略："
+      ]
+    },
+    {
+      "id": "assumption-auditor",
+      "focus": "Challenge hidden assumptions, dependency gaps, and unclear non-goals.",
+      "direct_user_contact": false,
+      "status": "CHALLENGE",
+      "weak_logic_lenses": [],
+      "proposed_questions": [
+        "有哪些看起来相关但明确不做的范围，避免后续设计误扩张？",
+        "问题处理策略："
+      ]
+    },
+    {
+      "id": "constraint-reviewer",
+      "focus": "Challenge quality gates, stop conditions, and definition-of-done gaps.",
+      "direct_user_contact": false,
+      "status": "CHALLENGE",
+      "weak_logic_lenses": [],
+      "proposed_questions": [
+        "完成定义是什么，哪些信号表示工作流已经真的可用？",
+        "问题处理策略："
+      ]
+    }
+  ],
+  "lead_question_backlog": [
+    "还缺哪些失败路径、边界场景或明确不自动化的情形？",
+    "问题处理策略：",
+    "有哪些看起来相关但明确不做的范围，避免后续设计误扩张？",
+    "完成定义是什么，哪些信号表示工作流已经真的可用？"
+  ],
+  "weakest_logic_lenses": [],
+  "logic_lens_review": [
+    {
+      "lens": "purpose",
+      "status": "complete",
+      "question_count": 1
+    },
+    {
+      "lens": "object_model",
+      "status": "complete",
+      "question_count": 0
+    },
+    {
+      "lens": "process_model",
+      "status": "complete",
+      "question_count": 0
+    },
+    {
+      "lens": "decision_model",
+      "status": "complete",
+      "question_count": 0
+    },
+    {
+      "lens": "evidence_model",
+      "status": "complete",
+      "question_count": 0
+    },
+    {
+      "lens": "acceptance_model",
+      "status": "complete",
+      "question_count": 0
+    },
+    {
+      "lens": "boundary_model",
+      "status": "complete",
+      "question_count": 0
+    }
+  ],
+  "ready_for_handoff": false,
+  "blocking_questions_cleared": false,
+  "deferred_questions": [
+    "问题处理策略："
+  ]
+}

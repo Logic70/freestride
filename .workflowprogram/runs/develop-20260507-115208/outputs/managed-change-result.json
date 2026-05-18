@@ -1,0 +1,312 @@
+{
+  "generated_at": "2026-05-07T12:47:18Z",
+  "target_root": "/mnt/d/Code/FreeSTRIDE",
+  "source_root": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/runs/develop-20260507-115208/outputs/managed-only",
+  "run_root": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/runs/develop-20260507-115208",
+  "manifest_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/managed-files.json",
+  "producer_version": "0.1.2",
+  "summary": {
+    "candidate_files": 29,
+    "create": 29,
+    "update": 0,
+    "conflict": 0
+  },
+  "applied": [
+    {
+      "relative_path": ".claude/agents/stride-analyzer.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/agents/stride-analyzer.md",
+      "applied_sha256": "a4b0c971cd7a349654de574efaa682768e49388d3521c31cab3b32d7d3ec8141",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".claude/agents/stride-attack-pattern-matcher.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/agents/stride-attack-pattern-matcher.md",
+      "applied_sha256": "c69fa6f981f9ed050a30489e61675ff39ee1769fde4cfceaa22dd7206b1441b6",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".claude/agents/stride-dfd-inferrer.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/agents/stride-dfd-inferrer.md",
+      "applied_sha256": "e60bbcc81175b00b51c19f4086d703dd1b041c4f42ea061f1f1da12d22a87d25",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".claude/agents/stride-diff-analyzer.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/agents/stride-diff-analyzer.md",
+      "applied_sha256": "b2dd6d7d85bcd2ab9d32d854d9a4dc728915def9435f95d38b3cdfe40619cda5",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".claude/agents/stride-parse.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/agents/stride-parse.md",
+      "applied_sha256": "782a54f2ffb2468660e2fc3c36a8e3a6a7ae813dbaac7df013eabb3657e045ed",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".claude/agents/stride-poc-generator.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/agents/stride-poc-generator.md",
+      "applied_sha256": "6f821b3cec1f27bf757afb0f0203a158af212b1bd71b1440b2f82073a0d41a6c",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".claude/agents/stride-report-assembler.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/agents/stride-report-assembler.md",
+      "applied_sha256": "9233b7cbbca142cf689cf46d89918b0e25e70a55cddc857d5577665229bc5acb",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".claude/agents/stride-sast-verifier.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/agents/stride-sast-verifier.md",
+      "applied_sha256": "84f590d686040827cffcc0b1bf6011bc3e74abef348986bc785a8eeee7ff0e9b",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".claude/commands/stride-audit.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/commands/stride-audit.md",
+      "applied_sha256": "c379a08dc6e5ce7e3ac5dcf859ebc4e61fcc0c32d4712d3c0deef9528f2c5efb",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".claude/settings.json",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/settings.json",
+      "applied_sha256": "a68ae407ecba5353416063f4fc958af5c3a3c3e132fff55cf96c00bba2108ade",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".claude/skills/stride-attack-pattern-lookup/SKILL.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/skills/stride-attack-pattern-lookup/SKILL.md",
+      "applied_sha256": "b4eaa65485cebdc9b9a904bbf3e51a541c1bd3b8864b09735790d70f7f83e60d",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".claude/skills/stride-dfd-renderer/SKILL.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/skills/stride-dfd-renderer/SKILL.md",
+      "applied_sha256": "2021db6491794c70fe7e83bf6ce7357196c11e37c91db7ee49301d7d004fff09",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".claude/skills/stride-html-reporter/SKILL.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/skills/stride-html-reporter/SKILL.md",
+      "applied_sha256": "7855bb17bc11b2518e7d5f77ba1e3b9098f6919cb50b319d4c938583144bfedc",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".claude/skills/stride-parse/SKILL.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/skills/stride-parse/SKILL.md",
+      "applied_sha256": "c26efe05517644c60c03015e5891258030dfe0aac95d68ddc9cdde9e371d841a",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".claude/skills/stride-poc-executor/SKILL.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/skills/stride-poc-executor/SKILL.md",
+      "applied_sha256": "73ad105ad98c15f64e5be29a57f6b20a4a795441c0c5ff14719e0779b242b19f",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".claude/skills/stride-sast-runner/SKILL.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.claude/skills/stride-sast-runner/SKILL.md",
+      "applied_sha256": "b6a70831769cbed3de8033061a9164b1c784e62644c72d4fe55acead39f101c3",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".workflowprogram/design/node-designs/attack-pattern-matcher.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/design/node-designs/attack-pattern-matcher.md",
+      "applied_sha256": "2ba9c9198d8ec1278ca4a0989aecdb56b850b745c603cc8097b0885f8d00b233",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".workflowprogram/design/node-designs/dfd-inferrer.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/design/node-designs/dfd-inferrer.md",
+      "applied_sha256": "7a7f806bf1e27ea64dcc8b0431b99496c30460bef0d009b52d7b10f7191ddaa6",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".workflowprogram/design/node-designs/poc-generator.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/design/node-designs/poc-generator.md",
+      "applied_sha256": "7b527482cbed907952575e477fe283d0bb5e6648b8843142471607300ee27f69",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".workflowprogram/design/node-designs/report-assembler.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/design/node-designs/report-assembler.md",
+      "applied_sha256": "e36ee8abb571248de8e96dbeac7e894caa6ffac8101fd4610511df99e0ffdbdb",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".workflowprogram/design/node-designs/stride-analyzer.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/design/node-designs/stride-analyzer.md",
+      "applied_sha256": "eef57cfaf01f66db3b67f5e802babbaf0a802e7f93fd70d70262717ff13e7f67",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".workflowprogram/design/s3-design-highlevel.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/design/s3-design-highlevel.md",
+      "applied_sha256": "3e8a02d7683f959b8d9e6ece546bfe83697ba52de1cb9f6a4990475c0ab8ffad",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".workflowprogram/design/workflow-lowlevel.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/design/workflow-lowlevel.md",
+      "applied_sha256": "f10732cc336589e540aa2810028af8bc734d2e0ef82584ddcd74a9989bd0d2aa",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".workflowprogram/design/workflow-spec.yaml",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/design/workflow-spec.yaml",
+      "applied_sha256": "4ecd81169151e36829612d5afb21bb0f1c30aef34855b281fd48738628ba9a1a",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".workflowprogram/design/workflow-view.md",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/design/workflow-view.md",
+      "applied_sha256": "3c42e4d02cd0ad8d39421d8d19b439c0c10763386e5f770572ce159a90c16ed4",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".workflowprogram/runtime/runtime-manifest.json",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/runtime/runtime-manifest.json",
+      "applied_sha256": "6b1121156118b63371d959d698f8cff9a92098ab0b6c0168c6fbd78c2494d1df",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".workflowprogram/runtime/validate-run-state.py",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/runtime/validate-run-state.py",
+      "applied_sha256": "5f44dfca875e6f9c59405f7da4745aa241e4406badf1e9ac95dad701c8ad47da",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".workflowprogram/runtime/workflow-entry.py",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/runtime/workflow-entry.py",
+      "applied_sha256": "8a5eaeab82ffe384a1cf14f7f84db2d83e8af48d3212e33c9b7ee877f64b006b",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    },
+    {
+      "relative_path": ".workflowprogram/runtime/workflow-runner.py",
+      "action": "create",
+      "target_path": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/runtime/workflow-runner.py",
+      "applied_sha256": "302a3256b08f303d2e71cda2ce82e26ebc593d51278daf1847c83bab85c3015d",
+      "before_exists": false,
+      "before_sha256": null,
+      "before_snapshot": null,
+      "run_id": "develop-20260507-115208"
+    }
+  ],
+  "conflicts": [],
+  "schema_version": 1,
+  "schema_name": "managed-change-result",
+  "error_code": null,
+  "failure_kind": "none",
+  "remediation": []
+}

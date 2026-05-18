@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+outputs/stride-audit/
+outputs/stride-audit-report-*.html
+outputs/archive/
+.playwright-mcp/
+.env
+.venv/
+*.log
+.workflowprogram/archive/
+outputs/
+.workflowprogram/publish-run/
+.workflowprogram/runs/

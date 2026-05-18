@@ -1,0 +1,49 @@
+# ============================================================
+# Attacker Capabilities Model (v0.4)
+# Defines the threat model's assumed attacker profile.
+# Classification decisions MUST respect these boundaries.
+# ============================================================
+
+# Default profile for OpenHarmony device auth module
+# Override per-audit with --attacker-profile <profile>
+default_profile: "mobile_device_remote_attacker"
+
+profiles:
+  mobile_device_remote_attacker:
+    description: >
+      Attacker is a remote entity communicating with the target device
+      over network/protocol, with no prior access to the device filesystem
+      or system partition.
+    capabilities:
+      normal_app: true            # Can invoke public APIs as any app
+      system_app: false           # No system-level privileges
+      local_filesystem_read: false  # Cannot read local FS
+      local_filesystem_write: false # Cannot write local FS
+      system_partition_write: false # Cannot modify system partition
+      root: false                 # No root access
+      physical_access: false      # No physical device access
+      network_access: true        # Can communicate over network
+
+    # Implications for classification
+    implications:
+      local_fs_required_attacks: "design or out_of_scope"
+      system_partition_required_attacks: "out_of_scope"
+      root_required_attacks: "out_of_scope (unless privilege escalation chain proven)"
+
+  mobile_device_local_attacker:
+    description: >
+      Attacker has normal app access plus ability to read/write local
+      filesystem (e.g., through a malicious app with storage permissions).
+    capabilities:
+      normal_app: true
+      system_app: false
+      local_filesystem_read: true
+      local_filesystem_write: true
+      system_partition_write: false
+      root: false
+      physical_access: false
+      network_access: true
+
+    implications:
+      local_fs_required_attacks: "confirmed applicable"
+      system_partition_required_attacks: "design or out_of_scope"

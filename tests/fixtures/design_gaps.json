@@ -1,0 +1,127 @@
+{
+  "meta": {
+    "target": "/mnt/d/Code/STRIDEAnalyse/security_device_auth",
+    "classification": "design",
+    "count": 6
+  },
+  "findings": [
+    {
+      "id": "T-013",
+      "name": "Dynamic plugin loaded via dlopen without signature verification",
+      "stride_category": "Elevation of Privilege",
+      "severity": "MEDIUM",
+      "cwe": "CWE-347",
+      "file": "services/frameworks/src/plugin_adapter/dynamic_plugin_adapter.c:84",
+      "attacker_control": "none",
+      "preconditions": [
+        "system_app"
+      ],
+      "exploit_path_type": "design_only",
+      "impact_observed": false,
+      "exploitability_score": 2.0,
+      "description": "dynamic_plugin_adapter.c:84-92: dlsym loads plugin functions without signature/hash verification of the .so file",
+      "risk": "Design gap — requires architecture change",
+      "recommendation": "Verify plugin ELF signature before loading",
+      "priority": "P3",
+      "effort": "2-5 days"
+    },
+    {
+      "id": "T-014",
+      "name": "No audit trail for credential CRUD operations",
+      "stride_category": "Repudiation",
+      "severity": "LOW",
+      "cwe": "CWE-778",
+      "file": "services/identity_service/src/identity_service.c",
+      "attacker_control": "none",
+      "preconditions": [],
+      "exploit_path_type": "design_only",
+      "impact_observed": false,
+      "exploitability_score": 2.0,
+      "description": "identity_service.c: CRUD operations perform DB writes without emitting security audit events",
+      "risk": "Design gap — requires architecture change",
+      "recommendation": "Add security audit events for credential lifecycle",
+      "priority": "P3",
+      "effort": "2-5 days"
+    },
+    {
+      "id": "T-015",
+      "name": "No transport-layer encryption for handshake metadata",
+      "stride_category": "Information Disclosure",
+      "severity": "LOW",
+      "cwe": "CWE-319",
+      "file": "services/legacy/group_manager/src/channel_manager/soft_bus_channel/soft_bus_channel.c",
+      "attacker_control": "none",
+      "preconditions": [
+        "network_access"
+      ],
+      "exploit_path_type": "design_only",
+      "impact_observed": false,
+      "exploitability_score": 2.0,
+      "description": "soft_bus_channel.c: Protocol data transmitted through SoftBus without additional transport encryption; metadata observable",
+      "risk": "Design gap — requires architecture change",
+      "recommendation": "Consider padding or transport wrapper for metadata",
+      "priority": "P3",
+      "effort": "2-5 days"
+    },
+    {
+      "id": "T-016",
+      "name": "Credential DB file paths constructed from static format strings",
+      "stride_category": "Information Disclosure",
+      "severity": "LOW",
+      "cwe": "CWE-552",
+      "file": "services/data_manager/cred_data_manager/src/credential_data_manager.c:164",
+      "attacker_control": "none",
+      "preconditions": [
+        "local_filesystem_read"
+      ],
+      "exploit_path_type": "design_only",
+      "impact_observed": false,
+      "exploitability_score": 2.0,
+      "description": "credential_data_manager.c:164: Hardcoded path template makes credential data location predictable on filesystem",
+      "risk": "Design gap — requires architecture change",
+      "recommendation": "Consider path randomization or alternative naming",
+      "priority": "P3",
+      "effort": "2-5 days"
+    },
+    {
+      "id": "T-017",
+      "name": "No rate limiting for PIN-based authentication attempts",
+      "stride_category": "Spoofing",
+      "severity": "MEDIUM",
+      "cwe": "CWE-307",
+      "file": "services/device_auth.c:299",
+      "attacker_control": "none",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "design_only",
+      "impact_observed": false,
+      "exploitability_score": 2.0,
+      "description": "device_auth.c:299: PIN-based auth path lacks rate limiting or attempt counting; repeated attempts possible",
+      "risk": "Design gap — requires architecture change",
+      "recommendation": "Implement exponential backoff and max attempt limit",
+      "priority": "P3",
+      "effort": "2-5 days"
+    },
+    {
+      "id": "T-018",
+      "name": "Session timeout not enforced — stale sessions accumulate",
+      "stride_category": "Denial of Service",
+      "severity": "LOW",
+      "cwe": "CWE-613",
+      "file": "services/session_manager/src/session/v2/dev_session_v2.c",
+      "attacker_control": "none",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "design_only",
+      "impact_observed": false,
+      "exploitability_score": 2.0,
+      "description": "dev_session_v2.c: Session state machine transitions only on protocol events; no time-based expiration",
+      "risk": "Design gap — requires architecture change",
+      "recommendation": "Add configurable session TTL with background cleanup",
+      "priority": "P3",
+      "effort": "2-5 days"
+    }
+  ]
+}

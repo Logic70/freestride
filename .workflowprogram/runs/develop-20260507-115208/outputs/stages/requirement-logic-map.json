@@ -1,0 +1,250 @@
+{
+  "schema_version": 1,
+  "complexity": "L",
+  "status": "BLOCKED",
+  "lenses": {
+    "purpose": {
+      "title": "Purpose Lens",
+      "task": "Convert the request from desired artifact into observable purpose and success signal.",
+      "status": "complete",
+      "required": true,
+      "items": [
+        "问题=系统化安全威胁分析缺乏统一工作流",
+        "目的=提供 STRIDE 驱动的自动化安全审计能力",
+        "主要使用者=安全工程师、开发者、架构师",
+        "成功信号=完整HTML报告含DFD+威胁模型+PoC+验证结果",
+        "非目标=不是实时入侵检测系统"
+      ],
+      "exit_criteria_met": true
+    },
+    "object_model": {
+      "title": "Object Lens",
+      "task": "Identify input, intermediate, and output objects plus source-of-truth rules.",
+      "status": "complete",
+      "required": true,
+      "items": [
+        "输入对象=代码仓库路径或系统描述文本",
+        "中间对象=代码阅读结果、DFD节点与边、威胁候选列表、攻击模式映射、SAST 验证报告",
+        "输出对象=HTML 报告含 DFD 图 + 威胁清单 + PoC 附件 + 验证记录",
+        "关键字段=威胁ID、STRIDE分类、攻击模式引用、影响评级、利用难度、缓解措施、PoC代码、验证结果",
+        "source of truth=代码仓库 + SAST工具输出 + 攻击模式库 + LLM推理",
+        "未知信息处理=标记为\"需人工确认\""
+      ],
+      "exit_criteria_met": true
+    },
+    "process_model": {
+      "title": "Process Lens",
+      "task": "Decompose the work into meaningful target workflow steps or node candidates.",
+      "status": "complete",
+      "required": true,
+      "items": [
+        "候选步骤 1)parse输入解析+语言检测→2)dfd代码阅读+DFD推断→3)stride六维度威胁并行识别→4)verify攻击模式匹配+SAST验证→5)poc分层PoC生成+条件执行→6)report HTML报告组装→7)[diff]对比分析",
+        "每步输入输出由对应 Agent 负责",
+        "人工触点=报告审阅确认、对话引导模式中的交互、PoC执行确认"
+      ],
+      "exit_criteria_met": true
+    },
+    "decision_model": {
+      "title": "Decision Lens",
+      "task": "Expose branching choices, decision inputs, fallbacks, confidence, and owners.",
+      "status": "complete",
+      "required": true,
+      "items": [
+        "关键分支=有无代码仓库输入？→有代码走自动分析/无代码走对话引导",
+        "C/C++/Rust还是其他语言？→影响 SAST 工具选择",
+        "威胁严重程度？→影响 PoC 深度和执行策略",
+        "沙箱/Docker可用？→影响 PoC 是否执行验证",
+        "决策输入=代码结构+STRIDE分析+攻击模式库+SAST结果+模型推理",
+        "fallback=SAST不可用时LLM-only验证",
+        "沙箱不可用时跳过PoC执行"
+      ],
+      "exit_criteria_met": true
+    },
+    "evidence_model": {
+      "title": "Evidence Lens",
+      "task": "Define evidence required to trust outputs, decisions, and intermediate models.",
+      "status": "complete",
+      "required": true,
+      "items": [
+        "必须保留的证据=代码阅读记录、DFD YAML、STRIDE威胁推理链、攻击模式匹配记录、SAST验证输出、PoC代码+执行结果、威胁-REQ映射",
+        "PASS最小证据=STRIDE六维度全覆盖+攻击模式映射完成+HTML报告生成+Critical/High威胁含PoC"
+      ],
+      "exit_criteria_met": true
+    },
+    "acceptance_model": {
+      "title": "Acceptance Lens",
+      "task": "Turn clarified logic into concrete scenarios and expected outputs.",
+      "status": "complete",
+      "required": true,
+      "items": [
+        "happy path=提供C++仓库→解析→阅读代码生成DFD→六维威胁识别→攻击模式匹配→SAST验证→PoC生成+沙箱执行→HTML报告输出",
+        "负向场景=无代码输入→进入对话引导→用户自评六维度→简化验证→生成报告",
+        "空仓库或无安全问题→生成\"未发现威胁\"报告",
+        "SAST不可用→攻击模式LLM验证并标注",
+        "沙箱不可用→PoC仅生成代码+标注\"未执行验证\""
+      ],
+      "exit_criteria_met": true
+    },
+    "boundary_model": {
+      "title": "Boundary Lens",
+      "task": "Define non-goals, stop conditions, manual confirmations, and degradation rules.",
+      "status": "complete",
+      "required": true,
+      "items": [
+        "明确不做=不修改目标代码、不替代专业渗透测试、不处理运行时安全监控",
+        "停止条件=目标路径无效且无系统描述、SAST工具全部不可用且攻击模式验证也失败且用户不确认手动模式",
+        "人工确认=威胁评级为Critical时需确认报告再发布、对话模式中每个维度结果需用户确认、PoC在沙箱外执行时需用户明确批准",
+        "安全约束=PoC仅生成代码（沙箱内执行除外），禁止修改目标仓库文件"
+      ],
+      "exit_criteria_met": true
+    }
+  },
+  "elements": {
+    "process": [
+      {
+        "id": "PROC-001",
+        "summary": "候选步骤 1)parse输入解析+语言检测→2)dfd代码阅读+DFD推断→3)stride六维度威胁并行识别→4)verify攻击模式匹配+SAST验证→5)poc分层PoC生成+条件执行→6)report HTML报告组装→7)[diff]对比分析"
+      },
+      {
+        "id": "PROC-002",
+        "summary": "每步输入输出由对应 Agent 负责"
+      },
+      {
+        "id": "PROC-003",
+        "summary": "人工触点=报告审阅确认、对话引导模式中的交互、PoC执行确认"
+      }
+    ],
+    "decisions": [
+      {
+        "id": "DEC-001",
+        "summary": "关键分支=有无代码仓库输入？→有代码走自动分析/无代码走对话引导"
+      },
+      {
+        "id": "DEC-002",
+        "summary": "C/C++/Rust还是其他语言？→影响 SAST 工具选择"
+      },
+      {
+        "id": "DEC-003",
+        "summary": "威胁严重程度？→影响 PoC 深度和执行策略"
+      },
+      {
+        "id": "DEC-004",
+        "summary": "沙箱/Docker可用？→影响 PoC 是否执行验证"
+      },
+      {
+        "id": "DEC-005",
+        "summary": "决策输入=代码结构+STRIDE分析+攻击模式库+SAST结果+模型推理"
+      },
+      {
+        "id": "DEC-006",
+        "summary": "fallback=SAST不可用时LLM-only验证"
+      },
+      {
+        "id": "DEC-007",
+        "summary": "沙箱不可用时跳过PoC执行"
+      }
+    ],
+    "evidence": [
+      {
+        "id": "EVD-001",
+        "summary": "必须保留的证据=代码阅读记录、DFD YAML、STRIDE威胁推理链、攻击模式匹配记录、SAST验证输出、PoC代码+执行结果、威胁-REQ映射"
+      },
+      {
+        "id": "EVD-002",
+        "summary": "PASS最小证据=STRIDE六维度全覆盖+攻击模式映射完成+HTML报告生成+Critical/High威胁含PoC"
+      }
+    ],
+    "acceptance": [
+      {
+        "id": "ACC-001",
+        "summary": "happy path=提供C++仓库→解析→阅读代码生成DFD→六维威胁识别→攻击模式匹配→SAST验证→PoC生成+沙箱执行→HTML报告输出"
+      },
+      {
+        "id": "ACC-002",
+        "summary": "负向场景=无代码输入→进入对话引导→用户自评六维度→简化验证→生成报告"
+      },
+      {
+        "id": "ACC-003",
+        "summary": "空仓库或无安全问题→生成\"未发现威胁\"报告"
+      },
+      {
+        "id": "ACC-004",
+        "summary": "SAST不可用→攻击模式LLM验证并标注"
+      },
+      {
+        "id": "ACC-005",
+        "summary": "沙箱不可用→PoC仅生成代码+标注\"未执行验证\""
+      }
+    ],
+    "boundaries": [
+      {
+        "id": "BND-001",
+        "summary": "明确不做=不修改目标代码、不替代专业渗透测试、不处理运行时安全监控"
+      },
+      {
+        "id": "BND-002",
+        "summary": "停止条件=目标路径无效且无系统描述、SAST工具全部不可用且攻击模式验证也失败且用户不确认手动模式"
+      },
+      {
+        "id": "BND-003",
+        "summary": "人工确认=威胁评级为Critical时需确认报告再发布、对话模式中每个维度结果需用户确认、PoC在沙箱外执行时需用户明确批准"
+      },
+      {
+        "id": "BND-004",
+        "summary": "安全约束=PoC仅生成代码（沙箱内执行除外），禁止修改目标仓库文件"
+      }
+    ]
+  },
+  "workflow_node_candidates": [],
+  "negative_or_stop_scenarios": [
+    "目标路径不存在且无系统描述→停止并要求用户提供有效输入",
+    "代码无法阅读或结构无法理解→降级为对话引导模式",
+    "攻击模式+SAST全不可用→询问用户是否继续LLM-only威胁分析",
+    "威胁评级结果无Critical/High且用户要求PoC覆盖→提示仅有场景描述"
+  ],
+  "requirement_links": [
+    {
+      "requirement_id": "REQ-001",
+      "priority": "must",
+      "process_refs": [
+        "PROC-001",
+        "PROC-002",
+        "PROC-003"
+      ],
+      "decision_refs": [
+        "DEC-001",
+        "DEC-002",
+        "DEC-003",
+        "DEC-004",
+        "DEC-005",
+        "DEC-006",
+        "DEC-007"
+      ],
+      "evidence_refs": [
+        "EVD-001",
+        "EVD-002"
+      ],
+      "acceptance_refs": [
+        "ACC-001",
+        "ACC-002",
+        "ACC-003",
+        "ACC-004",
+        "ACC-005"
+      ],
+      "boundary_refs": [
+        "BND-001",
+        "BND-002",
+        "BND-003",
+        "BND-004"
+      ]
+    }
+  ],
+  "open_logic_gaps": [],
+  "coverage": {
+    "all_required_lenses_present": true,
+    "has_process_refs": true,
+    "has_evidence_refs": true,
+    "has_acceptance_refs": true,
+    "has_design_consequential_questions": true
+  }
+}

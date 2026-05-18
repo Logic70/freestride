@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-12T10:42:39Z",
+  "target_root": "/mnt/d/Code/FreeSTRIDE",
+  "plugin_id": "freestride",
+  "plugin_name": "FreeSTRIDE",
+  "version": "0.1.1",
+  "repository": "https://github.com/Logic70/freestride",
+  "repo_mode": "export_repo",
+  "runtime_mode": "workflowprogram_dependency",
+  "dry_run": false
+}

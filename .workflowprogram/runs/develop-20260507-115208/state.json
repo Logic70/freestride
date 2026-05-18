@@ -1,0 +1,8 @@
+{
+  "run_id": "develop-20260507-115208",
+  "workflow": "workflowprogram-develop",
+  "state": "complete",
+  "current_stage": "s6",
+  "stages_completed": ["s1", "s2", "s3", "s4", "s5", "s6"],
+  "version": "0.5.0"
+}

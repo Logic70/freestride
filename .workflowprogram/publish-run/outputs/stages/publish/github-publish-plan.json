@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-12T10:42:46Z",
+  "repository": "https://github.com/Logic70/freestride",
+  "repo_mode": "export_repo",
+  "repo_path": "/tmp/freestride-publish",
+  "version": "0.1.1",
+  "package_root": "/mnt/d/Code/FreeSTRIDE/.workflowprogram/publish-run/outputs/stages/publish/package-root",
+  "steps": [
+    "verify GitHub auth",
+    "copy package to publishing checkout",
+    "commit dist/plugin payload",
+    "tag v0.1.1",
+    "push branch and tag"
+  ],
+  "execute": true,
+  "dry_run": false
+}

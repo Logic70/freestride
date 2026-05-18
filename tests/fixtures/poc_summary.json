@@ -1,0 +1,203 @@
+{
+  "meta": {
+    "generated": "2026-05-11T16:15:00.000000",
+    "workflow_version": "0.5.0",
+    "total_pocs": 20,
+    "runtime_target_poc": 0,
+    "runtime_model_poc": 0,
+    "static_evidence": 14,
+    "design_scenario": 6,
+    "isolation_method": "none — --no-poc-exec flag set",
+    "isolation_bypass_reason": "PoC execution skipped per user request"
+  },
+  "poc_results": [
+    {
+      "threat_id": "T-001",
+      "status": "STATIC_EVIDENCE",
+      "type": "static_evidence",
+      "target_code_invoked": false,
+      "source_file": "services/identity_service/src/identity_operation.c",
+      "source_line": 87,
+      "sink_function": "Int64ToString",
+      "repro": "Credential ID generation uses HcGetCurTimeInMillis() timestamp without random component — predictable identifier pattern",
+      "limitations": "Static evidence only — no runtime PoC executed (--no-poc-exec)"
+    },
+    {
+      "threat_id": "T-002",
+      "status": "STATIC_EVIDENCE",
+      "type": "static_evidence",
+      "target_code_invoked": false,
+      "source_file": "services/data_manager/cred_data_manager/src/credential_data_manager.c",
+      "source_line": 164,
+      "sink_function": "sprintf_s",
+      "repro": "sprintf_s constructs file path with osAccountId without path canonicalization — no parent directory validation",
+      "limitations": "Static evidence only — no runtime PoC executed (--no-poc-exec)"
+    },
+    {
+      "threat_id": "T-003",
+      "status": "STATIC_EVIDENCE",
+      "type": "static_evidence",
+      "target_code_invoked": false,
+      "source_file": "services/data_manager/cred_data_manager/src/credential_data_manager.c",
+      "source_line": 75,
+      "sink_function": "SaveOsAccountCredDb",
+      "repro": "Credential DB entries written without HMAC/checksum integrity protection",
+      "limitations": "Static evidence only — no runtime PoC executed (--no-poc-exec)"
+    },
+    {
+      "threat_id": "T-004",
+      "status": "STATIC_EVIDENCE",
+      "type": "static_evidence",
+      "target_code_invoked": false,
+      "source_file": "services/device_auth.c",
+      "source_line": 1134,
+      "sink_function": "HcFree",
+      "repro": "sharedKeyVal allocated via HcMalloc, filled with session key bytes, freed without prior memset_s",
+      "limitations": "Static evidence only — no runtime PoC executed (--no-poc-exec)"
+    },
+    {
+      "threat_id": "T-005",
+      "status": "FALSE_POSITIVE",
+      "type": "none",
+      "target_code_invoked": false,
+      "repro": "REJECT-005: PIN character string vs bit field confusion"
+    },
+    {
+      "threat_id": "T-006",
+      "status": "DESIGN_ONLY",
+      "type": "design_scenario",
+      "target_code_invoked": false,
+      "repro": "Design gap: no audit trail for credential CRUD — code review confirms no audit events in identity service"
+    },
+    {
+      "threat_id": "T-007",
+      "status": "STATIC_EVIDENCE",
+      "type": "static_evidence",
+      "target_code_invoked": false,
+      "source_file": "services/device_auth.c",
+      "source_line": 105,
+      "sink_function": "PRINT_SENSITIVE_DATA",
+      "repro": "PRINT_SENSITIVE_DATA logs peer UDID at LOGD level — no runtime opt-out mechanism",
+      "limitations": "Static evidence only — no runtime PoC executed (--no-poc-exec)"
+    },
+    {
+      "threat_id": "T-008",
+      "status": "STATIC_EVIDENCE",
+      "type": "static_evidence",
+      "target_code_invoked": false,
+      "source_file": "services/data_manager/cred_data_manager/src/credential_data_manager.c",
+      "source_line": 164,
+      "sink_function": "SaveOsAccountCredDb",
+      "repro": "Credential metadata written to .dat file without application-layer encryption",
+      "limitations": "Static evidence only — no runtime PoC executed (--no-poc-exec)"
+    },
+    {
+      "threat_id": "T-009",
+      "status": "STATIC_EVIDENCE",
+      "type": "static_evidence",
+      "target_code_invoked": false,
+      "source_file": "services/session_manager/src/session/v2/auth_sub_session/auth_sub_session.c",
+      "source_line": 62,
+      "sink_function": "StartAuthSubSession",
+      "repro": "Session state machine NULL check bypass on cascading error — edge case path identified in source",
+      "limitations": "Static evidence only — no runtime PoC executed (--no-poc-exec)"
+    },
+    {
+      "threat_id": "T-010",
+      "status": "STATIC_EVIDENCE",
+      "type": "static_evidence",
+      "target_code_invoked": false,
+      "source_file": "services/frameworks/src/plugin_adapter/dynamic_plugin_adapter.c",
+      "source_line": 84,
+      "sink_function": "DevAuthDlsym",
+      "repro": "dlsym loads plugin .so without signature/hash verification",
+      "limitations": "Static evidence only — no runtime PoC executed (--no-poc-exec)"
+    },
+    {
+      "threat_id": "T-011",
+      "status": "STATIC_EVIDENCE",
+      "type": "static_evidence",
+      "target_code_invoked": false,
+      "source_file": "services/identity_service/src/identity_operation.c",
+      "source_line": 93,
+      "sink_function": "HcMalloc",
+      "repro": "Potential memory leak on error paths in CombineBaseCredId — needs deeper analysis",
+      "limitations": "Static evidence only — leak not confirmed by dynamic analysis (--no-poc-exec)"
+    },
+    {
+      "threat_id": "T-012",
+      "status": "STATIC_EVIDENCE",
+      "type": "static_evidence",
+      "target_code_invoked": false,
+      "source_file": "services/frameworks/src/permission_adapter/permission_adapter.cpp",
+      "source_line": 192,
+      "sink_function": "CheckPermission",
+      "repro": "UID-only permission check lacks SELinux context verification",
+      "limitations": "Static evidence only — bypass not confirmed (--no-poc-exec)"
+    },
+    {
+      "threat_id": "T-013",
+      "status": "STATIC_EVIDENCE",
+      "type": "static_evidence",
+      "target_code_invoked": false,
+      "source_file": "services/session_manager/src/session/v2/dev_session_v2.c",
+      "source_line": 1,
+      "sink_function": "SessionSwitchState",
+      "repro": "No per-UID session limit identified in code — exhaustion risk",
+      "limitations": "Static evidence only — exhaustion threshold not confirmed (--no-poc-exec)"
+    },
+    {
+      "threat_id": "T-014",
+      "status": "STATIC_EVIDENCE",
+      "type": "static_evidence",
+      "target_code_invoked": false,
+      "source_file": "services/session_manager/src/session/v2/auth_sub_session/auth_sub_session.c",
+      "source_line": 51,
+      "sink_function": "GetProtocolComponent",
+      "repro": "Protocol selection by type ID — downgrade risk if peer proposes weak protocol",
+      "limitations": "Static evidence only — downgrade not confirmed (--no-poc-exec)"
+    },
+    {
+      "threat_id": "T-015",
+      "status": "DESIGN_ONLY",
+      "type": "design_scenario",
+      "target_code_invoked": false,
+      "repro": "Design gap: no transport-layer encryption for protocol handshake metadata"
+    },
+    {
+      "threat_id": "T-016",
+      "status": "DESIGN_ONLY",
+      "type": "design_scenario",
+      "target_code_invoked": false,
+      "repro": "Design gap: predictable DB file paths simplify targeted storage attacks"
+    },
+    {
+      "threat_id": "T-017",
+      "status": "DESIGN_ONLY",
+      "type": "design_scenario",
+      "target_code_invoked": false,
+      "repro": "Design gap: no rate limiting for PIN-based auth attempts"
+    },
+    {
+      "threat_id": "T-018",
+      "status": "DESIGN_ONLY",
+      "type": "design_scenario",
+      "target_code_invoked": false,
+      "repro": "Design gap: plugin execution in same process space as host service"
+    },
+    {
+      "threat_id": "T-019",
+      "status": "DESIGN_ONLY",
+      "type": "design_scenario",
+      "target_code_invoked": false,
+      "repro": "Design gap: no session timeout enforcement — stale sessions accumulate"
+    },
+    {
+      "threat_id": "T-020",
+      "status": "FALSE_POSITIVE",
+      "type": "none",
+      "target_code_invoked": false,
+      "repro": "REJECT-009: Error log messages contain operation status, not key bytes"
+    }
+  ]
+}

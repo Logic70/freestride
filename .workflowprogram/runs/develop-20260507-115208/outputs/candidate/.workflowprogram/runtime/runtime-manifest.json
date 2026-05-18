@@ -1,0 +1,22 @@
+{
+  "workflow": "stride-security-audit",
+  "version": "0.1.0",
+  "runtime_assets": {
+    "entry": ".workflowprogram/runtime/workflow-entry.py",
+    "runner": ".workflowprogram/runtime/workflow-runner.py",
+    "validator": ".workflowprogram/runtime/validate-run-state.py",
+    "manifest": ".workflowprogram/runtime/runtime-manifest.json"
+  },
+  "dependencies": {
+    "python": ">=3.10",
+    "packages": ["pyyaml", "jinja2"],
+    "optional": {
+      "cppcheck": "for C/C++ verification",
+      "flawfinder": "for C/C++ security scanning",
+      "semgrep": "for multi-language SAST",
+      "docker": "for PoC sandbox execution (preferred)"
+    }
+  },
+  "entry_command": "/stride-audit",
+  "generated_at": "2026-05-07T00:00:00Z"
+}

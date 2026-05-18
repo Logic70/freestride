@@ -1,0 +1,641 @@
+{
+  "meta": {
+    "target": "/mnt/d/Code/STRIDEAnalyse/security_device_auth",
+    "generated": "2026-05-11T16:30:00",
+    "version": "0.5.0",
+    "attacker_profile": "mobile_device_remote_attacker",
+    "total_threats": 20
+  },
+  "threats": [
+    {
+      "id": "T-001",
+      "name": "DecreaseCriticalCnt no lower bound — integer underflow",
+      "stride_category": "Tampering",
+      "severity": "MEDIUM",
+      "cwe": "CWE-191",
+      "file": "services/sa/src/critical_handler/critical_handler.cpp:48",
+      "dfd_elements": [
+        "P1"
+      ],
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "direct",
+      "classification": "confirmed",
+      "confirmed_tier": "confirmed_code_defect",
+      "final_classification": "confirmed_code_defect",
+      "call_chain": "DecreaseCriticalCnt → g_count = g_count - 1 → g_count == 0 branch unreachable when g_count < 0",
+      "source_evidence": "critical_handler.cpp:48-56: g_count declared as int32_t, decremented unconditionally without lower bound check. g_count == 0 branch only handles zero, not negative values. Underflow carries correction.",
+      "counter_evidence_checked": [
+        "g_count is int32_t, not uint32_t",
+        "No lower bound check before decrement"
+      ],
+      "mitigation": "Add lower bound check: if (g_count <= 0) return; before decrement",
+      "poc_type": "static_evidence",
+      "static_evidence_file": "services/sa/src/critical_handler/critical_handler.cpp",
+      "static_evidence_line": 48,
+      "sink_function": "DecreaseCriticalCnt",
+      "bug_pattern": "integer_underflow_no_lower_bound"
+    },
+    {
+      "id": "T-002",
+      "name": "Seed value not zeroed before free in identity_group.c",
+      "stride_category": "Information Disclosure",
+      "severity": "MEDIUM",
+      "cwe": "CWE-226",
+      "file": "services/legacy/identity_manager/src/identity_group.c:552",
+      "dfd_elements": [
+        "P2",
+        "P5"
+      ],
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "direct",
+      "classification": "confirmed",
+      "confirmed_tier": "confirmed_code_defect",
+      "final_classification": "confirmed_code_defect",
+      "call_chain": "GeneratePsk/AuthGeneratePsk → HcFree(seedVal) without prior memset_s",
+      "source_evidence": "identity_group.c:552,559,565: HcFree(seedVal) called at three locations without prior secure zeroization. ClearFreeUint8Buff exists in codebase but not used here.",
+      "counter_evidence_checked": [
+        "ClearFreeUint8Buff utility exists in codebase",
+        "memset_s pattern used correctly elsewhere (iso_task_common.c:336-338)"
+      ],
+      "mitigation": "Call memset_s(seedVal, SEED_LEN, 0, SEED_LEN) before HcFree(seedVal)",
+      "poc_type": "static_evidence",
+      "static_evidence_file": "services/legacy/identity_manager/src/identity_group.c",
+      "static_evidence_line": 552,
+      "sink_function": "HcFree",
+      "bug_pattern": "sensitive_data_not_cleared_before_free"
+    },
+    {
+      "id": "T-003",
+      "name": "Account-related group membership bypass",
+      "stride_category": "Spoofing",
+      "severity": "MEDIUM",
+      "cwe": "CWE-287",
+      "file": "services/legacy/group_auth/src/group_auth_manager/group_auth_common/group_auth_data_operation.c:187",
+      "dfd_elements": [
+        "P3",
+        "P2"
+      ],
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "direct",
+      "classification": "confirmed",
+      "confirmed_tier": "confirmed_code_defect",
+      "final_classification": "confirmed_code_defect",
+      "call_chain": "GaIsDeviceInGroup → check authForm → AUTH_FORM_ACROSS_ACCOUNT/AUTH_FORM_IDENTICAL_ACCOUNT → unconditional return true",
+      "source_evidence": "group_auth_data_operation.c:187: For AUTH_FORM_ACROSS_ACCOUNT and AUTH_FORM_IDENTICAL_ACCOUNT, device membership check returns true unconditionally. P2P groups DO verify properly.",
+      "counter_evidence_checked": [
+        "P2P group verification works correctly",
+        "AUTH_FORM_ACROSS_ACCOUNT and AUTH_FORM_IDENTICAL_ACCOUNT bypass verification"
+      ],
+      "mitigation": "Add proper device membership verification for account-related groups",
+      "poc_type": "static_evidence",
+      "static_evidence_file": "services/legacy/group_auth/src/group_auth_manager/group_auth_common/group_auth_data_operation.c",
+      "static_evidence_line": 187,
+      "sink_function": "GaIsDeviceInGroup",
+      "bug_pattern": "device_verification_bypass_for_account_groups"
+    },
+    {
+      "id": "T-004",
+      "name": "Credential listener callback invoked under mutex — re-entrancy deadlock",
+      "stride_category": "Denial of Service",
+      "severity": "MEDIUM",
+      "cwe": "CWE-833",
+      "file": "services/identity_service/listener/src/cred_listener.c:47",
+      "dfd_elements": [
+        "P4",
+        "EE1"
+      ],
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "direct",
+      "classification": "confirmed",
+      "confirmed_tier": "confirmed_code_defect",
+      "final_classification": "confirmed_code_defect",
+      "call_chain": "OnCredAdd/OnCredDelete/OnCredUpdate → LockHcMutex(g_credListenerMutex) → callback invocation while holding lock → re-entrancy deadlock",
+      "source_evidence": "cred_listener.c:47,68,89: LockHcMutex acquired before invoking external callbacks. If callback re-enters device_auth API that acquires same mutex, deadlock occurs.",
+      "counter_evidence_checked": [
+        "LockHcMutex is non-recursive",
+        "External callbacks are unknown third-party code"
+      ],
+      "mitigation": "Release mutex before invoking external callbacks, or use recursive mutex",
+      "poc_type": "static_evidence",
+      "static_evidence_file": "services/identity_service/listener/src/cred_listener.c",
+      "static_evidence_line": 47,
+      "sink_function": "LockHcMutex",
+      "bug_pattern": "callback_under_lock_deadlock_risk"
+    },
+    {
+      "id": "T-005",
+      "name": "Task queue has no capacity limit — unbounded growth",
+      "stride_category": "Denial of Service",
+      "severity": "MEDIUM",
+      "cwe": "CWE-770",
+      "file": "deps_adapter/os_adapter/impl/src/hc_task_thread.c:40",
+      "dfd_elements": [
+        "P15",
+        "P1"
+      ],
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "direct",
+      "classification": "confirmed",
+      "confirmed_tier": "confirmed_code_defect",
+      "final_classification": "confirmed_code_defect",
+      "call_chain": "PushTask → pushBack without capacity check → vector grows unbounded",
+      "source_evidence": "hc_task_thread.c:40-55: PushTask appends to task vector via pushBack without checking current size or enforcing capacity limit.",
+      "counter_evidence_checked": [
+        "No MAX_QUEUE_SIZE constant found",
+        "pushBack is unbounded operation"
+      ],
+      "mitigation": "Add MAX_TASK_QUEUE_SIZE limit with rejection when full",
+      "poc_type": "static_evidence",
+      "static_evidence_file": "deps_adapter/os_adapter/impl/src/hc_task_thread.c",
+      "static_evidence_line": 40,
+      "sink_function": "PushTask",
+      "bug_pattern": "unbounded_vector_pushback"
+    },
+    {
+      "id": "T-006",
+      "name": "Global session slots have no per-source limit — single source exhaustion",
+      "stride_category": "Denial of Service",
+      "severity": "MEDIUM",
+      "cwe": "CWE-770",
+      "file": "services/session_manager/src/dev_session_mgr.c:86",
+      "dfd_elements": [
+        "P8",
+        "EE1"
+      ],
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "direct",
+      "classification": "confirmed",
+      "confirmed_tier": "confirmed_code_defect",
+      "final_classification": "confirmed_code_defect",
+      "call_chain": "CheckEnvForOpenSession → curSessionNum check against global MAX_AUTH_SESSION_COUNT=10 only → no per-appId/per-UID limit",
+      "source_evidence": "dev_session_mgr.c:86-101: Session creation checks curSessionNum against MAX_AUTH_SESSION_COUNT=10 globally. Single caller can exhaust all 10 slots.",
+      "counter_evidence_checked": [
+        "MAX_AUTH_SESSION_COUNT=10 is global limit",
+        "No per-UID or per-appId counter exists"
+      ],
+      "mitigation": "Add per-UID session cap alongside global limit",
+      "poc_type": "static_evidence",
+      "static_evidence_file": "services/session_manager/src/dev_session_mgr.c",
+      "static_evidence_line": 86,
+      "sink_function": "CheckEnvForOpenSession",
+      "bug_pattern": "global_only_limit_no_per_source_cap"
+    },
+    {
+      "id": "T-007",
+      "name": "Credential ID generated with timestamp — predictable identifier",
+      "stride_category": "Spoofing",
+      "severity": "MEDIUM",
+      "cwe": "CWE-338",
+      "file": "services/identity_service/src/identity_operation.c:87",
+      "dfd_elements": [
+        "P4",
+        "EE1"
+      ],
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "conditional",
+      "classification": "confirmed",
+      "confirmed_tier": "confirmed_code_defect",
+      "final_classification": "confirmed_code_defect",
+      "call_chain": "AddCredential → CombineBaseCredId → Int64ToString(HcGetCurTimeInMillis)",
+      "source_evidence": "identity_operation.c:87: credId generation uses HcGetCurTimeInMillis() timestamp without random component — predictable within millisecond window",
+      "counter_evidence_checked": [
+        "HcGetCurTimeInMillis provides millisecond granularity",
+        "No random component added to credId"
+      ],
+      "mitigation": "Add random suffix to credential ID generation",
+      "poc_type": "static_evidence",
+      "static_evidence_file": "services/identity_service/src/identity_operation.c",
+      "static_evidence_line": 87,
+      "sink_function": "Int64ToString",
+      "bug_pattern": "predictable_identifier"
+    },
+    {
+      "id": "T-008",
+      "name": "Shared key material in malloc buffer not zeroed after use",
+      "stride_category": "Information Disclosure",
+      "severity": "MEDIUM",
+      "cwe": "CWE-226",
+      "file": "services/device_auth.c:1134",
+      "dfd_elements": [
+        "P1",
+        "P5",
+        "P8"
+      ],
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "direct",
+      "classification": "confirmed",
+      "confirmed_tier": "confirmed_code_defect",
+      "final_classification": "confirmed_code_defect",
+      "call_chain": "GetSharedKeyFromOutJson → HcMalloc(sharedKeyLen) → GetByteFromJson → return sharedKeyVal → HcFree without prior memset",
+      "source_evidence": "device_auth.c:1134-1146: sharedKeyVal allocated via HcMalloc filled with session key bytes, freed at line 1141 without secure zeroization",
+      "counter_evidence_checked": [
+        "HcFree calls free() which does not zero memory",
+        "memset_s+HcFree pattern used in iso_task_common.c but not here"
+      ],
+      "mitigation": "Call memset_s before HcFree for key material buffers",
+      "poc_type": "static_evidence",
+      "static_evidence_file": "services/device_auth.c",
+      "static_evidence_line": 1134,
+      "sink_function": "HcFree",
+      "bug_pattern": "sensitive_data_not_cleared_before_free"
+    },
+    {
+      "id": "T-009",
+      "name": "NULL dereference in session state machine on edge case",
+      "stride_category": "Denial of Service",
+      "severity": "MEDIUM",
+      "cwe": "CWE-476",
+      "file": "services/session_manager/src/session/v2/auth_sub_session/auth_sub_session.c:62",
+      "dfd_elements": [
+        "P8",
+        "P5"
+      ],
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "conditional",
+      "classification": "candidate",
+      "confirmed_tier": null,
+      "final_classification": "partial",
+      "call_chain": "SessionSwitchState → StartAuthSubSession(self) → NULL check then dereference",
+      "source_evidence": "auth_sub_session.c:62-75: StartAuthSubSession NULL check returns error but caller dispatch may not validate",
+      "counter_evidence_checked": [
+        "All callers appear to check return values",
+        "NULL check exists at function entry"
+      ],
+      "mitigation": "Add defensive NULL guard in dispatch layer",
+      "poc_type": "static_evidence",
+      "static_evidence_file": "services/session_manager/src/session/v2/auth_sub_session/auth_sub_session.c",
+      "static_evidence_line": 62,
+      "sink_function": "StartAuthSubSession",
+      "bug_pattern": "null_deref_edge_case"
+    },
+    {
+      "id": "T-010",
+      "name": "File path constructed via sprintf_s — no parent dir validation",
+      "stride_category": "Tampering",
+      "severity": "MEDIUM",
+      "cwe": "CWE-23",
+      "file": "services/data_manager/cred_data_manager/src/credential_data_manager.c:164",
+      "dfd_elements": [
+        "P12",
+        "DS2"
+      ],
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "conditional",
+      "classification": "candidate",
+      "confirmed_tier": null,
+      "final_classification": "partial",
+      "call_chain": "InitCredDatabase → GetOsAccountCredInfoPathCe → sprintf_s with osAccountId",
+      "source_evidence": "credential_data_manager.c:164: sprintf_s with osAccountId interpolated into path; sprintf_s prevents overflow but not path traversal via crafted osAccountId",
+      "counter_evidence_checked": [
+        "osAccountId is int32_t from caller",
+        "realpath() not called before file access"
+      ],
+      "mitigation": "Validate osAccountId >= 0 and canonicalize path",
+      "poc_type": "static_evidence",
+      "static_evidence_file": "services/data_manager/cred_data_manager/src/credential_data_manager.c",
+      "static_evidence_line": 164,
+      "sink_function": "sprintf_s",
+      "bug_pattern": "path_traversal"
+    },
+    {
+      "id": "T-011",
+      "name": "KeyAgree sessionKey.length + 1 used as copy size — overflow risk",
+      "stride_category": "Information Disclosure",
+      "severity": "MEDIUM",
+      "cwe": "CWE-131",
+      "file": "services/key_agree_sdk/src/key_agree_sdk.c:291",
+      "dfd_elements": [
+        "P6",
+        "P5"
+      ],
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "conditional",
+      "classification": "candidate",
+      "confirmed_tier": null,
+      "final_classification": "partial",
+      "call_chain": "ProcessTransmitCallback → memcpy_s(dest, sessionKey.length + 1, src, sessionKey.length)",
+      "source_evidence": "key_agree_sdk.c:285-300: memcpy_s uses sessionKey.length + 1 as destination size, risking off-by-one if length is UINT32_MAX",
+      "counter_evidence_checked": [
+        "sessionKey.length originates from protocol message size field",
+        "memcpy_s provides bounds checking but +1 may still overflow"
+      ],
+      "mitigation": "Check sessionKey.length < UINT32_MAX before adding 1",
+      "poc_type": "static_evidence",
+      "static_evidence_file": "services/key_agree_sdk/src/key_agree_sdk.c",
+      "static_evidence_line": 291,
+      "sink_function": "memcpy_s",
+      "bug_pattern": "length_plus_one_copy_size"
+    },
+    {
+      "id": "T-012",
+      "name": "IPC permission check limited to UID-based access control",
+      "stride_category": "Elevation of Privilege",
+      "severity": "MEDIUM",
+      "cwe": "CWE-862",
+      "file": "services/frameworks/src/permission_adapter/permission_adapter.cpp:192",
+      "dfd_elements": [
+        "P15",
+        "EE1"
+      ],
+      "attacker_control": "external_ipc_param",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "conditional",
+      "classification": "candidate",
+      "confirmed_tier": null,
+      "final_classification": "partial",
+      "call_chain": "IPC stub → CheckPermission(methodId) → UID comparison only",
+      "source_evidence": "permission_adapter.cpp:192: CheckPermission validates calling UID without checking SELinux context or process identity",
+      "counter_evidence_checked": [
+        "SELinux provides additional MAC at kernel level",
+        "Method ID routing limits surface"
+      ],
+      "mitigation": "Add SELinux context verification in permission check",
+      "poc_type": "static_evidence",
+      "static_evidence_file": "services/frameworks/src/permission_adapter/permission_adapter.cpp",
+      "static_evidence_line": 192,
+      "sink_function": "CheckPermission",
+      "bug_pattern": "insufficient_permission_check"
+    },
+    {
+      "id": "T-013",
+      "name": "Dynamic plugin loaded via dlopen without signature verification",
+      "stride_category": "Elevation of Privilege",
+      "severity": "MEDIUM",
+      "cwe": "CWE-347",
+      "file": "services/frameworks/src/plugin_adapter/dynamic_plugin_adapter.c:84",
+      "dfd_elements": [
+        "P15",
+        "P17"
+      ],
+      "attacker_control": "none",
+      "preconditions": [
+        "system_app"
+      ],
+      "exploit_path_type": "design_only",
+      "classification": "design",
+      "confirmed_tier": null,
+      "final_classification": "design",
+      "call_chain": "GetCredPluginFromLib → DevAuthDlsym → plugin loaded without integrity check",
+      "source_evidence": "dynamic_plugin_adapter.c:84-92: dlsym loads plugin functions without signature/hash verification of the .so file",
+      "counter_evidence_checked": [
+        "Plugin .so on system partition requires root to modify",
+        "Attacker model (mobile_device_remote_attacker) does not have system partition write access"
+      ],
+      "mitigation": "Verify plugin ELF signature before loading",
+      "poc_type": "design_scenario",
+      "static_evidence_file": null,
+      "static_evidence_line": null,
+      "sink_function": null,
+      "bug_pattern": null
+    },
+    {
+      "id": "T-014",
+      "name": "No audit trail for credential CRUD operations",
+      "stride_category": "Repudiation",
+      "severity": "LOW",
+      "cwe": "CWE-778",
+      "file": "services/identity_service/src/identity_service.c",
+      "dfd_elements": [
+        "P4",
+        "DS2"
+      ],
+      "attacker_control": "none",
+      "preconditions": [],
+      "exploit_path_type": "design_only",
+      "classification": "design",
+      "confirmed_tier": null,
+      "final_classification": "design",
+      "call_chain": "AddCredential/DeleteCredential → DB write → no audit event emitted",
+      "source_evidence": "identity_service.c: CRUD operations perform DB writes without emitting security audit events",
+      "counter_evidence_checked": [
+        "HiSysEvent exists for diagnostics only",
+        "No security audit event structure defined"
+      ],
+      "mitigation": "Add security audit events for credential lifecycle",
+      "poc_type": "design_scenario"
+    },
+    {
+      "id": "T-015",
+      "name": "No transport-layer encryption for handshake metadata",
+      "stride_category": "Information Disclosure",
+      "severity": "LOW",
+      "cwe": "CWE-319",
+      "file": "services/legacy/group_manager/src/channel_manager/soft_bus_channel/soft_bus_channel.c",
+      "dfd_elements": [
+        "P5",
+        "EE4"
+      ],
+      "attacker_control": "none",
+      "preconditions": [
+        "network_access"
+      ],
+      "exploit_path_type": "design_only",
+      "classification": "design",
+      "confirmed_tier": null,
+      "final_classification": "design",
+      "call_chain": "SoftBus sendMsg → data transmitted through SoftBus transport",
+      "source_evidence": "soft_bus_channel.c: Protocol data transmitted through SoftBus without additional transport encryption; metadata observable",
+      "counter_evidence_checked": [
+        "Application-layer PAKE/SPEKE encrypts payload",
+        "Metadata includes timing and message size"
+      ],
+      "mitigation": "Consider padding or transport wrapper for metadata",
+      "poc_type": "design_scenario"
+    },
+    {
+      "id": "T-016",
+      "name": "Credential DB file paths constructed from static format strings",
+      "stride_category": "Information Disclosure",
+      "severity": "LOW",
+      "cwe": "CWE-552",
+      "file": "services/data_manager/cred_data_manager/src/credential_data_manager.c:164",
+      "dfd_elements": [
+        "P12",
+        "DS2"
+      ],
+      "attacker_control": "none",
+      "preconditions": [
+        "local_filesystem_read"
+      ],
+      "exploit_path_type": "design_only",
+      "classification": "design",
+      "confirmed_tier": null,
+      "final_classification": "design",
+      "call_chain": "GetOsAccountCredInfoPath → sprintf_s with hardcoded path template",
+      "source_evidence": "credential_data_manager.c:164: Hardcoded path template makes credential data location predictable on filesystem",
+      "counter_evidence_checked": [
+        "Paths under per-app data directory",
+        "Linux DAC provides access control",
+        "Attacker model lacks local_filesystem_read"
+      ],
+      "mitigation": "Consider path randomization or alternative naming",
+      "poc_type": "design_scenario"
+    },
+    {
+      "id": "T-017",
+      "name": "No rate limiting for PIN-based authentication attempts",
+      "stride_category": "Spoofing",
+      "severity": "MEDIUM",
+      "cwe": "CWE-307",
+      "file": "services/device_auth.c:299",
+      "dfd_elements": [
+        "P1",
+        "EE1"
+      ],
+      "attacker_control": "none",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "design_only",
+      "classification": "design",
+      "confirmed_tier": null,
+      "final_classification": "design",
+      "call_chain": "AuthCredential → PIN verification path → no attempt counter",
+      "source_evidence": "device_auth.c:299: PIN-based auth path lacks rate limiting or attempt counting; repeated attempts possible",
+      "counter_evidence_checked": [
+        "PAKE provides cryptographic protection",
+        "Network interaction required per attempt"
+      ],
+      "mitigation": "Implement exponential backoff and max attempt limit",
+      "poc_type": "design_scenario"
+    },
+    {
+      "id": "T-018",
+      "name": "Session timeout not enforced — stale sessions accumulate",
+      "stride_category": "Denial of Service",
+      "severity": "LOW",
+      "cwe": "CWE-613",
+      "file": "services/session_manager/src/session/v2/dev_session_v2.c",
+      "dfd_elements": [
+        "P8",
+        "DS3"
+      ],
+      "attacker_control": "none",
+      "preconditions": [
+        "normal_app"
+      ],
+      "exploit_path_type": "design_only",
+      "classification": "design",
+      "confirmed_tier": null,
+      "final_classification": "design",
+      "call_chain": "SessionSwitchState → JUMP_TO_FINISH_STATE → no timer-based cleanup",
+      "source_evidence": "dev_session_v2.c: Session state machine transitions only on protocol events; no time-based expiration",
+      "counter_evidence_checked": [
+        "Sessions terminate on protocol completion",
+        "Stuck sessions not cleaned up"
+      ],
+      "mitigation": "Add configurable session TTL with background cleanup",
+      "poc_type": "design_scenario"
+    },
+    {
+      "id": "T-019",
+      "name": "PIN code length treated as security strength (6 chars ≠ 6 bits)",
+      "stride_category": "Information Disclosure",
+      "severity": "LOW",
+      "cwe": "CWE-327",
+      "file": "services/device_auth.c:299",
+      "dfd_elements": [
+        "P1",
+        "EE1"
+      ],
+      "attacker_control": "none",
+      "preconditions": [],
+      "exploit_path_type": "design_only",
+      "classification": "false_positive",
+      "confirmed_tier": null,
+      "final_classification": "false_positive",
+      "call_chain": "AuthCredential → pinCode field",
+      "source_evidence": "REJECT-005: PIN is character string not bit field. 6-char numeric PIN = 10^6 ≈ 20 bits.",
+      "counter_evidence_checked": [
+        "HcStrlen(pinCode) >= 6 checks character length",
+        "PIN used as auth factor not entropy source"
+      ],
+      "mitigation": "N/A — false positive",
+      "poc_type": "none",
+      "fp_rationale": "REJECT-005: 6字符PIN不是6bit熵。6位数字PIN有10^6≈20bit熵。代码中PIN作为认证因子使用。"
+    },
+    {
+      "id": "T-020",
+      "name": "PRINT_SENSITIVE_DATA exposed peer UDID in debug logs",
+      "stride_category": "Information Disclosure",
+      "severity": "LOW",
+      "cwe": "CWE-532",
+      "file": "services/device_auth.c:105",
+      "dfd_elements": [
+        "P1",
+        "EE1"
+      ],
+      "attacker_control": "none",
+      "preconditions": [],
+      "exploit_path_type": "design_only",
+      "classification": "false_positive",
+      "confirmed_tier": null,
+      "final_classification": "false_positive",
+      "call_chain": "ProcessBindRequest → PRINT_SENSITIVE_DATA(PeerUdid, deviceId)",
+      "source_evidence": "REJECT-003: PRINT_SENSITIVE_DATA only outputs 4 chars + ****; debug logging is compile-time disabled in release builds",
+      "counter_evidence_checked": [
+        "PRINT_SENSITIVE_DATA uses LOGD (compile-time gated)",
+        "Output truncated to 4 chars + mask in release"
+      ],
+      "mitigation": "N/A — false positive",
+      "poc_type": "none",
+      "fp_rationale": "REJECT-003: PRINT_SENSITIVE_DATA 仅输出前4字符+****。LOGD在release构建中编译时禁用。"
+    }
+  ],
+  "summary": {
+    "total_threats": 20,
+    "by_severity": {
+      "MEDIUM": 14,
+      "LOW": 6
+    },
+    "by_stride": {
+      "Tampering": 2,
+      "Information Disclosure": 7,
+      "Spoofing": 3,
+      "Denial of Service": 5,
+      "Elevation of Privilege": 2,
+      "Repudiation": 1
+    },
+    "by_classification": {
+      "confirmed": 8,
+      "partial": 4,
+      "design": 6,
+      "false_positive": 2
+    }
+  }
+}

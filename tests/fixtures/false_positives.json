@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "target": "/mnt/d/Code/STRIDEAnalyse/security_device_auth",
+    "classification": "false_positive",
+    "count": 2
+  },
+  "findings": [
+    {
+      "id": "T-019",
+      "name": "PIN code length treated as security strength (6 chars ≠ 6 bits)",
+      "stride_category": "Information Disclosure",
+      "severity": "LOW",
+      "cwe": "CWE-327",
+      "file": "services/device_auth.c:299",
+      "attacker_control": "none",
+      "preconditions": [],
+      "exploit_path_type": "design_only",
+      "impact_observed": false,
+      "poc_type": "none",
+      "exploitability_score": 1.0,
+      "reject_rule": "REJECT-005",
+      "reject_rationale": "REJECT-005: 6字符PIN不是6bit熵。6位数字PIN有10^6≈20bit熵。代码中PIN作为认证因子使用。",
+      "fp_pattern_match": "reject_005_pin_entropy_misread",
+      "fp_code_ref": "services/device_auth.c:299",
+      "fp_source_reason": "HcStrlen(pinCode) >= 6 checks character length"
+    },
+    {
+      "id": "T-020",
+      "name": "PRINT_SENSITIVE_DATA exposed peer UDID in debug logs",
+      "stride_category": "Information Disclosure",
+      "severity": "LOW",
+      "cwe": "CWE-532",
+      "file": "services/device_auth.c:105",
+      "attacker_control": "none",
+      "preconditions": [],
+      "exploit_path_type": "design_only",
+      "impact_observed": false,
+      "poc_type": "none",
+      "exploitability_score": 1.0,
+      "reject_rule": "REJECT-003",
+      "reject_rationale": "REJECT-003: PRINT_SENSITIVE_DATA 仅输出前4字符+****。LOGD在release构建中编译时禁用。",
+      "fp_pattern_match": "reject_003_log_leak",
+      "fp_code_ref": "services/device_auth.c:105",
+      "fp_source_reason": "PRINT_SENSITIVE_DATA uses LOGD (compile-time gated)"
+    }
+  ]
+}

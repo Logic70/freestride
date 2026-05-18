@@ -1,0 +1,143 @@
+# ============================================================
+# STRIDE Validation Regression Corpus
+# Known FP/confirmed records from prior audit runs.
+# Validator MUST cross-check against this corpus after classification.
+# ============================================================
+
+regression_entries:
+  - threat_id: "REG-001"
+    description: "Pseudo-random seed not zeroed after key generation"
+    correct_classification: "confirmed"
+    rationale: "Temporary buffers holding RNG seed material are freed without memset_s. Confirmed via huks_adapter.c code review."
+
+  - threat_id: "REG-002"
+    description: "sessionKey.length + 1 copy may over-read if non-NULL-terminated"
+    correct_classification: "partial"
+    rationale: "HcStrlen(returnMsg)+1 used as length in ProcessTransmitCallback. PackJsonToString should produce NULL-terminated output, but no guarantee. Partial evidence."
+
+  - threat_id: "REG-003"
+    description: "HcFileWrite short write leaves stale tail from old file"
+    correct_classification: "partial"
+    rationale: "HcFileWrite does not ftruncate after write. If new data is shorter than old file, stale bytes remain. MODE_FILE_WRITE should truncate in most implementations, but not verified."
+
+  - threat_id: "REG-004"
+    description: "Account lifecycle critical counter underflow (DecreaseCriticalCnt without matching IncreaseCriticalCnt)"
+    correct_classification: "false_positive"
+    rationale: "InitAndPushGMTask calls IncreaseCriticalCnt(ADD_TWO). Each Do* function calls DecreaseCriticalCnt() once. DestroyGroupManagerTask calls DecreaseCriticalCnt() again. Total: +2 -1 -1 = 0. Balanced."
+
+  - threat_id: "REG-005"
+    description: "IPC data length validation bypass in DecodeCallRequest"
+    correct_classification: "false_positive"
+    rationale: "Multiple bounds checks exist: GetReadableBytes() > MAX_DATA_LEN at ipc_dev_auth_stub.cpp:139, dataLen > GetReadableBytes() at :149, inParamNum < 0 || inParamNum > cacheNum at :159. No bypass possible."
+
+  - threat_id: "REG-006"
+    description: "Sensitive data leaked to logs via PRINT_SENSITIVE_DATA or PRINT_SENSITIVE_BYTE"
+    correct_classification: "false_positive"
+    rationale: "PRINT_SENSITIVE_DATA prints only 4/N chars + '****'. PRINT_SENSITIVE_BYTE prints only first 2 and last 2 bytes in hex. PRINT_DEBUG_MSG is default no-op. Built-in sanitization sufficient."
+
+  - threat_id: "REG-007"
+    description: "Protocol message JSON injection drives state machine"
+    correct_classification: "partial"
+    rationale: "MAX_DATA_BUFFER_SIZE=4096 limits input size. JSON depth capped at MAX_DEPTH=10. Protocol HMAC provides partial integrity. However, no field schema validation exists — downgraded from Critical to partial."
+
+  - threat_id: "REG-008"
+    description: "Credential/Group database lacks integrity protection (no HMAC/signature)"
+    correct_classification: "design"
+    rationale: "File-based TLV storage relies on OS file permissions. If the threat model does not include local filesystem attacker, this is a design choice, not an exploitable vulnerability."
+
+  - threat_id: "REG-009"
+    description: "Pre-shared key value logged via PRINT_SENSITIVE_DATA in PAKE protocol"
+    correct_classification: "false_positive"
+    rationale: "PRINT_SENSITIVE_DATA('pskValue', psk) prints 4/32 bytes of the PSK — minimal leakage. PRINT_DEBUG_MSG on line 202 is default no-op (requires DEV_AUTH_PRINT_DEBUG_MSG flag)."
+
+  - threat_id: "REG-010"
+    description: "Audit logging compile-time disabled via DEV_AUTH_HIVIEW_ENABLE guard"
+    correct_classification: "design"
+    rationale: "On production builds the flag is expected to be defined. The #ifdef guard is a build configuration issue, not an exploitable runtime vulnerability. Classify as design gap."
+
+# ============================================================
+# v0.3.1 评审补充 — must-detect 真实漏洞（不可漏报）
+# ============================================================
+must_detect_entries:
+  - threat_id: "MUST-001"
+    description: "Critical counter underflow: DecreaseCriticalCnt uses g_count = g_count - 1 without lower bound check"
+    file: "services/sa/src/critical_handler/critical_handler.cpp"
+    line: 51
+    correct_classification: "confirmed"
+    rationale: "g_count = g_count - 1 at critical_handler.cpp:51 has no lower bound. After g_count goes negative, g_count == 0 branch becomes unreachable permanently. PoC verified."
+
+  - threat_id: "MUST-002"
+    description: "Seed value not zeroed before free in identity_group.c"
+    file: "services/legacy/identity_manager/src/identity_group.c"
+    line: 542
+    correct_classification: "confirmed"
+    rationale: "seedVal allocated at line 544 via HcMalloc, used for crypto seed operations, then HcFree'd at lines 552/559 without memset_s. Same codebase zeroes PIN values before free — inconsistent. Static evidence level (not runtime PoC)."
+
+  - threat_id: "MUST-003"
+    description: "Account-related group membership bypass: GaIsDeviceInGroup returns true for ACROSS_ACCOUNT/IDENTICAL_ACCOUNT without checking"
+    file: "services/legacy/group_auth/src/group_auth_manager/group_auth_common/group_auth_data_operation.c"
+    line: 189
+    correct_classification: "confirmed"
+    rationale: "GaIsDeviceInGroup at line 189 returns true unconditionally for AUTH_FORM_ACROSS_ACCOUNT and AUTH_FORM_IDENTICAL_ACCOUNT with comment 'Do not check whether account related devices is in account'. Bypasses device membership verification for account-related groups."
+
+  - threat_id: "MUST-004"
+    description: "Credential listener callback invoked under lock causing deadlock risk"
+    file: "services/identity_service/listener/src/cred_listener.c"
+    line: 47
+    correct_classification: "confirmed"
+    rationale: "Listener notification loop holds mutex while calling external callbacks. If callback re-enters service (e.g., to query credentials), deadlock. Confirmed DoS/deadlock risk."
+
+  - threat_id: "MUST-005"
+    description: "Task queue has no capacity limit — PushTask at hc_task_thread.c:40 adds to vector without bounds"
+    file: "deps_adapter/os_adapter/impl/src/hc_task_thread.c"
+    line: 40
+    correct_classification: "confirmed"
+    rationale: "PushTask at hc_task_thread.c:40 does push_back to TaskVec with no capacity check. Single worker thread serializes consumption. Attacker can push faster than consume → heap exhaustion."
+
+  - threat_id: "MUST-006"
+    description: "Global session slots have no per-source limit — only MAX_AUTH_SESSION_COUNT=10 check"
+    file: "services/session_manager/src/dev_session_mgr.c"
+    line: 94
+    correct_classification: "confirmed"
+    rationale: "CheckEnvForOpenSession at dev_session_mgr.c:94 only checks curSessionNum >= MAX_AUTH_SESSION_COUNT (10). No per-appId, per-UID, or per-IP limit. Single source can exhaust all 10 slots."
+
+  - threat_id: "MUST-007"
+    description: "KeyAgree sessionKey.length + 1 used as copy size — potential off-by-one or over-read"
+    file: "services/key_agree_sdk/src/key_agree_sdk.c"
+    line: 291
+    correct_classification: "partial"
+    rationale: "Uses internal sessionKey.length + 1 as copy target size. If sessionKey is not NULL-terminated, +1 is wrong. If it IS NULL-terminated, HcStrlen would be more appropriate. Code smell, needs PoC."
+
+# ============================================================
+# v0.3.1 评审补充 — must-reject 误报模式（不可升级为 confirmed）
+# ============================================================
+must_reject_patterns:
+  - pattern_id: "REJECT-001"
+    description: "IPC interface claims no permission check, but CheckPermission exists at ipc_dev_auth_stub.cpp:277"
+    proof_location: "frameworks/src/standard/ipc_dev_auth_stub.cpp:277"
+    proof_code: "ret = CheckPermission(methodId);"
+    correct_classification: "false_positive"
+    rationale: "HandleDeviceAuthCall at line 277 calls CheckPermission(methodId) before any service dispatch. All IPC methods go through this gate. Claims of 'no permission check' are false."
+
+  - pattern_id: "REJECT-002"
+    description: "Credential export claims no authentication, but CheckOwnerUidPermission blocks at identity_service_impl.c:93"
+    proof_location: "services/identity_service/src/identity_service_impl.c:93"
+    proof_code: "ret = CheckOwnerUidPermission(credential);"
+    correct_classification: "false_positive"
+    rationale: "ExportCredentialImpl at line 93 calls CheckOwnerUidPermission which compares GetCallingUid() with credential->ownerUid. Export is properly authenticated. Claims of 'no authentication' are false."
+
+  - pattern_id: "REJECT-003"
+    description: "PRINT_SENSITIVE_DATA leak claim ignores built-in desensitization (4 chars only + ****)"
+    proof_location: "deps_adapter/os_adapter/interfaces/linux/hc_log.h:30-38"
+    correct_classification: "false_positive"
+    rationale: "PRINT_SENSITIVE_DATA only outputs first 4 chars then '****'. PRINT_SENSITIVE_BYTE outputs first 2 + last 2 bytes. PRINT_DEBUG_MSG is default no-op. Minimal leakage."
+
+  - pattern_id: "REJECT-004"
+    description: "Channel ID overflow claim ignores existing validation"
+    correct_classification: "false_positive"
+    rationale: "Channel ID paths have range checks. Claims of overflow must be verified against actual validation code."
+
+  - pattern_id: "REJECT-005"
+    description: "Parcel realloc buffer overflow claim without verified attack path"
+    correct_classification: "false_positive"
+    rationale: "Parcel operations have multiple bounds layers. Realloc claims must show specific bypass of existing guards."

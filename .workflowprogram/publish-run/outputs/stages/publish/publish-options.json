@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "allow_warn": false,
+  "execute_github": true,
+  "approve_github": true,
+  "require_claude_validate": false,
+  "skip_claude_validate": false
+}

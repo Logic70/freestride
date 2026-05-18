@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "complexity": "L",
+  "lead_role": "requirement-clarification-lead",
+  "questions": [
+    {
+      "id": "Q-001",
+      "lens": "purpose",
+      "question": "1)攻击模式库的基线条目数量和覆盖范围？2)PoC沙箱执行环境的标准化配置？3)对比分析模式的历史数据存储方案？",
+      "why_it_matters": "Different answers can alter workflow nodes, decisions, evidence, acceptance tests, or boundaries.",
+      "blocking": false,
+      "expected_answer_shape": "Concrete object/process/decision/evidence/acceptance/boundary rule, not a generic preference.",
+      "linked_requirement_ids": [
+        "REQ-001"
+      ],
+      "design_consequence": true,
+      "source": "draft",
+      "status": "open"
+    }
+  ],
+  "selected_next_question_id": "Q-001",
+  "blocking_count": 0,
+  "design_consequential_count": 1
+}

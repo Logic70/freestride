@@ -1,0 +1,80 @@
+# ============================================================
+# PoC Evidence Grading Rules (v0.4)
+# Every PoC MUST declare its evidence tier.
+# Report claims MUST match the tier — no overstatement.
+# ============================================================
+
+tiers:
+  - id: runtime_target_poc
+    rank: 1
+    name: "目标代码运行时验证"
+    description: "PoC 编译/调用目标仓库真实代码，证据最强"
+    requirements:
+      - "代码从目标仓库编译"
+      - "调用真实的漏洞函数/路径"
+      - "观察到的行为与漏洞描述一致"
+      - "隔离环境中可重现"
+    permitted_claims:
+      - "PoC 有效验证漏洞"
+      - "漏洞可利用性得到运行时确认"
+    confidence_contribution: "strong"
+    can_promote_to_confirmed: true
+
+  - id: runtime_model_poc
+    rank: 2
+    name: "独立机制模拟验证"
+    description: "独立代码模拟漏洞机制，只能证明模式存在"
+    requirements:
+      - "独立的 C/Python 模拟代码"
+      - "复现了漏洞的机制/模式"
+      - "不调用目标仓库实际代码"
+    permitted_claims:
+      - "漏洞机制成立"
+      - "代码模式缺陷经模拟确认"
+    forbidden_claims:
+      - "PoC 有效验证漏洞"          # 不能这么说
+      - "漏洞可利用性得到确认"       # 不能这么说
+      - "fully verified"             # 不能这么说
+    confidence_contribution: "moderate"
+    can_promote_to_confirmed: false   # 单靠此不能提 confirmed
+
+  - id: static_evidence
+    rank: 3
+    name: "静态代码证据"
+    description: "仅代码审查证据，证明代码缺陷但不证明可利用性"
+    requirements:
+      - "源码行号引用准确"
+      - "对比正确/错误的代码模式"
+    permitted_claims:
+      - "代码缺陷成立"
+      - "静态证据级别确认"
+    forbidden_claims:
+      - "PoC 验证通过"
+      - "漏洞确认可利用"
+    confidence_contribution: "weak"
+    can_promote_to_confirmed: false   # 不能单独提 confirmed
+
+  - id: design_scenario
+    rank: 4
+    name: "设计场景分析"
+    description: "仅设计/架构分析，无代码级证据"
+    requirements:
+      - "威胁模型分析"
+      - "设计文档或代码结构分析"
+    permitted_claims:
+      - "设计风险存在"
+      - "建议改进设计"
+    forbidden_claims:
+      - "漏洞确认"
+      - "可利用"
+    confidence_contribution: "none"
+    can_promote_to_confirmed: false   # 永远不能 confirmed
+
+# ============================================================
+# Reporting rules
+# ============================================================
+reporting_rules:
+  - "报告的 '验证状态' 必须与 PoC tier 的 permitted_claims 一致"
+  - "runtime_model_poc 不能说 'fully verified'"
+  - "static_evidence 不能提高 confirmed 置信度"
+  - "只有 runtime_target_poc 可以说 'PoC 有效验证漏洞'"
